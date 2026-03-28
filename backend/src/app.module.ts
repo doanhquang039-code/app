@@ -9,6 +9,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -26,10 +30,23 @@ import { ReportsModule } from './modules/reports/reports.module';
         trustServerCertificate: true,
       },
     }),
+    ScheduleModule.forRoot(),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      },
+    }),
     AuthModule,
     TransactionsModule,
-    CategoriesModule, // ← thêm vào đây
+    CategoriesModule,
     ReportsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

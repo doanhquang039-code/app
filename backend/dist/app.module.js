@@ -18,6 +18,9 @@ const auth_module_1 = require("./modules/auth/auth.module");
 const transactions_module_1 = require("./modules/transactions/transactions.module");
 const categories_module_1 = require("./modules/categories/categories.module");
 const reports_module_1 = require("./modules/reports/reports.module");
+const schedule_1 = require("@nestjs/schedule");
+const mailer_1 = require("@nestjs-modules/mailer");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,10 +42,23 @@ exports.AppModule = AppModule = __decorate([
                     trustServerCertificate: true,
                 },
             }),
+            schedule_1.ScheduleModule.forRoot(),
+            mailer_1.MailerModule.forRoot({
+                transport: {
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: process.env.MAIL_USER,
+                        pass: process.env.MAIL_PASS,
+                    },
+                },
+            }),
             auth_module_1.AuthModule,
             transactions_module_1.TransactionsModule,
             categories_module_1.CategoriesModule,
             reports_module_1.ReportsModule,
+            notifications_module_1.NotificationsModule,
         ],
     })
 ], AppModule);
