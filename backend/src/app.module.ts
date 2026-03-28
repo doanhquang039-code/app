@@ -7,6 +7,7 @@ import { Category } from './entities/category.entity';
 import { Transaction } from './entities/transaction.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     }),
     AuthModule,
     TransactionsModule,
+    CategoriesModule, // ← thêm vào đây
   ],
 })
 export class AppModule {}

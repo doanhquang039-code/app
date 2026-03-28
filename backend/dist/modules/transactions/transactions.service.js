@@ -45,7 +45,9 @@ let TransactionsService = class TransactionsService {
             });
         }
         if (query.categoryId) {
-            qb.andWhere('t.categoryId = :categoryId', { categoryId: query.categoryId });
+            qb.andWhere('t.categoryId = :categoryId', {
+                categoryId: query.categoryId,
+            });
         }
         if (query.type) {
             qb.andWhere('t.type = :type', { type: query.type });
@@ -86,8 +88,8 @@ let TransactionsService = class TransactionsService {
         })
             .groupBy('t.type')
             .getRawMany();
-        const income = result.find(r => r.type === 'income')?.total || 0;
-        const expense = result.find(r => r.type === 'expense')?.total || 0;
+        const income = result.find((r) => r.type === 'income')?.total || 0;
+        const expense = result.find((r) => r.type === 'expense')?.total || 0;
         return { income, expense, balance: income - expense };
     }
 };

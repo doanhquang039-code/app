@@ -17,8 +17,14 @@ let Category = class Category {
     userId;
     name;
     icon;
+    color;
     type;
+    parentId;
+    isDefault;
+    isActive;
     user;
+    parent;
+    children;
 };
 exports.Category = Category;
 __decorate([
@@ -38,14 +44,39 @@ __decorate([
     __metadata("design:type", String)
 ], Category.prototype, "icon", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Category.prototype, "color", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Category.prototype, "type", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Number)
+], Category.prototype, "parentId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Category.prototype, "isDefault", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], Category.prototype, "isActive", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
     (0, typeorm_1.JoinColumn)({ name: 'userId' }),
     __metadata("design:type", user_entity_1.User)
 ], Category.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Category, (category) => category.children),
+    (0, typeorm_1.JoinColumn)({ name: 'parentId' }),
+    __metadata("design:type", Category)
+], Category.prototype, "parent", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Category, (category) => category.parent),
+    __metadata("design:type", Array)
+], Category.prototype, "children", void 0);
 exports.Category = Category = __decorate([
     (0, typeorm_1.Entity)('Categories')
 ], Category);

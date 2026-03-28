@@ -4,6 +4,12 @@ export declare class Category {
     userId: number;
     name: string;
     icon: string;
+    color: string;
     type: string;
+    parentId: number;
+    isDefault: boolean;
+    isActive: boolean;
     user: User;
+    parent: Category;
+    children: Category[];
 }

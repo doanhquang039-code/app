@@ -60,7 +60,9 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async register(dto) {
-        const exists = await this.userRepository.findOne({ where: { email: dto.email } });
+        const exists = await this.userRepository.findOne({
+            where: { email: dto.email },
+        });
         if (exists)
             throw new common_1.ConflictException('Email đã tồn tại');
         const hashed = await bcrypt.hash(dto.password, 10);
@@ -73,7 +75,9 @@ let AuthService = class AuthService {
         return { message: 'Đăng ký thành công' };
     }
     async login(dto) {
-        const user = await this.userRepository.findOne({ where: { email: dto.email } });
+        const user = await this.userRepository.findOne({
+            where: { email: dto.email },
+        });
         if (!user)
             throw new common_1.UnauthorizedException('Email hoặc mật khẩu không đúng');
         const isMatch = await bcrypt.compare(dto.password, user.password);
