@@ -14,8 +14,10 @@ import { Category } from './category.entity';
 export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   userId: number;
+
   @Column()
   walletId: number;
 
@@ -24,10 +26,13 @@ export class Transaction {
 
   @Column({ type: 'decimal', precision: 18, scale: 2 })
   amount: number;
+
   @Column()
   type: string;
+
   @Column({ nullable: true })
   note: string;
+
   @Column()
   date: Date;
 
@@ -41,6 +46,7 @@ export class Transaction {
   @ManyToOne(() => Wallet)
   @JoinColumn({ name: 'walletId' })
   wallet: Wallet;
+
   @ManyToOne(() => Category)
   @JoinColumn({ name: 'categoryId' })
   category: Category;

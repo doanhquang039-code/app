@@ -8,7 +8,7 @@ import { Transaction } from './entities/transaction.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-
+import { ReportsModule } from './modules/reports/reports.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -29,6 +29,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     AuthModule,
     TransactionsModule,
     CategoriesModule, // ← thêm vào đây
+    ReportsModule,
   ],
 })
 export class AppModule {}
