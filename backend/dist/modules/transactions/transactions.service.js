@@ -17,10 +17,13 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const transaction_entity_1 = require("../../entities/transaction.entity");
+const wallet_entity_1 = require("../../entities/wallet.entity");
 let TransactionsService = class TransactionsService {
     transactionRepository;
-    constructor(transactionRepository) {
+    walletRepository;
+    constructor(transactionRepository, walletRepository) {
         this.transactionRepository = transactionRepository;
+        this.walletRepository = walletRepository;
     }
     async create(userId, dto) {
         const transaction = this.transactionRepository.create({
@@ -28,7 +31,9 @@ let TransactionsService = class TransactionsService {
             userId,
             date: new Date(dto.date),
         });
-        return this.transactionRepository.save(transaction);
+        const saved = await this.transactionRepository.save(transaction);
+        await this.updateWalletBalance(dto.walletId, dto.amount, dto.type, 'add');
+        return saved;
     }
     async findAll(userId, query) {
         const qb = this.transactionRepository
@@ -65,13 +70,17 @@ let TransactionsService = class TransactionsService {
     }
     async update(userId, id, dto) {
         const transaction = await this.findOne(userId, id);
+        await this.updateWalletBalance(transaction.walletId, Number(transaction.amount), transaction.type, 'revert');
         Object.assign(transaction, dto);
         if (dto.date)
             transaction.date = new Date(dto.date);
-        return this.transactionRepository.save(transaction);
+        const saved = await this.transactionRepository.save(transaction);
+        await this.updateWalletBalance(saved.walletId, Number(saved.amount), saved.type, 'add');
+        return saved;
     }
     async remove(userId, id) {
         const transaction = await this.findOne(userId, id);
+        await this.updateWalletBalance(transaction.walletId, Number(transaction.amount), transaction.type, 'revert');
         await this.transactionRepository.remove(transaction);
         return { message: 'Xóa thành công' };
     }
@@ -92,11 +101,29 @@ let TransactionsService = class TransactionsService {
         const expense = result.find((r) => r.type === 'expense')?.total || 0;
         return { income, expense, balance: income - expense };
     }
+    async updateWalletBalance(walletId, amount, type, action) {
+        const wallet = await this.walletRepository.findOne({
+            where: { id: walletId },
+        });
+        if (!wallet)
+            return;
+        let adjustment = amount;
+        if (type === 'expense') {
+            adjustment = -amount;
+        }
+        if (action === 'revert') {
+            adjustment = -adjustment;
+        }
+        wallet.balance = Number(wallet.balance) + adjustment;
+        await this.walletRepository.save(wallet);
+    }
 };
 exports.TransactionsService = TransactionsService;
 exports.TransactionsService = TransactionsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(transaction_entity_1.Transaction)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallet)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], TransactionsService);
 //# sourceMappingURL=transactions.service.js.map

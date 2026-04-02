@@ -5,7 +5,9 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/add_transaction_screen.dart';
-
+import 'screens/stats_screen.dart';
+import 'screens/category_screen.dart';
+import 'screens/report_screen.dart';
 void main() {
   runApp(
     MultiProvider(
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HP BANK',
+      title: 'Quản lý Chi tiêu',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       initialRoute: '/login',
@@ -32,6 +34,9 @@ class MyApp extends StatelessWidget {
         '/register': (_) => const RegisterScreen(),
         '/home': (_) => const HomeScreen(),
         '/add-transaction': (_) => const AddTransactionScreen(),
+         '/stats': (_) => const StatsScreen(),
+         '/categories': (_) => const CategoryScreen(),
+         '/reports': (_) => const ReportScreen(),
       },
     );
   }

@@ -55,4 +55,13 @@ class ApiService {
     final res = await _dio.get('/categories');
     return res.data;
   }
+  Future<Map<String, dynamic>> createCategory(Map<String, dynamic> data) async {
+  final res = await _dio.post('/categories', data: data);
+  return res.data;
+}
+
+Future<Map<String, dynamic>> updateCategory(int id, Map<String, dynamic> data) async {
+  final res = await _dio.put('/categories/$id', data: data);
+  return res.data;
+}
 }

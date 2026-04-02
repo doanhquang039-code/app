@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from '../../entities/transaction.entity';
+import { Wallet } from '../../entities/wallet.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
@@ -11,6 +12,8 @@ export class TransactionsService {
   constructor(
     @InjectRepository(Transaction)
     private transactionRepository: Repository<Transaction>,
+    @InjectRepository(Wallet)
+    private walletRepository: Repository<Wallet>,
   ) {}
 
   async create(userId: number, dto: CreateTransactionDto) {
@@ -19,7 +22,12 @@ export class TransactionsService {
       userId,
       date: new Date(dto.date),
     });
-    return this.transactionRepository.save(transaction);
+    const saved = await this.transactionRepository.save(transaction);
+
+    // Auto-update wallet balance
+    await this.updateWalletBalance(dto.walletId, dto.amount, dto.type, 'add');
+
+    return saved;
   }
 
   async findAll(userId: number, query: QueryTransactionDto) {
@@ -62,13 +70,41 @@ export class TransactionsService {
 
   async update(userId: number, id: number, dto: UpdateTransactionDto) {
     const transaction = await this.findOne(userId, id);
+
+    // Hoàn lại balance cũ
+    await this.updateWalletBalance(
+      transaction.walletId,
+      Number(transaction.amount),
+      transaction.type,
+      'revert',
+    );
+
     Object.assign(transaction, dto);
     if (dto.date) transaction.date = new Date(dto.date);
-    return this.transactionRepository.save(transaction);
+    const saved = await this.transactionRepository.save(transaction);
+
+    // Cập nhật balance mới
+    await this.updateWalletBalance(
+      saved.walletId,
+      Number(saved.amount),
+      saved.type,
+      'add',
+    );
+
+    return saved;
   }
 
   async remove(userId: number, id: number) {
     const transaction = await this.findOne(userId, id);
+
+    // Hoàn lại balance khi xóa
+    await this.updateWalletBalance(
+      transaction.walletId,
+      Number(transaction.amount),
+      transaction.type,
+      'revert',
+    );
+
     await this.transactionRepository.remove(transaction);
     return { message: 'Xóa thành công' };
   }
@@ -91,4 +127,33 @@ export class TransactionsService {
     const expense = result.find((r) => r.type === 'expense')?.total || 0;
     return { income, expense, balance: income - expense };
   }
+
+  /**
+   * Cập nhật balance ví khi tạo/sửa/xóa giao dịch
+   * action: 'add' = thêm giao dịch mới, 'revert' = hoàn lại giao dịch
+   */
+  private async updateWalletBalance(
+    walletId: number,
+    amount: number,
+    type: string,
+    action: 'add' | 'revert',
+  ) {
+    const wallet = await this.walletRepository.findOne({
+      where: { id: walletId },
+    });
+    if (!wallet) return;
+
+    let adjustment = amount;
+    if (type === 'expense') {
+      adjustment = -amount; // Chi tiêu trừ balance
+    }
+
+    if (action === 'revert') {
+      adjustment = -adjustment; // Hoàn lại thì đảo dấu
+    }
+
+    wallet.balance = Number(wallet.balance) + adjustment;
+    await this.walletRepository.save(wallet);
+  }
 }
+

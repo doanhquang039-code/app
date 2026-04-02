@@ -14,6 +14,7 @@ const user_entity_1 = require("./entities/user.entity");
 const wallet_entity_1 = require("./entities/wallet.entity");
 const category_entity_1 = require("./entities/category.entity");
 const transaction_entity_1 = require("./entities/transaction.entity");
+const budget_entity_1 = require("./entities/budget.entity");
 const auth_module_1 = require("./modules/auth/auth.module");
 const transactions_module_1 = require("./modules/transactions/transactions.module");
 const categories_module_1 = require("./modules/categories/categories.module");
@@ -21,6 +22,10 @@ const reports_module_1 = require("./modules/reports/reports.module");
 const schedule_1 = require("@nestjs/schedule");
 const mailer_1 = require("@nestjs-modules/mailer");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
+const wallets_module_1 = require("./modules/wallets/wallets.module");
+const budgets_module_1 = require("./modules/budgets/budgets.module");
+const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
+const users_module_1 = require("./modules/users/users.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -28,37 +33,49 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'mssql',
-                host: 'localhost',
-                port: 1433,
-                username: 'sa',
-                password: '123456789',
-                database: 'ExpenseTrackerDB',
-                entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction],
-                synchronize: false,
-                options: {
-                    encrypt: false,
-                    trustServerCertificate: true,
-                },
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    type: 'mssql',
+                    host: configService.get('DB_HOST', 'localhost'),
+                    port: configService.get('DB_PORT', 1433),
+                    username: configService.get('DB_USERNAME', 'sa'),
+                    password: configService.get('DB_PASSWORD', '123456789'),
+                    database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
+                    entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget],
+                    synchronize: false,
+                    options: {
+                        encrypt: false,
+                        trustServerCertificate: true,
+                    },
+                }),
             }),
             schedule_1.ScheduleModule.forRoot(),
-            mailer_1.MailerModule.forRoot({
-                transport: {
-                    host: 'smtp.gmail.com',
-                    port: 587,
-                    secure: false,
-                    auth: {
-                        user: process.env.MAIL_USER,
-                        pass: process.env.MAIL_PASS,
+            mailer_1.MailerModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    transport: {
+                        host: 'smtp.gmail.com',
+                        port: 587,
+                        secure: false,
+                        auth: {
+                            user: configService.get('MAIL_USER'),
+                            pass: configService.get('MAIL_PASS'),
+                        },
                     },
-                },
+                }),
             }),
             auth_module_1.AuthModule,
             transactions_module_1.TransactionsModule,
             categories_module_1.CategoriesModule,
             reports_module_1.ReportsModule,
             notifications_module_1.NotificationsModule,
+            wallets_module_1.WalletsModule,
+            budgets_module_1.BudgetsModule,
+            dashboard_module_1.DashboardModule,
+            users_module_1.UsersModule,
         ],
     })
 ], AppModule);
