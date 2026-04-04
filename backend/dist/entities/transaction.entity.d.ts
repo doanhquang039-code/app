@@ -1,6 +1,7 @@
 import { User } from './user.entity';
 import { Wallet } from './wallet.entity';
 import { Category } from './category.entity';
+import { Tag } from './tag.entity';
 export declare class Transaction {
     id: number;
     userId: number;
@@ -14,4 +15,5 @@ export declare class Transaction {
     user: User;
     wallet: Wallet;
     category: Category;
+    tags: Tag[];
 }

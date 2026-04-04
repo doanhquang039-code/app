@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 const wallet_entity_1 = require("./wallet.entity");
 const category_entity_1 = require("./category.entity");
+const tag_entity_1 = require("./tag.entity");
 let Transaction = class Transaction {
     id;
     userId;
@@ -27,6 +28,7 @@ let Transaction = class Transaction {
     user;
     wallet;
     category;
+    tags;
 };
 exports.Transaction = Transaction;
 __decorate([
@@ -80,6 +82,15 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'categoryId' }),
     __metadata("design:type", category_entity_1.Category)
 ], Transaction.prototype, "category", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => tag_entity_1.Tag, (tag) => tag.transactions, { cascade: true }),
+    (0, typeorm_1.JoinTable)({
+        name: 'transaction_tags',
+        joinColumn: { name: 'transactionId', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'tagId', referencedColumnName: 'id' },
+    }),
+    __metadata("design:type", Array)
+], Transaction.prototype, "tags", void 0);
 exports.Transaction = Transaction = __decorate([
     (0, typeorm_1.Entity)('Transactions')
 ], Transaction);

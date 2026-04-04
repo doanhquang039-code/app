@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Wallet } from './wallet.entity';
 import { Category } from './category.entity';
+import { Tag } from './tag.entity';
 
 @Entity('Transactions')
 export class Transaction {
@@ -50,4 +53,12 @@ export class Transaction {
   @ManyToOne(() => Category)
   @JoinColumn({ name: 'categoryId' })
   category: Category;
+
+  @ManyToMany(() => Tag, (tag) => tag.transactions, { cascade: true })
+  @JoinTable({
+    name: 'transaction_tags',
+    joinColumn: { name: 'transactionId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tagId', referencedColumnName: 'id' },
+  })
+  tags: Tag[];
 }
