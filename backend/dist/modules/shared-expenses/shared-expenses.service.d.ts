@@ -1,0 +1,31 @@
+import { Repository } from 'typeorm';
+import { SharedExpenseGroup, SharedExpense, GroupSettlement } from '../../entities/shared-expense.entity';
+import { User } from '../../entities/user.entity';
+import { CreateGroupDto, CreateSharedExpenseDto, UpdateGroupDto } from './dto/shared-expense.dto';
+export declare class SharedExpensesService {
+    private groupRepository;
+    private expenseRepository;
+    private settlementRepository;
+    private userRepository;
+    constructor(groupRepository: Repository<SharedExpenseGroup>, expenseRepository: Repository<SharedExpense>, settlementRepository: Repository<GroupSettlement>, userRepository: Repository<User>);
+    createGroup(ownerId: number, createGroupDto: CreateGroupDto): Promise<SharedExpenseGroup>;
+    getGroupsForUser(userId: number): Promise<SharedExpenseGroup[]>;
+    getGroupDetails(groupId: number, userId: number): Promise<SharedExpenseGroup | null>;
+    addMemberToGroup(groupId: number, newMemberId: number, requestingUserId: number): Promise<SharedExpenseGroup>;
+    removeMemberFromGroup(groupId: number, memberId: number, requestingUserId: number): Promise<SharedExpenseGroup>;
+    updateGroup(groupId: number, userId: number, updateGroupDto: UpdateGroupDto): Promise<SharedExpenseGroup>;
+    deleteGroup(groupId: number, userId: number): Promise<void>;
+    createSharedExpense(userId: number, groupId: number, createExpenseDto: CreateSharedExpenseDto): Promise<SharedExpense>;
+    getGroupExpenses(groupId: number, userId: number): Promise<SharedExpense[]>;
+    getExpenseDetails(expenseId: number, userId: number): Promise<SharedExpense>;
+    deleteExpense(expenseId: number, userId: number): Promise<void>;
+    getSettlementsForGroup(groupId: number, userId: number): Promise<GroupSettlement[]>;
+    getSettlementsForUser(groupId: number, userId: number): Promise<GroupSettlement[]>;
+    settlePayment(settlementId: number, userId: number): Promise<GroupSettlement>;
+    getGroupBalance(groupId: number, userId: number): Promise<any>;
+    getExpenseSummary(groupId: number, userId: number): Promise<any>;
+    private verifyGroupOwner;
+    private verifyMembership;
+    private isGroupMember;
+    private createOrUpdateSettlement;
+}

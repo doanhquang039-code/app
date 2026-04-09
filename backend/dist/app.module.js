@@ -20,6 +20,9 @@ const savings_goal_entity_1 = require("./entities/savings-goal.entity");
 const tag_entity_1 = require("./entities/tag.entity");
 const budget_alert_entity_1 = require("./entities/budget-alert.entity");
 const bill_reminder_entity_1 = require("./entities/bill-reminder.entity");
+const bank_account_entity_1 = require("./entities/bank-account.entity");
+const credit_card_entity_1 = require("./entities/credit-card.entity");
+const smart_notification_entity_1 = require("./entities/smart-notification.entity");
 const auth_module_1 = require("./modules/auth/auth.module");
 const transactions_module_1 = require("./modules/transactions/transactions.module");
 const categories_module_1 = require("./modules/categories/categories.module");
@@ -38,6 +41,17 @@ const budget_alerts_module_1 = require("./modules/budget-alerts/budget-alerts.mo
 const duplicate_detection_module_1 = require("./modules/duplicate-detection/duplicate-detection.module");
 const bill_reminders_module_1 = require("./modules/bill-reminders/bill-reminders.module");
 const financial_insights_module_1 = require("./modules/financial-insights/financial-insights.module");
+const bank_accounts_module_1 = require("./modules/bank-accounts/bank-accounts.module");
+const credit_cards_module_1 = require("./modules/credit-cards/credit-cards.module");
+const smart_notifications_module_1 = require("./modules/smart-notifications/smart-notifications.module");
+const analytics_entity_1 = require("./entities/analytics.entity");
+const shared_expense_entity_1 = require("./entities/shared-expense.entity");
+const financial_report_entity_1 = require("./entities/financial-report.entity");
+const multi_currency_entity_1 = require("./entities/multi-currency.entity");
+const analytics_module_1 = require("./modules/analytics/analytics.module");
+const shared_expenses_module_1 = require("./modules/shared-expenses/shared-expenses.module");
+const financial_reports_module_1 = require("./modules/financial-reports/financial-reports.module");
+const multi_currency_module_1 = require("./modules/multi-currency/multi-currency.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -55,7 +69,7 @@ exports.AppModule = AppModule = __decorate([
                     username: configService.get('DB_USERNAME', 'sa'),
                     password: configService.get('DB_PASSWORD', '123456789'),
                     database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-                    entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget, recurring_transaction_entity_1.RecurringTransaction, savings_goal_entity_1.SavingsGoal, tag_entity_1.Tag, budget_alert_entity_1.BudgetAlert, bill_reminder_entity_1.BillReminder],
+                    entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget, recurring_transaction_entity_1.RecurringTransaction, savings_goal_entity_1.SavingsGoal, tag_entity_1.Tag, budget_alert_entity_1.BudgetAlert, bill_reminder_entity_1.BillReminder, bank_account_entity_1.BankAccount, credit_card_entity_1.CreditCard, smart_notification_entity_1.SmartNotification, smart_notification_entity_1.NotificationRule, analytics_entity_1.AnalyticsData, analytics_entity_1.SpendingForecast, shared_expense_entity_1.SharedExpenseGroup, shared_expense_entity_1.SharedExpense, shared_expense_entity_1.GroupSettlement, financial_report_entity_1.FinancialReport, multi_currency_entity_1.Currency, multi_currency_entity_1.MultiCurrencyWallet, multi_currency_entity_1.ExchangeRateHistory],
                     synchronize: false,
                     options: {
                         encrypt: false,
@@ -95,6 +109,13 @@ exports.AppModule = AppModule = __decorate([
             duplicate_detection_module_1.DuplicateDetectionModule,
             bill_reminders_module_1.BillRemindersModule,
             financial_insights_module_1.FinancialInsightsModule,
+            bank_accounts_module_1.BankAccountsModule,
+            credit_cards_module_1.CreditCardsModule,
+            smart_notifications_module_1.SmartNotificationsModule,
+            analytics_module_1.AnalyticsModule,
+            shared_expenses_module_1.SharedExpensesModule,
+            financial_reports_module_1.FinancialReportsModule,
+            multi_currency_module_1.MultiCurrencyModule,
         ],
     })
 ], AppModule);

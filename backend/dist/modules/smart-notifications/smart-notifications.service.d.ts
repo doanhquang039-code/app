@@ -1,0 +1,32 @@
+import { Repository } from 'typeorm';
+import { SmartNotification, NotificationRule } from '../../entities/smart-notification.entity';
+import { CreateSmartNotificationDto, CreateNotificationRuleDto, UpdateNotificationRuleDto } from './dto/smart-notification.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+export declare class SmartNotificationsService {
+    private smartNotificationRepository;
+    private notificationRuleRepository;
+    private mailerService;
+    private readonly logger;
+    constructor(smartNotificationRepository: Repository<SmartNotification>, notificationRuleRepository: Repository<NotificationRule>, mailerService: MailerService);
+    create(userId: number, createSmartNotificationDto: CreateSmartNotificationDto): Promise<SmartNotification>;
+    findAll(userId: number, unreadOnly?: boolean): Promise<SmartNotification[]>;
+    findOne(id: number, userId: number): Promise<SmartNotification | null>;
+    markAsRead(id: number, userId: number): Promise<SmartNotification | null>;
+    markAllAsRead(userId: number): Promise<void>;
+    delete(id: number, userId: number): Promise<void>;
+    deleteOlderThan(userId: number, days: number): Promise<void>;
+    getUnreadCount(userId: number): Promise<number>;
+    getByType(userId: number, type: string): Promise<SmartNotification[]>;
+    createRule(userId: number, createRuleDto: CreateNotificationRuleDto): Promise<NotificationRule>;
+    findAllRules(userId: number): Promise<NotificationRule[]>;
+    findOneRule(id: number, userId: number): Promise<NotificationRule | null>;
+    updateRule(id: number, userId: number, updateRuleDto: UpdateNotificationRuleDto): Promise<NotificationRule | null>;
+    deleteRule(id: number, userId: number): Promise<void>;
+    toggleRuleStatus(id: number, userId: number, isEnabled: boolean): Promise<NotificationRule | null>;
+    getActiveRules(userId: number, ruleType?: string): Promise<NotificationRule[]>;
+    sendNotification(userId: number, title: string, message: string, type: string, severity?: string, actionUrl?: string, metadata?: Record<string, any>): Promise<SmartNotification>;
+    private executeNotificationAction;
+    private sendEmailNotification;
+    getNotificationStats(userId: number): Promise<any>;
+    getNotificationTrends(userId: number, days?: number): Promise<any>;
+}
