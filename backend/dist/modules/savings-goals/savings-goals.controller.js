@@ -45,6 +45,9 @@ let SavingsGoalsController = class SavingsGoalsController {
     addToGoal(req, id, body) {
         return this.savingsGoalsService.addToGoal(req.user.userId, +id, body.amount);
     }
+    contribute(req, id, body) {
+        return this.savingsGoalsService.addToGoal(req.user.userId, +id, body.amount);
+    }
     withdrawFromGoal(req, id, body) {
         return this.savingsGoalsService.withdrawFromGoal(req.user.userId, +id, body.amount);
     }
@@ -111,6 +114,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, Object]),
     __metadata("design:returntype", void 0)
 ], SavingsGoalsController.prototype, "addToGoal", null);
+__decorate([
+    (0, common_1.Post)(':id/contribute'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", void 0)
+], SavingsGoalsController.prototype, "contribute", null);
 __decorate([
     (0, common_1.Post)(':id/withdraw'),
     __param(0, (0, common_1.Request)()),

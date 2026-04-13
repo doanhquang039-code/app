@@ -8,9 +8,11 @@ export declare class TransactionsController {
     create(req: any, dto: CreateTransactionDto): Promise<import("../../entities/transaction.entity").Transaction>;
     findAll(req: any, query: QueryTransactionDto): Promise<import("../../entities/transaction.entity").Transaction[]>;
     getSummary(req: any, month: string): Promise<{
-        income: any;
-        expense: any;
+        totalIncome: number;
+        totalExpense: number;
         balance: number;
+        income: number;
+        expense: number;
     }>;
     findOne(req: any, id: string): Promise<import("../../entities/transaction.entity").Transaction>;
     update(req: any, id: string, dto: UpdateTransactionDto): Promise<import("../../entities/transaction.entity").Transaction>;

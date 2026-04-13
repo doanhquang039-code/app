@@ -21,6 +21,18 @@ let DashboardController = class DashboardController {
     constructor(dashboardService) {
         this.dashboardService = dashboardService;
     }
+    getFullDashboard(req) {
+        const userId = req.user.userId;
+        return Promise.all([
+            this.dashboardService.getOverview(userId),
+            this.dashboardService.getRecentTransactions(userId, 10),
+            this.dashboardService.getMonthlyComparison(userId),
+        ]).then(([overview, recent, monthly]) => ({
+            ...overview,
+            recentTransactions: recent,
+            monthlyComparison: monthly,
+        }));
+    }
     getOverview(req) {
         return this.dashboardService.getOverview(req.user.userId);
     }
@@ -38,6 +50,13 @@ let DashboardController = class DashboardController {
     }
 };
 exports.DashboardController = DashboardController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], DashboardController.prototype, "getFullDashboard", null);
 __decorate([
     (0, common_1.Get)('overview'),
     __param(0, (0, common_1.Request)()),

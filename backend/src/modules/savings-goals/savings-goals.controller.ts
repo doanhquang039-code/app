@@ -65,6 +65,16 @@ export class SavingsGoalsController {
     return this.savingsGoalsService.addToGoal(req.user.userId, +id, body.amount);
   }
 
+  /** Alias for Flutter: POST /savings-goals/:id/contribute */
+  @Post(':id/contribute')
+  contribute(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() body: { amount: number },
+  ) {
+    return this.savingsGoalsService.addToGoal(req.user.userId, +id, body.amount);
+  }
+
   @Post(':id/withdraw')
   withdrawFromGoal(
     @Request() req,

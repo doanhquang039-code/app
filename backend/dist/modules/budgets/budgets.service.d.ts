@@ -8,7 +8,20 @@ export declare class BudgetsService {
     private transactionRepo;
     constructor(budgetRepo: Repository<Budget>, transactionRepo: Repository<Transaction>);
     create(userId: number, dto: CreateBudgetDto): Promise<Budget>;
-    findAll(userId: number, month?: string): Promise<Budget[]>;
+    findAll(userId: number, month?: string): Promise<{
+        id: number;
+        userId: number;
+        categoryId: number;
+        categoryName: string;
+        amount: number;
+        spent: number;
+        remaining: number;
+        period: string;
+        month: string;
+        startDate: string;
+        endDate: string;
+        createdAt: Date;
+    }[]>;
     findOne(userId: number, id: number): Promise<Budget>;
     update(userId: number, id: number, dto: UpdateBudgetDto): Promise<Budget>;
     remove(userId: number, id: number): Promise<{
@@ -25,7 +38,6 @@ export declare class BudgetsService {
             id: number;
             categoryId: number;
             categoryName: string;
-            categoryIcon: string;
             budgetAmount: number;
             spent: number;
             remaining: number;

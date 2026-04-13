@@ -15,10 +15,12 @@ export declare class TransactionsService {
     remove(userId: number, id: number): Promise<{
         message: string;
     }>;
-    getSummary(userId: number, month: string): Promise<{
-        income: any;
-        expense: any;
+    getSummary(userId: number, month?: string): Promise<{
+        totalIncome: number;
+        totalExpense: number;
         balance: number;
+        income: number;
+        expense: number;
     }>;
     private updateWalletBalance;
 }

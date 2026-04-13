@@ -43,7 +43,7 @@ class _ReportScreenState extends State<ReportScreen> {
       final to = DateFormat('yyyy-MM-dd').format(_toDate);
 
       final dio = Dio();
-      final res = await dio.get(
+      await dio.get(
         'http://10.0.2.2:3000/reports/$type',
         queryParameters: {'from': from, 'to': to},
         options: Options(

@@ -26,13 +26,21 @@ let BudgetsService = class BudgetsService {
         this.transactionRepo = transactionRepo;
     }
     async create(userId, dto) {
-        const exists = await this.budgetRepo.findOne({
-            where: {
-                userId,
-                categoryId: dto.categoryId,
-                month: dto.month,
-            },
-        });
+        if (!dto.month && dto.startDate) {
+            const d = new Date(dto.startDate);
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            dto.month = `${y}-${m}`;
+        }
+        if (!dto.month) {
+            const now = new Date();
+            dto.month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        }
+        const exists = dto.categoryId
+            ? await this.budgetRepo.findOne({
+                where: { userId, categoryId: dto.categoryId, month: dto.month },
+            })
+            : null;
         if (exists) {
             throw new common_1.ConflictException('Đã tồn tại ngân sách cho danh mục này trong tháng này');
         }
@@ -41,13 +49,51 @@ let BudgetsService = class BudgetsService {
     }
     async findAll(userId, month) {
         const where = { userId };
-        if (month)
-            where.month = month;
-        return this.budgetRepo.find({
+        if (!month) {
+            const now = new Date();
+            month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        }
+        where.month = month;
+        const budgets = await this.budgetRepo.find({
             where,
             relations: ['category'],
             order: { createdAt: 'DESC' },
         });
+        const [year, m] = month.split('-');
+        const enriched = await Promise.all(budgets.map(async (budget) => {
+            const qb = this.transactionRepo
+                .createQueryBuilder('t')
+                .select('SUM(t.amount)', 'total')
+                .where('t.userId = :userId', { userId })
+                .andWhere('t.type = :type', { type: 'expense' })
+                .andWhere('MONTH(t.date) = :month AND YEAR(t.date) = :year', {
+                month: parseInt(m),
+                year: parseInt(year),
+            });
+            if (budget.categoryId) {
+                qb.andWhere('t.categoryId = :categoryId', {
+                    categoryId: budget.categoryId,
+                });
+            }
+            const spentResult = await qb.getRawOne();
+            const spent = Number(spentResult?.total) || 0;
+            const amount = Number(budget.amount);
+            return {
+                id: budget.id,
+                userId: budget.userId,
+                categoryId: budget.categoryId,
+                categoryName: budget.category?.name ?? null,
+                amount,
+                spent,
+                remaining: amount - spent,
+                period: 'monthly',
+                month: budget.month,
+                startDate: `${year}-${m}-01`,
+                endDate: new Date(parseInt(year), parseInt(m), 0).toISOString().split('T')[0],
+                createdAt: budget.createdAt,
+            };
+        }));
+        return enriched;
     }
     async findOne(userId, id) {
         const budget = await this.budgetRepo.findOne({
@@ -69,28 +115,14 @@ let BudgetsService = class BudgetsService {
         return { message: 'Xóa ngân sách thành công' };
     }
     async getBudgetStatus(userId, month) {
-        const budgets = await this.findAll(userId, month);
-        if (budgets.length === 0) {
+        const enriched = await this.findAll(userId, month);
+        if (enriched.length === 0) {
             return { budgets: [], totalBudget: 0, totalSpent: 0 };
         }
-        const [year, m] = month.split('-');
-        const result = await Promise.all(budgets.map(async (budget) => {
-            const spentResult = await this.transactionRepo
-                .createQueryBuilder('t')
-                .select('SUM(t.amount)', 'total')
-                .where('t.userId = :userId', { userId })
-                .andWhere('t.categoryId = :categoryId', {
-                categoryId: budget.categoryId,
-            })
-                .andWhere('t.type = :type', { type: 'expense' })
-                .andWhere('MONTH(t.date) = :month AND YEAR(t.date) = :year', {
-                month: parseInt(m),
-                year: parseInt(year),
-            })
-                .getRawOne();
-            const spent = Number(spentResult?.total) || 0;
-            const budgetAmount = Number(budget.amount);
-            const percentage = budgetAmount > 0 ? Math.round((spent / budgetAmount) * 100) : 0;
+        const result = enriched.map((budget) => {
+            const percentage = budget.amount > 0
+                ? Math.round((budget.spent / budget.amount) * 100)
+                : 0;
             let status;
             if (percentage >= 100) {
                 status = 'exceeded';
@@ -104,15 +136,14 @@ let BudgetsService = class BudgetsService {
             return {
                 id: budget.id,
                 categoryId: budget.categoryId,
-                categoryName: budget.category?.name || '',
-                categoryIcon: budget.category?.icon || '',
-                budgetAmount,
-                spent,
-                remaining: budgetAmount - spent,
+                categoryName: budget.categoryName ?? '',
+                budgetAmount: budget.amount,
+                spent: budget.spent,
+                remaining: budget.remaining,
                 percentage,
                 status,
             };
-        }));
+        });
         const totalBudget = result.reduce((s, b) => s + b.budgetAmount, 0);
         const totalSpent = result.reduce((s, b) => s + b.spent, 0);
         return {

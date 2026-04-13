@@ -14,4 +14,22 @@ export class QueryTransactionDto {
   @IsOptional()
   @IsString()
   type?: string; // 'income' | 'expense'
-}
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  walletId?: number;
+
+  @IsOptional()
+  @IsString()
+  startDate?: string; // ISO date string
+
+  @IsOptional()
+  @IsString()
+  endDate?: string; // ISO date string
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  limit?: number;
+}

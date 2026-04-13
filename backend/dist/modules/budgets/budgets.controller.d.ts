@@ -5,7 +5,20 @@ export declare class BudgetsController {
     private readonly budgetsService;
     constructor(budgetsService: BudgetsService);
     create(req: any, dto: CreateBudgetDto): Promise<import("../../entities/budget.entity").Budget>;
-    findAll(req: any, month?: string): Promise<import("../../entities/budget.entity").Budget[]>;
+    findAll(req: any, month?: string): Promise<{
+        id: number;
+        userId: number;
+        categoryId: number;
+        categoryName: string;
+        amount: number;
+        spent: number;
+        remaining: number;
+        period: string;
+        month: string;
+        startDate: string;
+        endDate: string;
+        createdAt: Date;
+    }[]>;
     getBudgetStatus(req: any, month: string): Promise<{
         budgets: never[];
         totalBudget: number;
@@ -17,7 +30,6 @@ export declare class BudgetsController {
             id: number;
             categoryId: number;
             categoryName: string;
-            categoryIcon: string;
             budgetAmount: number;
             spent: number;
             remaining: number;

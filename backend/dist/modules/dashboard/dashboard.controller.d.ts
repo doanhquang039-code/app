@@ -2,6 +2,20 @@ import { DashboardService } from './dashboard.service';
 export declare class DashboardController {
     private readonly dashboardService;
     constructor(dashboardService: DashboardService);
+    getFullDashboard(req: any): Promise<{
+        recentTransactions: import("../../entities/transaction.entity").Transaction[];
+        monthlyComparison: {
+            month: string;
+            income: number;
+            expense: number;
+        }[];
+        income: number;
+        expense: number;
+        balance: number;
+        totalBalance: number;
+        transactionCount: number;
+        month: string;
+    }>;
     getOverview(req: any): Promise<{
         income: number;
         expense: number;

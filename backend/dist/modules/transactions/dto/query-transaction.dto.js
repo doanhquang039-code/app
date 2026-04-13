@@ -16,6 +16,10 @@ class QueryTransactionDto {
     month;
     categoryId;
     type;
+    walletId;
+    startDate;
+    endDate;
+    limit;
 }
 exports.QueryTransactionDto = QueryTransactionDto;
 __decorate([
@@ -34,4 +38,26 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], QueryTransactionDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], QueryTransactionDto.prototype, "walletId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], QueryTransactionDto.prototype, "startDate", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], QueryTransactionDto.prototype, "endDate", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], QueryTransactionDto.prototype, "limit", void 0);
 //# sourceMappingURL=query-transaction.dto.js.map

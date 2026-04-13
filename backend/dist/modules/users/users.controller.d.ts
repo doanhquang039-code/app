@@ -5,6 +5,10 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     getProfile(req: any): Promise<{
+        name: string;
+        transactionCount: number;
+        categoryCount: number;
+        budgetCount: number;
         id: number;
         email: string;
         fullName: string;
@@ -14,6 +18,7 @@ export declare class UsersController {
     updateProfile(req: any, dto: UpdateProfileDto): Promise<{
         message: string;
         user: {
+            name: string;
             id: number;
             email: string;
             fullName: string;

@@ -52,8 +52,24 @@ export class TransactionsService {
       });
     }
 
+    if (query.walletId) {
+      qb.andWhere('t.walletId = :walletId', { walletId: query.walletId });
+    }
+
     if (query.type) {
       qb.andWhere('t.type = :type', { type: query.type });
+    }
+
+    if (query.startDate) {
+      qb.andWhere('t.date >= :startDate', { startDate: new Date(query.startDate) });
+    }
+
+    if (query.endDate) {
+      qb.andWhere('t.date <= :endDate', { endDate: new Date(query.endDate) });
+    }
+
+    if (query.limit) {
+      qb.take(query.limit);
     }
 
     return qb.getMany();
@@ -109,24 +125,36 @@ export class TransactionsService {
     return { message: 'Xóa thành công' };
   }
 
-  async getSummary(userId: number, month: string) {
-    const [year, m] = month.split('-');
-    const result = await this.transactionRepository
+  async getSummary(userId: number, month?: string) {
+    const qb = this.transactionRepository
       .createQueryBuilder('t')
       .select('t.type', 'type')
       .addSelect('SUM(t.amount)', 'total')
-      .where('t.userId = :userId', { userId })
-      .andWhere('MONTH(t.date) = :month AND YEAR(t.date) = :year', {
+      .where('t.userId = :userId', { userId });
+
+    if (month) {
+      const [year, m] = month.split('-');
+      qb.andWhere('MONTH(t.date) = :month AND YEAR(t.date) = :year', {
         month: parseInt(m),
         year: parseInt(year),
-      })
-      .groupBy('t.type')
-      .getRawMany();
+      });
+    }
 
-    const income = result.find((r) => r.type === 'income')?.total || 0;
-    const expense = result.find((r) => r.type === 'expense')?.total || 0;
-    return { income, expense, balance: income - expense };
+    const result = await qb.groupBy('t.type').getRawMany<{ type: string; total: string }>();
+
+    const totalIncome = Number(result.find((r) => r.type === 'income')?.total) || 0;
+    const totalExpense = Number(result.find((r) => r.type === 'expense')?.total) || 0;
+    const balance = totalIncome - totalExpense;
+
+    return {
+      totalIncome,
+      totalExpense,
+      balance,
+      income: totalIncome,
+      expense: totalExpense,
+    };
   }
+
 
   /**
    * Cập nhật balance ví khi tạo/sửa/xóa giao dịch

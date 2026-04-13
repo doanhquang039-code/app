@@ -7,6 +7,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
+import { Transaction } from '../../entities/transaction.entity';
+import { Category } from '../../entities/category.entity';
+import { Budget } from '../../entities/budget.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import * as bcrypt from 'bcrypt';
@@ -16,6 +19,12 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepo: Repository<User>,
+    @InjectRepository(Transaction)
+    private transactionRepo: Repository<Transaction>,
+    @InjectRepository(Category)
+    private categoryRepo: Repository<Category>,
+    @InjectRepository(Budget)
+    private budgetRepo: Repository<Budget>,
   ) {}
 
   async getProfile(userId: number) {
@@ -25,9 +34,22 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');
 
-    // Trả về thông tin không kèm password
+    // Đếm số liệu thống kê
+    const [transactionCount, categoryCount, budgetCount] = await Promise.all([
+      this.transactionRepo.count({ where: { userId } }),
+      this.categoryRepo.count({ where: { userId } }),
+      this.budgetRepo.count({ where: { userId } }),
+    ]);
+
     const { password, ...profile } = user;
-    return profile;
+    return {
+      ...profile,
+      // Flutter dùng 'name' thay vì 'fullName'
+      name: user.fullName,
+      transactionCount,
+      categoryCount,
+      budgetCount,
+    };
   }
 
   async updateProfile(userId: number, dto: UpdateProfileDto) {
@@ -47,11 +69,19 @@ export class UsersService {
       }
     }
 
+    // Support both 'name' (Flutter) and 'fullName' (backend)
+    if ((dto as any).name && !dto.fullName) {
+      dto.fullName = (dto as any).name;
+    }
+
     Object.assign(user, dto);
     await this.userRepo.save(user);
 
     const { password, ...profile } = user;
-    return { message: 'Cập nhật thông tin thành công', user: profile };
+    return {
+      message: 'Cập nhật thông tin thành công',
+      user: { ...profile, name: user.fullName },
+    };
   }
 
   async changePassword(userId: number, dto: ChangePasswordDto) {

@@ -96,6 +96,27 @@ export declare class SavingsGoalsController {
         user: import("../../entities/user.entity").User;
         wallet: import("../../entities/wallet.entity").Wallet;
     }>;
+    contribute(req: any, id: string, body: {
+        amount: number;
+    }): Promise<{
+        progressPercentage: number;
+        message: string;
+        id: number;
+        userId: number;
+        walletId: number;
+        name: string;
+        description: string;
+        targetAmount: number;
+        currentAmount: number;
+        icon: string;
+        startDate: Date;
+        targetDate: Date | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
+        user: import("../../entities/user.entity").User;
+        wallet: import("../../entities/wallet.entity").Wallet;
+    }>;
     withdrawFromGoal(req: any, id: string, body: {
         amount: number;
     }): Promise<{

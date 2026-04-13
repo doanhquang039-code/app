@@ -54,8 +54,20 @@ let TransactionsService = class TransactionsService {
                 categoryId: query.categoryId,
             });
         }
+        if (query.walletId) {
+            qb.andWhere('t.walletId = :walletId', { walletId: query.walletId });
+        }
         if (query.type) {
             qb.andWhere('t.type = :type', { type: query.type });
+        }
+        if (query.startDate) {
+            qb.andWhere('t.date >= :startDate', { startDate: new Date(query.startDate) });
+        }
+        if (query.endDate) {
+            qb.andWhere('t.date <= :endDate', { endDate: new Date(query.endDate) });
+        }
+        if (query.limit) {
+            qb.take(query.limit);
         }
         return qb.getMany();
     }
@@ -85,21 +97,29 @@ let TransactionsService = class TransactionsService {
         return { message: 'Xóa thành công' };
     }
     async getSummary(userId, month) {
-        const [year, m] = month.split('-');
-        const result = await this.transactionRepository
+        const qb = this.transactionRepository
             .createQueryBuilder('t')
             .select('t.type', 'type')
             .addSelect('SUM(t.amount)', 'total')
-            .where('t.userId = :userId', { userId })
-            .andWhere('MONTH(t.date) = :month AND YEAR(t.date) = :year', {
-            month: parseInt(m),
-            year: parseInt(year),
-        })
-            .groupBy('t.type')
-            .getRawMany();
-        const income = result.find((r) => r.type === 'income')?.total || 0;
-        const expense = result.find((r) => r.type === 'expense')?.total || 0;
-        return { income, expense, balance: income - expense };
+            .where('t.userId = :userId', { userId });
+        if (month) {
+            const [year, m] = month.split('-');
+            qb.andWhere('MONTH(t.date) = :month AND YEAR(t.date) = :year', {
+                month: parseInt(m),
+                year: parseInt(year),
+            });
+        }
+        const result = await qb.groupBy('t.type').getRawMany();
+        const totalIncome = Number(result.find((r) => r.type === 'income')?.total) || 0;
+        const totalExpense = Number(result.find((r) => r.type === 'expense')?.total) || 0;
+        const balance = totalIncome - totalExpense;
+        return {
+            totalIncome,
+            totalExpense,
+            balance,
+            income: totalIncome,
+            expense: totalExpense,
+        };
     }
     async updateWalletBalance(walletId, amount, type, action) {
         const wallet = await this.walletRepository.findOne({

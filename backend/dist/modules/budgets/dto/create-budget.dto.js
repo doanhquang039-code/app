@@ -15,9 +15,13 @@ class CreateBudgetDto {
     categoryId;
     amount;
     month;
+    startDate;
+    endDate;
+    period;
 }
 exports.CreateBudgetDto = CreateBudgetDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateBudgetDto.prototype, "categoryId", void 0);
@@ -27,8 +31,24 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateBudgetDto.prototype, "amount", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.Matches)(/^\d{4}-\d{2}$/, { message: 'month phải có format YYYY-MM' }),
     __metadata("design:type", String)
 ], CreateBudgetDto.prototype, "month", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateBudgetDto.prototype, "startDate", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateBudgetDto.prototype, "endDate", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateBudgetDto.prototype, "period", void 0);
 //# sourceMappingURL=create-budget.dto.js.map

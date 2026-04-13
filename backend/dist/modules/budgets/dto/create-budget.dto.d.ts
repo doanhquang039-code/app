@@ -1,5 +1,8 @@
 export declare class CreateBudgetDto {
-    categoryId: number;
+    categoryId?: number;
     amount: number;
-    month: string;
+    month?: string;
+    startDate?: string;
+    endDate?: string;
+    period?: string;
 }

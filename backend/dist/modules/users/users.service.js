@@ -50,11 +50,20 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../entities/user.entity");
+const transaction_entity_1 = require("../../entities/transaction.entity");
+const category_entity_1 = require("../../entities/category.entity");
+const budget_entity_1 = require("../../entities/budget.entity");
 const bcrypt = __importStar(require("bcrypt"));
 let UsersService = class UsersService {
     userRepo;
-    constructor(userRepo) {
+    transactionRepo;
+    categoryRepo;
+    budgetRepo;
+    constructor(userRepo, transactionRepo, categoryRepo, budgetRepo) {
         this.userRepo = userRepo;
+        this.transactionRepo = transactionRepo;
+        this.categoryRepo = categoryRepo;
+        this.budgetRepo = budgetRepo;
     }
     async getProfile(userId) {
         const user = await this.userRepo.findOne({
@@ -62,8 +71,19 @@ let UsersService = class UsersService {
         });
         if (!user)
             throw new common_1.NotFoundException('Không tìm thấy người dùng');
+        const [transactionCount, categoryCount, budgetCount] = await Promise.all([
+            this.transactionRepo.count({ where: { userId } }),
+            this.categoryRepo.count({ where: { userId } }),
+            this.budgetRepo.count({ where: { userId } }),
+        ]);
         const { password, ...profile } = user;
-        return profile;
+        return {
+            ...profile,
+            name: user.fullName,
+            transactionCount,
+            categoryCount,
+            budgetCount,
+        };
     }
     async updateProfile(userId, dto) {
         const user = await this.userRepo.findOne({
@@ -79,10 +99,16 @@ let UsersService = class UsersService {
                 throw new common_1.ConflictException('Email này đã được sử dụng');
             }
         }
+        if (dto.name && !dto.fullName) {
+            dto.fullName = dto.name;
+        }
         Object.assign(user, dto);
         await this.userRepo.save(user);
         const { password, ...profile } = user;
-        return { message: 'Cập nhật thông tin thành công', user: profile };
+        return {
+            message: 'Cập nhật thông tin thành công',
+            user: { ...profile, name: user.fullName },
+        };
     }
     async changePassword(userId, dto) {
         const user = await this.userRepo.findOne({
@@ -113,6 +139,12 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(transaction_entity_1.Transaction)),
+    __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __param(3, (0, typeorm_1.InjectRepository)(budget_entity_1.Budget)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map
