@@ -247,4 +247,329 @@ class ApiService {
   Future<void> deleteRecurringTransaction(int id) async {
     await _dio.delete('/recurring-transactions/$id');
   }
+
+  // ─── BANK ACCOUNTS ────────────────────────────────────────────────────────
+  Future<List<dynamic>> getBankAccounts() async {
+    final res = await _dio.get('/bank-accounts');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> createBankAccount(Map<String, dynamic> data) async {
+    final res = await _dio.post('/bank-accounts', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateBankAccount(int id, Map<String, dynamic> data) async {
+    final res = await _dio.put('/bank-accounts/$id', data: data);
+    return res.data;
+  }
+
+  Future<void> deleteBankAccount(int id) async {
+    await _dio.delete('/bank-accounts/$id');
+  }
+
+  Future<Map<String, dynamic>> getBankTotalBalance() async {
+    final res = await _dio.get('/bank-accounts/total-balance');
+    return res.data;
+  }
+
+  // ─── CREDIT CARDS ─────────────────────────────────────────────────────────
+  Future<List<dynamic>> getCreditCards() async {
+    final res = await _dio.get('/credit-cards');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> createCreditCard(Map<String, dynamic> data) async {
+    final res = await _dio.post('/credit-cards', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateCreditCard(int id, Map<String, dynamic> data) async {
+    final res = await _dio.put('/credit-cards/$id', data: data);
+    return res.data;
+  }
+
+  Future<void> deleteCreditCard(int id) async {
+    await _dio.delete('/credit-cards/$id');
+  }
+
+  Future<Map<String, dynamic>> getCreditCardUtilization() async {
+    final res = await _dio.get('/credit-cards/analytics/utilization-ratio');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getCreditCardTotalLimit() async {
+    final res = await _dio.get('/credit-cards/analytics/total-limit');
+    return res.data;
+  }
+
+  // ─── SHARED EXPENSES ─────────────────────────────────────────────────────
+  Future<List<dynamic>> getSharedExpenseGroups() async {
+    final res = await _dio.get('/shared-expenses/groups');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> createSharedExpenseGroup(Map<String, dynamic> data) async {
+    final res = await _dio.post('/shared-expenses/groups', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getSharedExpenseGroup(int id) async {
+    final res = await _dio.get('/shared-expenses/groups/$id');
+    return res.data;
+  }
+
+  Future<void> deleteSharedExpenseGroup(int id) async {
+    await _dio.delete('/shared-expenses/groups/$id');
+  }
+
+  Future<Map<String, dynamic>> addSharedExpense(int groupId, Map<String, dynamic> data) async {
+    final res = await _dio.post('/shared-expenses/groups/$groupId/expenses', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getGroupBalance(int groupId) async {
+    final res = await _dio.get('/shared-expenses/groups/$groupId/balance');
+    return res.data;
+  }
+
+  Future<List<dynamic>> getGroupExpenses(int groupId) async {
+    final res = await _dio.get('/shared-expenses/groups/$groupId/expenses');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getGroupSummary(int groupId) async {
+    final res = await _dio.get('/shared-expenses/groups/$groupId/summary');
+    return res.data;
+  }
+
+  // ─── MULTI-CURRENCY ───────────────────────────────────────────────────────
+  Future<List<dynamic>> getCurrencies() async {
+    final res = await _dio.get('/multi-currency/currencies');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> convertCurrency(String from, String to, double amount) async {
+    final res = await _dio.get('/multi-currency/convert', queryParameters: {
+      'from': from,
+      'to': to,
+      'amount': amount,
+    });
+    return res.data;
+  }
+
+  Future<List<dynamic>> getExchangeRateHistory(String from, String to, {int days = 30}) async {
+    final res = await _dio.get('/multi-currency/exchange-history', queryParameters: {
+      'from': from,
+      'to': to,
+      'days': days,
+    });
+    return res.data;
+  }
+
+  // ─── ANALYTICS & INSIGHTS ─────────────────────────────────────────────────
+  Future<Map<String, dynamic>> getAnalytics({String? period}) async {
+    final res = await _dio.get('/analytics', queryParameters: {
+      if (period != null) 'period': period,
+    });
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getFinancialInsights() async {
+    final res = await _dio.get('/financial-insights/summary');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getSpendingForecast() async {
+    final res = await _dio.get('/financial-insights/spending-forecast');
+    return res.data;
+  }
+
+  Future<List<dynamic>> getSpendingByCategory({String? month}) async {
+    final res = await _dio.get('/financial-insights/spending-by-category', queryParameters: {
+      if (month != null) 'month': month,
+    });
+    return res.data;
+  }
+
+  Future<List<dynamic>> getMonthlyTrend({int months = 6}) async {
+    final res = await _dio.get('/financial-insights/monthly-trend', queryParameters: {
+      'months': months,
+    });
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRecommendations() async {
+    final res = await _dio.get('/financial-insights/recommendations');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getSpendingTrend({int days = 30}) async {
+    final res = await _dio.get('/analytics/spending-trend', queryParameters: {
+      'days': days,
+    });
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getPredictedExpense() async {
+    final res = await _dio.get('/analytics/predicted-expense');
+    return res.data;
+  }
+
+  // ─── TAGS ─────────────────────────────────────────────────────────────────
+  Future<List<dynamic>> getTags() async {
+    final res = await _dio.get('/tags');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> createTag(Map<String, dynamic> data) async {
+    final res = await _dio.post('/tags', data: data);
+    return res.data;
+  }
+
+  Future<void> deleteTag(int id) async {
+    await _dio.delete('/tags/$id');
+  }
+
+  // ─── FINANCIAL REPORTS ────────────────────────────────────────────────────
+  Future<List<dynamic>> getFinancialReports() async {
+    final res = await _dio.get('/financial-reports');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> generateMonthlyReport({int? month, int? year}) async {
+    final now = DateTime.now();
+    final res = await _dio.post('/financial-reports/monthly', queryParameters: {
+      'month': month ?? now.month,
+      'year': year ?? now.year,
+    });
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> generateQuarterlyReport({int? quarter, int? year}) async {
+    final now = DateTime.now();
+    final res = await _dio.post('/financial-reports/quarterly', queryParameters: {
+      'quarter': quarter ?? ((now.month - 1) ~/ 3 + 1),
+      'year': year ?? now.year,
+    });
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> generateYearlyReport({int? year}) async {
+    final res = await _dio.post('/financial-reports/yearly', queryParameters: {
+      'year': year ?? DateTime.now().year,
+    });
+    return res.data;
+  }
+
+  Future<void> deleteFinancialReport(int id) async {
+    await _dio.delete('/financial-reports/$id');
+  }
+
+  // ─── USER PROFILE ───────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> getUserProfile() async {
+    final res = await _dio.get('/user-profiles');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateUserProfile(Map<String, dynamic> data) async {
+    final res = await _dio.put('/user-profiles', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateUserSettings(Map<String, dynamic> settings) async {
+    final res = await _dio.put('/user-profiles/settings', data: settings);
+    return res.data;
+  }
+
+  // ─── DEBTS ──────────────────────────────────────────────────────────────
+  Future<List<dynamic>> getDebts() async {
+    final res = await _dio.get('/debts');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getDebtsSummary() async {
+    final res = await _dio.get('/debts/summary');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getDebt(int id) async {
+    final res = await _dio.get('/debts/$id');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> createDebt(Map<String, dynamic> data) async {
+    final res = await _dio.post('/debts', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateDebt(int id, Map<String, dynamic> data) async {
+    final res = await _dio.put('/debts/$id', data: data);
+    return res.data;
+  }
+
+  Future<void> deleteDebt(int id) async {
+    await _dio.delete('/debts/$id');
+  }
+
+  Future<List<dynamic>> getDebtPayments(int debtId) async {
+    final res = await _dio.get('/debts/$debtId/payments');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> addDebtPayment(int debtId, Map<String, dynamic> data) async {
+    final res = await _dio.post('/debts/$debtId/payments', data: data);
+    return res.data;
+  }
+
+  // ─── INVESTMENTS ────────────────────────────────────────────────────────
+  Future<List<dynamic>> getInvestments() async {
+    final res = await _dio.get('/investments');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getPortfolioSummary() async {
+    final res = await _dio.get('/investments/portfolio');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getInvestment(int id) async {
+    final res = await _dio.get('/investments/$id');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> createInvestment(Map<String, dynamic> data) async {
+    final res = await _dio.post('/investments', data: data);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateInvestment(int id, Map<String, dynamic> data) async {
+    final res = await _dio.put('/investments/$id', data: data);
+    return res.data;
+  }
+
+  Future<void> deleteInvestment(int id) async {
+    await _dio.delete('/investments/$id');
+  }
+
+  Future<List<dynamic>> getInvestmentTransactions(int investmentId) async {
+    final res = await _dio.get('/investments/$investmentId/transactions');
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> addInvestmentTransaction(int investmentId, Map<String, dynamic> data) async {
+    final res = await _dio.post('/investments/$investmentId/transactions', data: data);
+    return res.data;
+  }
+
+  // ─── AUDIT LOGS ─────────────────────────────────────────────────────────
+  Future<List<dynamic>> getAuditLogs({int limit = 50}) async {
+    final res = await _dio.get('/audit-logs', queryParameters: {'limit': limit});
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getAuditStats() async {
+    final res = await _dio.get('/audit-logs/stats');
+    return res.data;
+  }
 }

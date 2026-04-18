@@ -13,6 +13,13 @@ import 'add_transaction_screen.dart';
 import 'notifications_screen.dart';
 import 'savings_screen.dart';
 import 'bill_reminders_screen.dart';
+import 'bank_accounts_screen.dart';
+import 'credit_cards_screen.dart';
+import 'recurring_transactions_screen.dart';
+import 'analytics_screen.dart';
+import 'shared_expenses_screen.dart';
+import 'multi_currency_screen.dart';
+import 'financial_reports_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -196,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Quick actions
+                        // Quick actions - Row 1
                         const Text('Tính năng', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 12),
                         Row(
@@ -214,6 +221,43 @@ class _HomeScreenState extends State<HomeScreen> {
                             _quickAction('Hóa đơn', Icons.receipt_long_rounded, const Color(0xFFF97316), () {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => const BillRemindersScreen()));
                             }),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        // Quick actions - Row 2 (NEW)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('Ngân hàng', Icons.account_balance_rounded, const Color(0xFF2C5364), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const BankAccountsScreen()));
+                            }),
+                            _quickAction('Thẻ tín dụng', Icons.credit_card_rounded, const Color(0xFFFD746C), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const CreditCardsScreen()));
+                            }),
+                            _quickAction('Định kỳ', Icons.repeat_rounded, const Color(0xFF1A2980), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const RecurringTransactionsScreen()));
+                            }),
+                            _quickAction('Phân tích', Icons.auto_graph_rounded, const Color(0xFF11998E), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                            }),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        // Quick actions - Row 3 (NEW)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('Chia tiền', Icons.group_rounded, const Color(0xFF8E2DE2), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const SharedExpensesScreen()));
+                            }),
+                            _quickAction('Tiền tệ', Icons.currency_exchange_rounded, const Color(0xFF1A2980), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const MultiCurrencyScreen()));
+                            }),
+                            _quickAction('Báo cáo', Icons.assessment_rounded, const Color(0xFFEB5757), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const FinancialReportsScreen()));
+                            }),
+                            // Empty spacer to keep alignment
+                            const SizedBox(width: 60),
                           ],
                         ),
                         const SizedBox(height: 24),

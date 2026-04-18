@@ -43,6 +43,15 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SharedExpensesModule } from './modules/shared-expenses/shared-expenses.module';
 import { FinancialReportsModule } from './modules/financial-reports/financial-reports.module';
 import { MultiCurrencyModule } from './modules/multi-currency/multi-currency.module';
+import { UserProfile } from './entities/user-profile.entity';
+import { TransactionAttachment } from './entities/transaction-attachment.entity';
+import { Debt, DebtPayment } from './entities/debt.entity';
+import { Investment, InvestmentTransaction } from './entities/investment.entity';
+import { AuditLog } from './entities/audit-log.entity';
+import { UserProfilesModule } from './modules/user-profiles/user-profiles.module';
+import { DebtsModule } from './modules/debts/debts.module';
+import { InvestmentsModule } from './modules/investments/investments.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -57,7 +66,7 @@ import { MultiCurrencyModule } from './modules/multi-currency/multi-currency.mod
         username: configService.get('DB_USERNAME', 'sa'),
         password: configService.get('DB_PASSWORD', '123456789'),
         database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory],
+        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory, UserProfile, TransactionAttachment, Debt, DebtPayment, Investment, InvestmentTransaction, AuditLog],
         synchronize: false,
         options: {
           encrypt: false,
@@ -104,6 +113,10 @@ import { MultiCurrencyModule } from './modules/multi-currency/multi-currency.mod
     SharedExpensesModule,
     FinancialReportsModule,
     MultiCurrencyModule,
+    UserProfilesModule,
+    DebtsModule,
+    InvestmentsModule,
+    AuditLogsModule,
   ],
 })
 export class AppModule {}

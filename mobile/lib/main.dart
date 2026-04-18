@@ -17,6 +17,13 @@ import 'screens/savings_screen.dart';
 import 'screens/bill_reminders_screen.dart';
 import 'screens/notifications_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/bank_accounts_screen.dart';
+import 'screens/credit_cards_screen.dart';
+import 'screens/recurring_transactions_screen.dart';
+import 'screens/analytics_screen.dart';
+import 'screens/shared_expenses_screen.dart';
+import 'screens/multi_currency_screen.dart';
+import 'screens/financial_reports_screen.dart';
 
 void main() {
   runApp(
@@ -85,6 +92,13 @@ class MyApp extends StatelessWidget {
         '/bills': (_) => const BillRemindersScreen(),
         '/notifications': (_) => const NotificationsScreen(),
         '/profile': (_) => const ProfileScreen(),
+        '/bank-accounts': (_) => const BankAccountsScreen(),
+        '/credit-cards': (_) => const CreditCardsScreen(),
+        '/recurring': (_) => const RecurringTransactionsScreen(),
+        '/analytics': (_) => const AnalyticsScreen(),
+        '/shared-expenses': (_) => const SharedExpensesScreen(),
+        '/multi-currency': (_) => const MultiCurrencyScreen(),
+        '/financial-reports': (_) => const FinancialReportsScreen(),
       },
     );
   }
