@@ -18,6 +18,7 @@ const transactions_service_1 = require("./transactions.service");
 const create_transaction_dto_1 = require("./dto/create-transaction.dto");
 const update_transaction_dto_1 = require("./dto/update-transaction.dto");
 const query_transaction_dto_1 = require("./dto/query-transaction.dto");
+const bulk_import_transactions_dto_1 = require("./dto/bulk-import-transactions.dto");
 const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
 let TransactionsController = class TransactionsController {
     transactionsService;
@@ -26,6 +27,9 @@ let TransactionsController = class TransactionsController {
     }
     create(req, dto) {
         return this.transactionsService.create(req.user.userId, dto);
+    }
+    bulkCreate(req, dto) {
+        return this.transactionsService.bulkCreate(req.user.userId, dto.items);
     }
     findAll(req, query) {
         return this.transactionsService.findAll(req.user.userId, query);
@@ -52,6 +56,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_transaction_dto_1.CreateTransactionDto]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('bulk'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, bulk_import_transactions_dto_1.BulkImportTransactionsDto]),
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "bulkCreate", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Request)()),

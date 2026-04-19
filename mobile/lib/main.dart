@@ -4,6 +4,7 @@ import 'providers/auth_provider.dart';
 import 'providers/wallet_provider.dart';
 import 'providers/budget_provider.dart';
 import 'providers/transaction_provider.dart';
+import 'providers/net_worth_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
@@ -24,6 +25,8 @@ import 'screens/analytics_screen.dart';
 import 'screens/shared_expenses_screen.dart';
 import 'screens/multi_currency_screen.dart';
 import 'screens/financial_reports_screen.dart';
+import 'screens/net_worth_screen.dart';
+import 'screens/bulk_import_screen.dart';
 
 void main() {
   runApp(
@@ -33,6 +36,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => WalletProvider()),
         ChangeNotifierProvider(create: (_) => BudgetProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => NetWorthProvider()),
       ],
       child: const MyApp(),
     ),
@@ -99,6 +103,8 @@ class MyApp extends StatelessWidget {
         '/shared-expenses': (_) => const SharedExpensesScreen(),
         '/multi-currency': (_) => const MultiCurrencyScreen(),
         '/financial-reports': (_) => const FinancialReportsScreen(),
+        '/net-worth': (_) => const NetWorthScreen(),
+        '/bulk-import': (_) => const BulkImportScreen(),
       },
     );
   }

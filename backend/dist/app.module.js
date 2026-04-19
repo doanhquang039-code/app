@@ -52,6 +52,17 @@ const analytics_module_1 = require("./modules/analytics/analytics.module");
 const shared_expenses_module_1 = require("./modules/shared-expenses/shared-expenses.module");
 const financial_reports_module_1 = require("./modules/financial-reports/financial-reports.module");
 const multi_currency_module_1 = require("./modules/multi-currency/multi-currency.module");
+const user_profile_entity_1 = require("./entities/user-profile.entity");
+const transaction_attachment_entity_1 = require("./entities/transaction-attachment.entity");
+const debt_entity_1 = require("./entities/debt.entity");
+const investment_entity_1 = require("./entities/investment.entity");
+const audit_log_entity_1 = require("./entities/audit-log.entity");
+const user_profiles_module_1 = require("./modules/user-profiles/user-profiles.module");
+const debts_module_1 = require("./modules/debts/debts.module");
+const investments_module_1 = require("./modules/investments/investments.module");
+const audit_logs_module_1 = require("./modules/audit-logs/audit-logs.module");
+const net_worth_snapshot_entity_1 = require("./entities/net-worth-snapshot.entity");
+const net_worth_module_1 = require("./modules/net-worth/net-worth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -69,7 +80,7 @@ exports.AppModule = AppModule = __decorate([
                     username: configService.get('DB_USERNAME', 'sa'),
                     password: configService.get('DB_PASSWORD', '123456789'),
                     database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-                    entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget, recurring_transaction_entity_1.RecurringTransaction, savings_goal_entity_1.SavingsGoal, tag_entity_1.Tag, budget_alert_entity_1.BudgetAlert, bill_reminder_entity_1.BillReminder, bank_account_entity_1.BankAccount, credit_card_entity_1.CreditCard, smart_notification_entity_1.SmartNotification, smart_notification_entity_1.NotificationRule, analytics_entity_1.AnalyticsData, analytics_entity_1.SpendingForecast, shared_expense_entity_1.SharedExpenseGroup, shared_expense_entity_1.SharedExpense, shared_expense_entity_1.GroupSettlement, financial_report_entity_1.FinancialReport, multi_currency_entity_1.Currency, multi_currency_entity_1.MultiCurrencyWallet, multi_currency_entity_1.ExchangeRateHistory],
+                    entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget, recurring_transaction_entity_1.RecurringTransaction, savings_goal_entity_1.SavingsGoal, tag_entity_1.Tag, budget_alert_entity_1.BudgetAlert, bill_reminder_entity_1.BillReminder, bank_account_entity_1.BankAccount, credit_card_entity_1.CreditCard, smart_notification_entity_1.SmartNotification, smart_notification_entity_1.NotificationRule, analytics_entity_1.AnalyticsData, analytics_entity_1.SpendingForecast, shared_expense_entity_1.SharedExpenseGroup, shared_expense_entity_1.SharedExpense, shared_expense_entity_1.GroupSettlement, financial_report_entity_1.FinancialReport, multi_currency_entity_1.Currency, multi_currency_entity_1.MultiCurrencyWallet, multi_currency_entity_1.ExchangeRateHistory, user_profile_entity_1.UserProfile, transaction_attachment_entity_1.TransactionAttachment, debt_entity_1.Debt, debt_entity_1.DebtPayment, investment_entity_1.Investment, investment_entity_1.InvestmentTransaction, audit_log_entity_1.AuditLog, net_worth_snapshot_entity_1.NetWorthSnapshot],
                     synchronize: false,
                     options: {
                         encrypt: false,
@@ -116,6 +127,11 @@ exports.AppModule = AppModule = __decorate([
             shared_expenses_module_1.SharedExpensesModule,
             financial_reports_module_1.FinancialReportsModule,
             multi_currency_module_1.MultiCurrencyModule,
+            user_profiles_module_1.UserProfilesModule,
+            debts_module_1.DebtsModule,
+            investments_module_1.InvestmentsModule,
+            audit_logs_module_1.AuditLogsModule,
+            net_worth_module_1.NetWorthModule,
         ],
     })
 ], AppModule);

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Debt, DebtPayment } from '../../entities/debt.entity';
@@ -16,7 +16,7 @@ export class DebtsService {
     return this.debtRepo.find({ where: { userId }, order: { createdAt: 'DESC' } });
   }
 
-  async findOne(id: number, userId: number): Promise<Debt> {
+  async findOne(id: number, userId: number): Promise<Debt | null> {
     return this.debtRepo.findOne({ where: { id, userId } });
   }
 
@@ -27,7 +27,9 @@ export class DebtsService {
 
   async update(id: number, userId: number, data: Partial<Debt>): Promise<Debt> {
     await this.debtRepo.update({ id, userId }, data);
-    return this.findOne(id, userId);
+    const updated = await this.findOne(id, userId);
+    if (!updated) throw new NotFoundException('Không tìm thấy khoản nợ');
+    return updated;
   }
 
   async remove(id: number, userId: number): Promise<void> {

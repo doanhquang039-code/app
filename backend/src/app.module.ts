@@ -52,6 +52,8 @@ import { UserProfilesModule } from './modules/user-profiles/user-profiles.module
 import { DebtsModule } from './modules/debts/debts.module';
 import { InvestmentsModule } from './modules/investments/investments.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
+import { NetWorthSnapshot } from './entities/net-worth-snapshot.entity';
+import { NetWorthModule } from './modules/net-worth/net-worth.module';
 
 @Module({
   imports: [
@@ -66,7 +68,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
         username: configService.get('DB_USERNAME', 'sa'),
         password: configService.get('DB_PASSWORD', '123456789'),
         database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory, UserProfile, TransactionAttachment, Debt, DebtPayment, Investment, InvestmentTransaction, AuditLog],
+        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory, UserProfile, TransactionAttachment, Debt, DebtPayment, Investment, InvestmentTransaction, AuditLog, NetWorthSnapshot],
         synchronize: false,
         options: {
           encrypt: false,
@@ -117,6 +119,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
     DebtsModule,
     InvestmentsModule,
     AuditLogsModule,
+    NetWorthModule,
   ],
 })
 export class AppModule {}

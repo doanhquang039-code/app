@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { DebtsService } from './debts.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @Controller('debts')
 @UseGuards(JwtAuthGuard)

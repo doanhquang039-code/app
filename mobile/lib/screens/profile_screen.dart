@@ -143,6 +143,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _menuItem(Icons.receipt_long_outlined, 'Nhắc nhở hóa đơn', () {
                     Navigator.pushNamed(context, '/bills');
                   }),
+                  _menuItem(Icons.trending_up, 'Tài sản ròng', () {
+                    Navigator.pushNamed(context, '/net-worth');
+                  }),
+                  _menuItem(Icons.upload_file_outlined, 'Nhập nhiều giao dịch', () {
+                    Navigator.pushNamed(context, '/bulk-import');
+                  }),
 
                   const SizedBox(height: 12),
                   const Divider(color: Colors.white12),

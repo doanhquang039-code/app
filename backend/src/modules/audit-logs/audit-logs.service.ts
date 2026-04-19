@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { AuditLog } from '../../entities/audit-log.entity';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class AuditLogsService {
       ipAddress: data?.ipAddress,
       userAgent: data?.userAgent,
       description: data?.description,
-    });
+    } as DeepPartial<AuditLog>);
     return this.auditRepo.save(log);
   }
 

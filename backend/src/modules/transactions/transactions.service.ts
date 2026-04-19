@@ -16,6 +16,28 @@ export class TransactionsService {
     private walletRepository: Repository<Wallet>,
   ) {}
 
+  async bulkCreate(
+    userId: number,
+    items: CreateTransactionDto[],
+  ): Promise<{
+    created: number;
+    results: Transaction[];
+    errors: { index: number; message: string }[];
+  }> {
+    const results: Transaction[] = [];
+    const errors: { index: number; message: string }[] = [];
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const saved = await this.create(userId, items[i]);
+        results.push(saved);
+      } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : 'Lỗi không xác định';
+        errors.push({ index: i, message });
+      }
+    }
+    return { created: results.length, results, errors };
+  }
+
   async create(userId: number, dto: CreateTransactionDto) {
     const transaction = this.transactionRepository.create({
       ...dto,

@@ -25,6 +25,21 @@ let TransactionsService = class TransactionsService {
         this.transactionRepository = transactionRepository;
         this.walletRepository = walletRepository;
     }
+    async bulkCreate(userId, items) {
+        const results = [];
+        const errors = [];
+        for (let i = 0; i < items.length; i++) {
+            try {
+                const saved = await this.create(userId, items[i]);
+                results.push(saved);
+            }
+            catch (e) {
+                const message = e instanceof Error ? e.message : 'Lỗi không xác định';
+                errors.push({ index: i, message });
+            }
+        }
+        return { created: results.length, results, errors };
+    }
     async create(userId, dto) {
         const transaction = this.transactionRepository.create({
             ...dto,

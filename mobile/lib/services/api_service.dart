@@ -572,4 +572,37 @@ class ApiService {
     final res = await _dio.get('/audit-logs/stats');
     return res.data;
   }
+
+  // ─── NET WORTH ────────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> getNetWorthCurrent() async {
+    final res = await _dio.get('/net-worth/current');
+    return Map<String, dynamic>.from(res.data as Map);
+  }
+
+  Future<List<dynamic>> getNetWorthSnapshots({
+    bool latest = false,
+    String? from,
+    String? to,
+  }) async {
+    final res = await _dio.get('/net-worth/snapshots', queryParameters: {
+      if (latest) 'latest': 'true',
+      if (from != null) 'from': from,
+      if (to != null) 'to': to,
+    });
+    final data = res.data;
+    if (data is List) return data;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> captureNetWorthSnapshot({String? note}) async {
+    final res = await _dio.post('/net-worth/snapshots', data: {
+      if (note != null && note.isNotEmpty) 'note': note,
+    });
+    return Map<String, dynamic>.from(res.data as Map);
+  }
+
+  Future<Map<String, dynamic>> bulkImportTransactions(List<Map<String, dynamic>> items) async {
+    final res = await _dio.post('/transactions/bulk', data: {'items': items});
+    return Map<String, dynamic>.from(res.data as Map);
+  }
 }

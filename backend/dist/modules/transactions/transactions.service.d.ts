@@ -8,6 +8,14 @@ export declare class TransactionsService {
     private transactionRepository;
     private walletRepository;
     constructor(transactionRepository: Repository<Transaction>, walletRepository: Repository<Wallet>);
+    bulkCreate(userId: number, items: CreateTransactionDto[]): Promise<{
+        created: number;
+        results: Transaction[];
+        errors: {
+            index: number;
+            message: string;
+        }[];
+    }>;
     create(userId: number, dto: CreateTransactionDto): Promise<Transaction>;
     findAll(userId: number, query: QueryTransactionDto): Promise<Transaction[]>;
     findOne(userId: number, id: number): Promise<Transaction>;

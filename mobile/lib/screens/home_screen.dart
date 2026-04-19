@@ -256,8 +256,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             _quickAction('Báo cáo', Icons.assessment_rounded, const Color(0xFFEB5757), () {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => const FinancialReportsScreen()));
                             }),
-                            // Empty spacer to keep alignment
-                            const SizedBox(width: 60),
+                            _quickAction('Tài sản ròng', Icons.trending_up_rounded, const Color(0xFF38EF7D), () {
+                              Navigator.pushNamed(context, '/net-worth');
+                            }),
                           ],
                         ),
                         const SizedBox(height: 24),

@@ -14,6 +14,7 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
+import { BulkImportTransactionsDto } from './dto/bulk-import-transactions.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -24,6 +25,11 @@ export class TransactionsController {
   @Post()
   create(@Request() req, @Body() dto: CreateTransactionDto) {
     return this.transactionsService.create(req.user.userId, dto);
+  }
+
+  @Post('bulk')
+  bulkCreate(@Request() req, @Body() dto: BulkImportTransactionsDto) {
+    return this.transactionsService.bulkCreate(req.user.userId, dto.items);
   }
 
   @Get()
