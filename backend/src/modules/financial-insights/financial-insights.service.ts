@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from '../../entities/transaction.entity';
@@ -299,5 +299,51 @@ export class FinancialInsightsService {
       currency: 'VND',
       minimumFractionDigits: 0,
     }).format(amount);
+  }
+
+  /**
+   * Calculate financial health score (0-100)
+   */
+  async getHealthScore(userId: number) {
+    const summary = await this.getFinancialSummary(userId);
+    const lm = summary.lastMonth;
+    const tips: string[] = [];
+    let score = 0;
+
+    const savingsRate = lm.savingsRate;
+    const savingsScore = Math.min(30, Math.round(savingsRate * 0.6));
+    score += savingsScore;
+    if (savingsRate < 10) tips.push('Save at least 10% of monthly income');
+    else if (savingsRate >= 20) tips.push('Great savings rate! Consider investing the surplus');
+
+    const expenseRatio = lm.income > 0 ? lm.expense / lm.income : 1;
+    const expenseScore = expenseRatio <= 0.5 ? 25 : expenseRatio <= 0.7 ? 20 : expenseRatio <= 0.9 ? 10 : 0;
+    score += expenseScore;
+    if (expenseRatio > 0.9) tips.push('Expenses too high vs income, need to reduce spending');
+
+    const trend = await this.getMonthlyTrend(userId, 3);
+    const incomes = Object.values(trend).map((t: any) => t.income);
+    const hasIncome = incomes.every((i) => i > 0);
+    const incomeScore = hasIncome ? 20 : incomes.filter((i) => i > 0).length * 7;
+    score += incomeScore;
+    if (!hasIncome) tips.push('Record income regularly for better financial tracking');
+
+    const txCount = await this.transactionRepository.count({ where: { userId } });
+    const trackingScore = txCount >= 30 ? 15 : txCount >= 10 ? 10 : txCount >= 5 ? 5 : 0;
+    score += trackingScore;
+    if (txCount < 10) tips.push('Record transactions more frequently for accurate analysis');
+
+    const netScore = lm.net > 0 ? 10 : lm.net === 0 ? 5 : 0;
+    score += netScore;
+
+    const finalScore = Math.min(100, score);
+    const label = finalScore >= 80 ? 'Excellent' : finalScore >= 65 ? 'Good' : finalScore >= 50 ? 'Fair' : finalScore >= 35 ? 'Average' : 'Needs Improvement';
+
+    return {
+      score: finalScore,
+      label,
+      breakdown: { savingsScore, expenseScore, incomeScore, trackingScore, netScore },
+      tips: tips.slice(0, 3),
+    };
   }
 }

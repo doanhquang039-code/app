@@ -50,4 +50,16 @@ export declare class FinancialInsightsService {
     }>;
     private getLastMonthString;
     private formatCurrency;
+    getHealthScore(userId: number): Promise<{
+        score: number;
+        label: string;
+        breakdown: {
+            savingsScore: number;
+            expenseScore: number;
+            incomeScore: number;
+            trackingScore: number;
+            netScore: number;
+        };
+        tips: string[];
+    }>;
 }

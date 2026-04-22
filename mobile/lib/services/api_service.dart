@@ -404,6 +404,11 @@ class ApiService {
     return res.data;
   }
 
+  Future<Map<String, dynamic>> getHealthScore() async {
+    final res = await _dio.get('/financial-insights/health-score');
+    return res.data;
+  }
+
   Future<Map<String, dynamic>> getSpendingTrend({int days = 30}) async {
     final res = await _dio.get('/analytics/spending-trend', queryParameters: {
       'days': days,

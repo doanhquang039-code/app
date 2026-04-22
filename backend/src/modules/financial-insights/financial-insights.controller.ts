@@ -40,4 +40,9 @@ export class FinancialInsightsController {
   getFinancialSummary(@Request() req) {
     return this.financialInsightsService.getFinancialSummary(req.user.userId);
   }
+
+  @Get('health-score')
+  getHealthScore(@Request() req) {
+    return this.financialInsightsService.getHealthScore(req.user.userId);
+  }
 }

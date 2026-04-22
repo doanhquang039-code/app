@@ -36,6 +36,9 @@ let FinancialInsightsController = class FinancialInsightsController {
     getFinancialSummary(req) {
         return this.financialInsightsService.getFinancialSummary(req.user.userId);
     }
+    getHealthScore(req) {
+        return this.financialInsightsService.getHealthScore(req.user.userId);
+    }
 };
 exports.FinancialInsightsController = FinancialInsightsController;
 __decorate([
@@ -76,6 +79,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], FinancialInsightsController.prototype, "getFinancialSummary", null);
+__decorate([
+    (0, common_1.Get)('health-score'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], FinancialInsightsController.prototype, "getHealthScore", null);
 exports.FinancialInsightsController = FinancialInsightsController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('financial-insights'),

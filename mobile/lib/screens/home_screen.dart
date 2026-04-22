@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +20,8 @@ import 'analytics_screen.dart';
 import 'shared_expenses_screen.dart';
 import 'multi_currency_screen.dart';
 import 'financial_reports_screen.dart';
+import 'debt_screen.dart';
+import 'investment_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -116,6 +118,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.search, color: Colors.white),
+                onPressed: () => Navigator.pushNamed(context, '/search'),
+              ),
               Stack(
                 children: [
                   IconButton(

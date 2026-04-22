@@ -45,4 +45,16 @@ export declare class FinancialInsightsController {
             savingsRate: number;
         };
     }>;
+    getHealthScore(req: any): Promise<{
+        score: number;
+        label: string;
+        breakdown: {
+            savingsScore: number;
+            expenseScore: number;
+            incomeScore: number;
+            trackingScore: number;
+            netScore: number;
+        };
+        tips: string[];
+    }>;
 }
