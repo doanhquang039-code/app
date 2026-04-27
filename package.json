@@ -1,0 +1,33 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "Full-stack expense tracker application",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "start:backend": "cd backend && npm run start:prod",
+    "start:frontend": "cd frontend && npm run preview",
+    "test:api": "bash test-api.sh",
+    "test:api:windows": "powershell -ExecutionPolicy Bypass -File test-api.ps1",
+    "migrate": "echo 'Run migrations manually using sqlcmd'",
+    "seed": "echo 'Run seed data manually using sqlcmd'"
+  },
+  "keywords": [
+    "expense-tracker",
+    "finance",
+    "budget",
+    "nestjs",
+    "react",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
