@@ -142,7 +142,7 @@ export default function Dashboard() {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {(stats?.categoryBreakdown || []).map((entry: any, index: number) => (
+                {(stats?.categoryBreakdown || []).map((_entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

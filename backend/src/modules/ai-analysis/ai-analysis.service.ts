@@ -54,7 +54,8 @@ export class AIAnalysisService {
           periodEnd: new Date(),
           isActive: true,
         });
-        patterns.push(await this.patternRepo.save(pattern));
+        const savedPattern = await this.patternRepo.save(pattern) as unknown as SpendingPattern;
+        patterns.push(savedPattern);
       }
 
       // Detect seasonal patterns
@@ -69,7 +70,8 @@ export class AIAnalysisService {
           periodEnd: new Date(),
           isActive: true,
         });
-        patterns.push(await this.patternRepo.save(pattern));
+        const savedPattern = await this.patternRepo.save(pattern) as unknown as SpendingPattern;
+        patterns.push(savedPattern);
       }
 
       // Detect trends
@@ -84,7 +86,8 @@ export class AIAnalysisService {
           periodEnd: new Date(),
           isActive: true,
         });
-        patterns.push(await this.patternRepo.save(pattern));
+        const savedPattern = await this.patternRepo.save(pattern) as unknown as SpendingPattern;
+        patterns.push(savedPattern);
       }
     }
 
@@ -260,7 +263,7 @@ export class AIAnalysisService {
       return acc;
     }, {} as Record<number, number>);
 
-    return parseInt(Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b));
+    return Number(Object.keys(counts).reduce((a, b) => counts[Number(a)] > counts[Number(b)] ? a : b));
   }
 
   // Helper: Get month span
@@ -334,9 +337,9 @@ export class AIAnalysisService {
   }
 
   // Helper: Project trend
-  private projectTrend(amounts: number[], slope: number, months: number): number[] {
+  private projectTrend(amounts: number[], slope: number, months: number): Array<number> {
     const lastAmount = amounts[amounts.length - 1];
-    const projection: number[] = [];
+    const projection: Array<number> = [];
 
     for (let i = 1; i <= months; i++) {
       projection.push(Math.max(0, lastAmount + (slope * i)));
@@ -506,8 +509,16 @@ export class AIAnalysisService {
   }
 
   // Generate recommendations
-  private generateRecommendations(pattern: SpendingPattern, predictedAmount: number): any[] {
-    const recommendations = [];
+  private generateRecommendations(pattern: SpendingPattern, predictedAmount: number): Array<{
+    type: string;
+    message: string;
+    priority: string;
+  }> {
+    const recommendations: Array<{
+      type: string;
+      message: string;
+      priority: string;
+    }> = [];
 
     if (pattern.patternType === 'TREND') {
       const insights = JSON.parse(pattern.insights);

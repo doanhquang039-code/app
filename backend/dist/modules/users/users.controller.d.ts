@@ -12,6 +12,7 @@ export declare class UsersController {
         id: number;
         email: string;
         fullName: string;
+        username: string;
         isActive: boolean;
         createdAt: Date;
     }>;
@@ -22,6 +23,7 @@ export declare class UsersController {
             id: number;
             email: string;
             fullName: string;
+            username: string;
             isActive: boolean;
             createdAt: Date;
         };

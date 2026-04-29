@@ -13,7 +13,6 @@ import {
   Crown,
   TrendingUp,
   Calendar,
-  DollarSign,
 } from 'lucide-react'
 
 interface Friend {
@@ -79,7 +78,7 @@ export default function Social() {
   })
 
   // Fetch friend requests
-  const { data: friendRequests, isLoading: requestsLoading } = useQuery({
+  const { data: friendRequests } = useQuery({
     queryKey: ['friend-requests'],
     queryFn: async () => {
       const { data } = await api.get('/social/friends/requests')

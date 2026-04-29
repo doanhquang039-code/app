@@ -1,0 +1,30 @@
+import { User } from './user.entity';
+import { Category } from './category.entity';
+export declare class Subscription {
+    id: number;
+    userId: number;
+    user: User;
+    name: string;
+    description: string;
+    amount: number;
+    currency: string;
+    billingCycle: string;
+    categoryId: number;
+    category: Category;
+    startDate: Date;
+    endDate: Date;
+    nextBillingDate: Date;
+    provider: string;
+    website: string;
+    icon: string;
+    status: string;
+    autoRenew: boolean;
+    reminderEnabled: boolean;
+    reminderDaysBefore: number;
+    reminderSent: boolean;
+    notes: string;
+    totalPaid: number;
+    paymentCount: number;
+    createdAt: Date;
+    updatedAt: Date;
+}

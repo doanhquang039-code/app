@@ -54,6 +54,19 @@ import { InvestmentsModule } from './modules/investments/investments.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { NetWorthSnapshot } from './entities/net-worth-snapshot.entity';
 import { NetWorthModule } from './modules/net-worth/net-worth.module';
+import { BankIntegrationModule } from './modules/bank-integration/bank-integration.module';
+import { ScheduledTransactionsModule } from './modules/scheduled-transactions/scheduled-transactions.module';
+import { VoiceCommandsModule } from './modules/voice-commands/voice-commands.module';
+import { AIAnalysisModule } from './modules/ai-analysis/ai-analysis.module';
+import { ExportImportModule } from './modules/export-import/export-import.module';
+import { GamificationModule } from './modules/gamification/gamification.module';
+import { SocialModule } from './modules/social/social.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { BankTransaction } from './entities/bank-transaction.entity';
+import { ScheduledTransaction } from './entities/scheduled-transaction.entity';
+import { VoiceCommand } from './entities/voice-command.entity';
+import { Receipt } from './entities/receipt.entity';
+import { ThirdPartyIntegration } from './entities/third-party-integration.entity';
 
 @Module({
   imports: [
@@ -68,7 +81,7 @@ import { NetWorthModule } from './modules/net-worth/net-worth.module';
         username: configService.get('DB_USERNAME', 'sa'),
         password: configService.get('DB_PASSWORD', '123456789'),
         database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory, UserProfile, TransactionAttachment, Debt, DebtPayment, Investment, InvestmentTransaction, AuditLog, NetWorthSnapshot],
+        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory, UserProfile, TransactionAttachment, Debt, DebtPayment, Investment, InvestmentTransaction, AuditLog, NetWorthSnapshot, BankTransaction, ScheduledTransaction, VoiceCommand, Receipt, ThirdPartyIntegration],
         synchronize: false,
         options: {
           encrypt: false,
@@ -120,6 +133,14 @@ import { NetWorthModule } from './modules/net-worth/net-worth.module';
     InvestmentsModule,
     AuditLogsModule,
     NetWorthModule,
+    BankIntegrationModule,
+    ScheduledTransactionsModule,
+    VoiceCommandsModule,
+    AIAnalysisModule,
+    ExportImportModule,
+    GamificationModule,
+    SocialModule,
+    SubscriptionsModule,
   ],
 })
 export class AppModule {}

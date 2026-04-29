@@ -1,0 +1,32 @@
+import { User } from './user.entity';
+import { Transaction } from './transaction.entity';
+export declare class Receipt {
+    id: number;
+    userId: number;
+    user: User;
+    transactionId: number;
+    transaction: Transaction;
+    fileName: string;
+    filePath: string;
+    fileType: string;
+    fileSize: number;
+    imageUrl: string;
+    thumbnailUrl: string;
+    merchantName: string;
+    totalAmount: number;
+    receiptDate: Date;
+    currency: string;
+    taxAmount: string;
+    paymentMethod: string;
+    items: string;
+    rawText: string;
+    ocrStatus: string;
+    ocrConfidence: number;
+    ocrError: string;
+    isVerified: boolean;
+    isLinked: boolean;
+    notes: string;
+    metadata: string;
+    createdAt: Date;
+    updatedAt: Date;
+}

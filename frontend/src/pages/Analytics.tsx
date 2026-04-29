@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { Calendar, TrendingUp, TrendingDown, PieChart as PieChartIcon, BarChart3, Download } from 'lucide-react'
+import { TrendingUp, TrendingDown, PieChart as PieChartIcon, BarChart3, Download } from 'lucide-react'
 import api from '../lib/api'
 import {
   BarChart,
@@ -22,7 +22,6 @@ const COLORS = ['#0ea5e9', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 
 export default function Analytics() {
   const [dateRange, setDateRange] = useState('6months')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   const { data: monthlyTrend } = useQuery(['monthly-trend', dateRange], async () => {
     const months = dateRange === '3months' ? 3 : dateRange === '6months' ? 6 : 12
@@ -182,7 +181,7 @@ export default function Analytics() {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {categoryData.map((entry: any, index: number) => (
+                {categoryData.map((_entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

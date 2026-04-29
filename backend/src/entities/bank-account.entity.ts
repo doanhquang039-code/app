@@ -1,5 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { User } from './user.entity';
+import { BankTransaction } from './bank-transaction.entity';
 
 @Entity('BankAccounts')
 export class BankAccount {
@@ -9,6 +19,10 @@ export class BankAccount {
   @Column()
   userId: number;
 
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
   @Column()
   bankName: string;
 
@@ -16,42 +30,72 @@ export class BankAccount {
   accountNumber: string;
 
   @Column()
-  accountHolder: string;
+  accountType: string; // CHECKING, SAVINGS, CREDIT_CARD
+
+  @Column()
+  accountHolderName: string;
+
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  balance: number;
 
   @Column({ nullable: true })
-  accountType: string; // Savings, Checking, BusinessAccount
+  currency: string;
 
-  @Column({ type: 'decimal', precision: 18, scale: 2, default: 0 })
-  balance: number;
+  @Column({ nullable: true })
+  bankCode: string; // Bank identifier code
 
   @Column({ nullable: true })
   branchCode: string;
 
   @Column({ nullable: true })
-  ifscCode: string;
-
-  @Column({ nullable: true })
-  routingNumber: string;
-
-  @Column({ nullable: true })
   swiftCode: string;
 
   @Column({ nullable: true })
-  icon: string;
+  iban: string;
+
+  // Integration details
+  @Column({ nullable: true })
+  plaidAccessToken: string; // Plaid integration
+
+  @Column({ nullable: true })
+  plaidItemId: string;
+
+  @Column({ nullable: true })
+  plaidAccountId: string;
+
+  @Column({ default: 'MANUAL' })
+  connectionType: string; // MANUAL, PLAID, OPEN_BANKING, API
+
+  @Column({ default: 'ACTIVE' })
+  status: string; // ACTIVE, INACTIVE, DISCONNECTED, ERROR
+
+  @Column({ default: true })
+  autoSync: boolean;
+
+  @Column({ type: 'datetime', nullable: true })
+  lastSyncedAt: Date;
+
+  @Column({ nullable: true })
+  syncFrequency: string; // REALTIME, HOURLY, DAILY, WEEKLY
+
+  @Column({ type: 'text', nullable: true })
+  syncError: string;
+
+  @Column({ default: false })
+  isPrimary: boolean;
 
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
-  linkedWalletId: number; // Link to wallet for auto-sync
+  @Column({ type: 'text', nullable: true })
+  notes: string;
+
+  @OneToMany(() => BankTransaction, (transaction) => transaction.bankAccount)
+  transactions: BankTransaction[];
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'userId' })
-  user: User;
 }

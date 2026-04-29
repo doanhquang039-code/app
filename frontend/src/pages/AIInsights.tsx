@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../lib/api'
 import { toast } from 'sonner'
@@ -12,7 +12,6 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  DollarSign,
   Calendar,
   Activity,
 } from 'lucide-react'
@@ -62,7 +61,7 @@ export default function AIInsights() {
   const [activeTab, setActiveTab] = useState<'overview' | 'patterns' | 'anomalies' | 'predictions'>('overview')
 
   // Fetch insights overview
-  const { data: insights, isLoading: insightsLoading } = useQuery({
+  const { data: insights } = useQuery({
     queryKey: ['ai-insights'],
     queryFn: async () => {
       const { data } = await api.get('/ai-analysis/insights')
@@ -106,7 +105,7 @@ export default function AIInsights() {
       const { data } = await api.post('/ai-analysis/patterns/analyze')
       return data
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success(data.message || 'Đã phân tích mẫu chi tiêu')
       queryClient.invalidateQueries({ queryKey: ['ai-patterns'] })
       queryClient.invalidateQueries({ queryKey: ['ai-insights'] })
@@ -122,7 +121,7 @@ export default function AIInsights() {
       const { data } = await api.post('/ai-analysis/anomalies/detect')
       return data
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success(data.message || 'Đã phát hiện chi tiêu bất thường')
       queryClient.invalidateQueries({ queryKey: ['ai-anomalies'] })
       queryClient.invalidateQueries({ queryKey: ['ai-insights'] })
@@ -138,7 +137,7 @@ export default function AIInsights() {
       const { data } = await api.post('/ai-analysis/predictions/generate')
       return data
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success(data.message || 'Đã tạo dự đoán chi tiêu')
       queryClient.invalidateQueries({ queryKey: ['ai-predictions'] })
       queryClient.invalidateQueries({ queryKey: ['ai-insights'] })

@@ -12,24 +12,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BankAccount = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
+const bank_transaction_entity_1 = require("./bank-transaction.entity");
 let BankAccount = class BankAccount {
     id;
     userId;
+    user;
     bankName;
     accountNumber;
-    accountHolder;
     accountType;
+    accountHolderName;
     balance;
+    currency;
+    bankCode;
     branchCode;
-    ifscCode;
-    routingNumber;
     swiftCode;
-    icon;
+    iban;
+    plaidAccessToken;
+    plaidItemId;
+    plaidAccountId;
+    connectionType;
+    status;
+    autoSync;
+    lastSyncedAt;
+    syncFrequency;
+    syncError;
+    isPrimary;
     isActive;
-    linkedWalletId;
+    notes;
+    transactions;
     createdAt;
     updatedAt;
-    user;
 };
 exports.BankAccount = BankAccount;
 __decorate([
@@ -41,6 +53,11 @@ __decorate([
     __metadata("design:type", Number)
 ], BankAccount.prototype, "userId", void 0);
 __decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
+    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
+    __metadata("design:type", user_entity_1.User)
+], BankAccount.prototype, "user", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], BankAccount.prototype, "bankName", void 0);
@@ -51,15 +68,23 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], BankAccount.prototype, "accountHolder", void 0);
+], BankAccount.prototype, "accountType", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], BankAccount.prototype, "accountHolderName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 15, scale: 2, default: 0 }),
+    __metadata("design:type", Number)
+], BankAccount.prototype, "balance", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], BankAccount.prototype, "accountType", void 0);
+], BankAccount.prototype, "currency", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 18, scale: 2, default: 0 }),
-    __metadata("design:type", Number)
-], BankAccount.prototype, "balance", void 0);
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "bankCode", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
@@ -67,27 +92,63 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], BankAccount.prototype, "ifscCode", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], BankAccount.prototype, "routingNumber", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
 ], BankAccount.prototype, "swiftCode", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], BankAccount.prototype, "icon", void 0);
+], BankAccount.prototype, "iban", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "plaidAccessToken", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "plaidItemId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "plaidAccountId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'MANUAL' }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "connectionType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'ACTIVE' }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], BankAccount.prototype, "autoSync", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'datetime', nullable: true }),
+    __metadata("design:type", Date)
+], BankAccount.prototype, "lastSyncedAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "syncFrequency", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "syncError", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], BankAccount.prototype, "isPrimary", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], BankAccount.prototype, "isActive", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Number)
-], BankAccount.prototype, "linkedWalletId", void 0);
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], BankAccount.prototype, "notes", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => bank_transaction_entity_1.BankTransaction, (transaction) => transaction.bankAccount),
+    __metadata("design:type", Array)
+], BankAccount.prototype, "transactions", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
@@ -96,11 +157,6 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], BankAccount.prototype, "updatedAt", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
-    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
-    __metadata("design:type", user_entity_1.User)
-], BankAccount.prototype, "user", void 0);
 exports.BankAccount = BankAccount = __decorate([
     (0, typeorm_1.Entity)('BankAccounts')
 ], BankAccount);

@@ -174,7 +174,7 @@ export class SocialService {
       participantCount: 1,
     });
 
-    const savedChallenge = await this.challengeRepo.save(challenge);
+    const savedChallenge = await this.challengeRepo.save(challenge) as unknown as SpendingChallenge;
 
     // Auto-join creator
     await this.joinChallenge(userId, savedChallenge.id);

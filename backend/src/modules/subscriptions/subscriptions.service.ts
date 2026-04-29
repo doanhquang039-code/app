@@ -30,7 +30,8 @@ export class SubscriptionsService {
       paymentCount: 0,
     });
 
-    return await this.subscriptionRepo.save(subscription);
+    const savedSubscription = await this.subscriptionRepo.save(subscription) as unknown as Subscription;
+    return savedSubscription;
   }
 
   // Get all subscriptions
@@ -65,7 +66,7 @@ export class SubscriptionsService {
   async updateSubscription(
     userId: number,
     subscriptionId: number,
-    data: any,
+    data: Partial<Subscription>,
   ): Promise<Subscription> {
     const subscription = await this.getSubscription(userId, subscriptionId);
 

@@ -1,0 +1,38 @@
+import { User } from './user.entity';
+import { Category } from './category.entity';
+import { Wallet } from './wallet.entity';
+export declare class ScheduledTransaction {
+    id: number;
+    userId: number;
+    user: User;
+    name: string;
+    type: string;
+    amount: number;
+    categoryId: number;
+    category: Category;
+    walletId: number;
+    wallet: Wallet;
+    description: string;
+    frequency: string;
+    startDate: Date;
+    endDate: Date;
+    occurrences: number;
+    executedCount: number;
+    nextExecutionDate: Date;
+    lastExecutionDate: Date;
+    customPattern: string;
+    daysOfWeek: string;
+    daysOfMonth: string;
+    monthsOfYear: string;
+    useAIOptimization: boolean;
+    adjustForWeekends: boolean;
+    adjustForHolidays: boolean;
+    notifyBeforeExecution: boolean;
+    notificationHoursBefore: number;
+    status: string;
+    autoExecute: boolean;
+    executionError: string;
+    notes: string;
+    createdAt: Date;
+    updatedAt: Date;
+}

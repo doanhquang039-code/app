@@ -13,7 +13,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ExportImportService } from './export-import.service';
 import { ExportDataDto, ImportDataDto, DataType } from './dto/export-data.dto';

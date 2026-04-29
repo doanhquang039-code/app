@@ -19,6 +19,7 @@ export declare class UsersService {
         id: number;
         email: string;
         fullName: string;
+        username: string;
         isActive: boolean;
         createdAt: Date;
     }>;
@@ -29,6 +30,7 @@ export declare class UsersService {
             id: number;
             email: string;
             fullName: string;
+            username: string;
             isActive: boolean;
             createdAt: Date;
         };

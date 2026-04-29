@@ -3,6 +3,7 @@ export declare class User {
     email: string;
     password: string;
     fullName: string;
+    username: string;
     isActive: boolean;
     createdAt: Date;
 }

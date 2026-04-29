@@ -22,10 +22,10 @@ export class AIAnalysisController {
 
   @Post('patterns/analyze')
   @ApiOperation({ summary: 'Phân tích mẫu chi tiêu (chạy AI analysis)' })
-  async analyzePatterns(@Request() req, @Query('months') months?: number) {
+  async analyzePatterns(@Request() req, @Query('months') months?: string) {
     const patterns = await this.aiAnalysisService.analyzeSpendingPatterns(
       req.user.userId,
-      months ? parseInt(months) : 6,
+      months ? Number(months) : 6,
     );
 
     return {
@@ -112,8 +112,18 @@ export class AIAnalysisController {
     };
   }
 
-  private generateTopRecommendations(patterns: any[], anomalies: any[], predictions: any[]): any[] {
-    const recommendations = [];
+  private generateTopRecommendations(patterns: any[], anomalies: any[], predictions: any[]): Array<{
+    type: string;
+    priority: string;
+    message: string;
+    action: string;
+  }> {
+    const recommendations: Array<{
+      type: string;
+      priority: string;
+      message: string;
+      action: string;
+    }> = [];
 
     // High severity anomalies
     const criticalAnomalies = anomalies.filter(a => a.severity === 'CRITICAL' || a.severity === 'HIGH');

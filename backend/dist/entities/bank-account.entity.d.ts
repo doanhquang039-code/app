@@ -1,20 +1,32 @@
 import { User } from './user.entity';
+import { BankTransaction } from './bank-transaction.entity';
 export declare class BankAccount {
     id: number;
     userId: number;
+    user: User;
     bankName: string;
     accountNumber: string;
-    accountHolder: string;
     accountType: string;
+    accountHolderName: string;
     balance: number;
+    currency: string;
+    bankCode: string;
     branchCode: string;
-    ifscCode: string;
-    routingNumber: string;
     swiftCode: string;
-    icon: string;
+    iban: string;
+    plaidAccessToken: string;
+    plaidItemId: string;
+    plaidAccountId: string;
+    connectionType: string;
+    status: string;
+    autoSync: boolean;
+    lastSyncedAt: Date;
+    syncFrequency: string;
+    syncError: string;
+    isPrimary: boolean;
     isActive: boolean;
-    linkedWalletId: number;
+    notes: string;
+    transactions: BankTransaction[];
     createdAt: Date;
     updatedAt: Date;
-    user: User;
 }

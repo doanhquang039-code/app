@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { Plus, Search, Filter, TrendingUp, TrendingDown, Edit, Trash2, Download } from 'lucide-react'
+import { Plus, Search, TrendingUp, TrendingDown, Edit, Trash2, Download } from 'lucide-react'
 import { toast } from 'sonner'
 import api from '../lib/api'
 import TransactionModal from '../components/transactions/TransactionModal'

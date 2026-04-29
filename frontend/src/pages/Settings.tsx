@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useAuthStore } from '../stores/authStore'
 import api from '../lib/api'
 import { toast } from 'sonner'
@@ -8,8 +8,6 @@ import {
   Lock,
   Bell,
   Palette,
-  Globe,
-  Shield,
   Download,
   Trash2,
   Save,
@@ -18,7 +16,6 @@ import {
 } from 'lucide-react'
 
 export default function Settings() {
-  const queryClient = useQueryClient()
   const { user, updateUser } = useAuthStore()
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'preferences'>('profile')
 
@@ -65,7 +62,7 @@ export default function Settings() {
       const response = await api.put('/users/profile', data)
       return response.data
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success('Đã cập nhật thông tin cá nhân')
       updateUser(data)
     },

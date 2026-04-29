@@ -41,10 +41,10 @@ export class SubscriptionsController {
 
   @Get('upcoming')
   @ApiOperation({ summary: 'Lấy danh sách đăng ký sắp gia hạn' })
-  async getUpcomingRenewals(@Request() req, @Query('days') days?: number) {
+  async getUpcomingRenewals(@Request() req, @Query('days') days?: string) {
     return await this.subscriptionsService.getUpcomingRenewals(
       req.user.userId,
-      days ? parseInt(days) : 30,
+      days ? Number(days) : 30,
     );
   }
 

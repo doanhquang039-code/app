@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../lib/api'
 import { toast } from 'sonner'
@@ -14,15 +14,6 @@ import {
   Gift,
   Medal,
 } from 'lucide-react'
-
-interface UserStats {
-  userId: number
-  totalPoints: number
-  level: number
-  rank: string
-  dailyStreak: number
-  lastLoginDate: string
-}
 
 interface PointHistory {
   id: number
@@ -61,7 +52,7 @@ export default function Gamification() {
   const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'leaderboard'>('overview')
 
   // Fetch user stats
-  const { data: userStats, isLoading: statsLoading } = useQuery({
+  const { data: userStats } = useQuery({
     queryKey: ['user-stats'],
     queryFn: async () => {
       const { data } = await api.get('/gamification/stats')
@@ -80,7 +71,7 @@ export default function Gamification() {
   })
 
   // Fetch achievements
-  const { data: achievements, isLoading: achievementsLoading } = useQuery({
+  const { data: achievements } = useQuery({
     queryKey: ['achievements'],
     queryFn: async () => {
       const { data } = await api.get('/gamification/achievements')
@@ -115,7 +106,7 @@ export default function Gamification() {
       const { data } = await api.post('/gamification/daily-login')
       return data
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success(data.message || 'Đã cập nhật chuỗi đăng nhập')
       queryClient.invalidateQueries({ queryKey: ['user-stats'] })
       queryClient.invalidateQueries({ queryKey: ['points-history'] })

@@ -1,0 +1,35 @@
+import { Repository } from 'typeorm';
+import { SpendingPattern } from '../../entities/spending-pattern.entity';
+import { AIPrediction } from '../../entities/ai-prediction.entity';
+import { SpendingAnomaly } from '../../entities/spending-anomaly.entity';
+import { Transaction } from '../../entities/transaction.entity';
+export declare class AIAnalysisService {
+    private patternRepo;
+    private predictionRepo;
+    private anomalyRepo;
+    private transactionRepo;
+    constructor(patternRepo: Repository<SpendingPattern>, predictionRepo: Repository<AIPrediction>, anomalyRepo: Repository<SpendingAnomaly>, transactionRepo: Repository<Transaction>);
+    analyzeSpendingPatterns(userId: number, months?: number): Promise<SpendingPattern[]>;
+    private groupByCategory;
+    private detectRecurringPattern;
+    private detectSeasonalPattern;
+    private detectTrend;
+    private detectTimePattern;
+    private findMostCommon;
+    private getMonthSpan;
+    private groupByMonth;
+    private findPeakMonth;
+    private findLowMonth;
+    private predictNextDate;
+    private projectTrend;
+    detectAnomalies(userId: number): Promise<SpendingAnomaly[]>;
+    private calculateStdDev;
+    private calculateSeverity;
+    private getAnomalyRecommendation;
+    generatePredictions(userId: number): Promise<AIPrediction[]>;
+    private generateRecommendations;
+    getUserPatterns(userId: number): Promise<SpendingPattern[]>;
+    getUserAnomalies(userId: number, status?: string): Promise<SpendingAnomaly[]>;
+    getUserPredictions(userId: number): Promise<AIPrediction[]>;
+    updateAnomalyStatus(userId: number, anomalyId: number, status: string, note?: string): Promise<SpendingAnomaly>;
+}

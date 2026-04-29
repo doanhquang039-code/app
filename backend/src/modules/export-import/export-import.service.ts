@@ -44,18 +44,18 @@ export class ExportImportService {
       fileName,
       filePath,
       dataType: dto.dataType,
-      startDate: dto.startDate ? new Date(dto.startDate) : null,
-      endDate: dto.endDate ? new Date(dto.endDate) : null,
+      startDate: dto.startDate ? new Date(dto.startDate) : undefined,
+      endDate: dto.endDate ? new Date(dto.endDate) : undefined,
       status: 'PROCESSING',
       recordCount: 0,
       fileSize: 0,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     });
 
-    await this.exportHistoryRepo.save(exportHistory);
+    const savedExportHistory = await this.exportHistoryRepo.save(exportHistory);
 
     try {
-      let data: any[];
+      let data: any[] | { transactions: any[]; budgets: any[]; savingsGoals: any[]; bills: any[] };
       let recordCount = 0;
 
       // Fetch data based on type
@@ -79,7 +79,7 @@ export class ExportImportService {
           throw new Error('Unsupported data type');
       }
 
-      recordCount = Array.isArray(data) ? data.length : Object.keys(data).reduce((sum, key) => sum + data[key].length, 0);
+      recordCount = Array.isArray(data) ? data.length : Object.keys(data).reduce((sum, key) => sum + (data as any)[key].length, 0);
 
       // Generate file based on export type
       switch (dto.exportType) {
@@ -87,7 +87,12 @@ export class ExportImportService {
           await this.generateExcel(filePath, data, dto.dataType);
           break;
         case ExportType.CSV:
-          await this.generateCSV(filePath, data);
+          if (Array.isArray(data)) {
+            await this.generateCSV(filePath, data);
+          } else {
+            // For ALL data type, convert to array format or handle differently
+            await this.generateCSV(filePath, []);
+          }
           break;
         case ExportType.PDF:
           await this.generatePDF(filePath, data, dto.dataType);
@@ -102,16 +107,16 @@ export class ExportImportService {
       const fileSize = stats.size;
 
       // Update export history
-      exportHistory.status = 'COMPLETED';
-      exportHistory.recordCount = recordCount;
-      exportHistory.fileSize = fileSize;
-      await this.exportHistoryRepo.save(exportHistory);
+      savedExportHistory.status = 'COMPLETED';
+      savedExportHistory.recordCount = recordCount;
+      savedExportHistory.fileSize = fileSize;
+      await this.exportHistoryRepo.save(savedExportHistory);
 
-      return exportHistory;
+      return savedExportHistory;
     } catch (error) {
-      exportHistory.status = 'FAILED';
-      exportHistory.errorMessage = error.message;
-      await this.exportHistoryRepo.save(exportHistory);
+      savedExportHistory.status = 'FAILED';
+      savedExportHistory.errorMessage = error.message;
+      await this.exportHistoryRepo.save(savedExportHistory);
       throw error;
     }
   }
@@ -165,7 +170,12 @@ export class ExportImportService {
   }
 
   // Get all data
-  private async getAllData(userId: number, dto: ExportDataDto): Promise<any> {
+  private async getAllData(userId: number, dto: ExportDataDto): Promise<{
+    transactions: any[];
+    budgets: any[];
+    savingsGoals: any[];
+    bills: any[];
+  }> {
     return {
       transactions: await this.getTransactionsData(userId, dto),
       budgets: await this.getBudgetsData(userId),
@@ -175,16 +185,16 @@ export class ExportImportService {
   }
 
   // Generate Excel file
-  private async generateExcel(filePath: string, data: any, dataType: string): Promise<void> {
+  private async generateExcel(filePath: string, data: any[] | { transactions: any[]; budgets: any[]; savingsGoals: any[]; bills: any[] }, dataType: string): Promise<void> {
     const workbook = new ExcelJS.Workbook();
     
-    if (dataType === DataType.ALL) {
+    if (dataType === DataType.ALL && !Array.isArray(data)) {
       // Multiple sheets for ALL data
       this.addTransactionsSheet(workbook, data.transactions);
       this.addBudgetsSheet(workbook, data.budgets);
       this.addSavingsGoalsSheet(workbook, data.savingsGoals);
       this.addBillsSheet(workbook, data.bills);
-    } else {
+    } else if (Array.isArray(data)) {
       // Single sheet
       const worksheet = workbook.addWorksheet(dataType);
       
@@ -516,7 +526,6 @@ export class ExportImportService {
           userId,
           type: item.type || item.Loại,
           amount: parseFloat(item.amount || item['Số tiền']),
-          description: item.description || item['Mô tả'],
           date: new Date(item.date || item.Ngày),
           // Add other fields as needed
         });

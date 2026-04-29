@@ -102,13 +102,14 @@ export class GamificationService {
     await this.userPointsRepo.save(userPoints);
 
     // Record points history
-    await this.pointsHistoryRepo.save({
+    const historyEntry = this.pointsHistoryRepo.create({
       userId,
       points: pointsToAward,
       action,
       description,
-      metadata: metadata ? JSON.stringify(metadata) : null,
+      metadata: metadata ? JSON.stringify(metadata) : undefined,
     });
+    await this.pointsHistoryRepo.save(historyEntry);
 
     // Check achievements
     await this.checkAchievements(userId);
