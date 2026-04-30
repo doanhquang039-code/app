@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package notification;
+
+service NotificationService {
+  rpc SendNotification (SendNotificationRequest) returns (SendNotificationResponse);
+  rpc SendBulkNotifications (SendBulkNotificationsRequest) returns (SendBulkNotificationsResponse);
+  rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
+  rpc MarkAsRead (MarkAsReadRequest) returns (MarkAsReadResponse);
+  rpc DeleteNotification (DeleteNotificationRequest) returns (DeleteNotificationResponse);
+  rpc GetNotificationSettings (GetNotificationSettingsRequest) returns (GetNotificationSettingsResponse);
+  rpc UpdateNotificationSettings (UpdateNotificationSettingsRequest) returns (UpdateNotificationSettingsResponse);
+}
+
+message SendNotificationRequest {
+  int32 userId = 1;
+  string type = 2;
+  string title = 3;
+  string message = 4;
+  string data = 5;
+  string priority = 6;
+  repeated string channels = 7;
+}
+
+message SendNotificationResponse {
+  bool success = 1;
+  string notificationId = 2;
+  string message = 3;
+}
+
+message SendBulkNotificationsRequest {
+  repeated int32 userIds = 1;
+  string type = 2;
+  string title = 3;
+  string message = 4;
+  string data = 5;
+}
+
+message SendBulkNotificationsResponse {
+  bool success = 1;
+  int32 sentCount = 2;
+  int32 failedCount = 3;
+}
+
+message GetUserNotificationsRequest {
+  int32 userId = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+  bool unreadOnly = 4;
+}
+
+message GetUserNotificationsResponse {
+  repeated Notification notifications = 1;
+  int32 totalCount = 2;
+  int32 unreadCount = 3;
+}
+
+message Notification {
+  string id = 1;
+  int32 userId = 2;
+  string type = 3;
+  string title = 4;
+  string message = 5;
+  string data = 6;
+  bool read = 7;
+  string createdAt = 8;
+}
+
+message MarkAsReadRequest {
+  string notificationId = 1;
+  int32 userId = 2;
+}
+
+message MarkAsReadResponse {
+  bool success = 1;
+}
+
+message DeleteNotificationRequest {
+  string notificationId = 1;
+  int32 userId = 2;
+}
+
+message DeleteNotificationResponse {
+  bool success = 1;
+}
+
+message GetNotificationSettingsRequest {
+  int32 userId = 1;
+}
+
+message GetNotificationSettingsResponse {
+  NotificationSettings settings = 1;
+}
+
+message NotificationSettings {
+  bool emailEnabled = 1;
+  bool pushEnabled = 2;
+  bool smsEnabled = 3;
+  bool budgetAlerts = 4;
+  bool transactionAlerts = 5;
+  bool weeklyReports = 6;
+  bool monthlyReports = 7;
+}
+
+message UpdateNotificationSettingsRequest {
+  int32 userId = 1;
+  NotificationSettings settings = 2;
+}
+
+message UpdateNotificationSettingsResponse {
+  bool success = 1;
+  NotificationSettings settings = 2;
+}

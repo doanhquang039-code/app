@@ -72,6 +72,11 @@ import { ExportModule } from './export/export.module';
 import { OCRModule } from './ocr/ocr.module';
 import { WebsocketModule } from './websocket/websocket.module';
 import { GamificationModule as GamificationVIPModule } from './gamification/gamification.module';
+import { GraphqlModule } from './graphql/graphql.module';
+import { RedisModule } from './redis/redis.module';
+import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
+import { QueueModule } from './queue/queue.module';
+import { CloudModule } from './cloud/cloud.module';
 
 @Module({
   imports: [
@@ -151,6 +156,11 @@ import { GamificationModule as GamificationVIPModule } from './gamification/gami
     OCRModule,
     WebsocketModule,
     GamificationVIPModule,
+    GraphqlModule,
+    RedisModule,
+    ElasticsearchModule,
+    QueueModule,
+    CloudModule,
   ],
 })
 export class AppModule {}

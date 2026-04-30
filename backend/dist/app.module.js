@@ -81,6 +81,11 @@ const export_module_1 = require("./export/export.module");
 const ocr_module_1 = require("./ocr/ocr.module");
 const websocket_module_1 = require("./websocket/websocket.module");
 const gamification_module_2 = require("./gamification/gamification.module");
+const graphql_module_1 = require("./graphql/graphql.module");
+const redis_module_1 = require("./redis/redis.module");
+const elasticsearch_module_1 = require("./elasticsearch/elasticsearch.module");
+const queue_module_1 = require("./queue/queue.module");
+const cloud_module_1 = require("./cloud/cloud.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -163,6 +168,11 @@ exports.AppModule = AppModule = __decorate([
             ocr_module_1.OCRModule,
             websocket_module_1.WebsocketModule,
             gamification_module_2.GamificationModule,
+            graphql_module_1.GraphqlModule,
+            redis_module_1.RedisModule,
+            elasticsearch_module_1.ElasticsearchModule,
+            queue_module_1.QueueModule,
+            cloud_module_1.CloudModule,
         ],
     })
 ], AppModule);

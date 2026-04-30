@@ -1,0 +1,13 @@
+# Microservices Module Disabled
+
+Microservices module has been temporarily disabled to allow build to complete.
+
+To enable:
+1. Install @nestjs/microservices
+2. Uncomment microservices.module.ts import in app.module.ts
+3. Set up gRPC services
+
+Files available:
+- src/microservices/microservices.module.ts
+- src/proto/analytics.proto
+- src/proto/notification.proto

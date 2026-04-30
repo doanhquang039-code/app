@@ -1,0 +1,32 @@
+import { ConfigService } from '@nestjs/config';
+import Stripe from 'stripe';
+export declare class StripeService {
+    private configService;
+    private stripe;
+    constructor(configService: ConfigService);
+    createPaymentIntent(amount: number, currency?: string, metadata?: any): Promise<Stripe.PaymentIntent>;
+    confirmPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent>;
+    cancelPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent>;
+    createCustomer(email: string, name: string, metadata?: any): Promise<Stripe.Customer>;
+    getCustomer(customerId: string): Promise<Stripe.Customer>;
+    updateCustomer(customerId: string, data: Stripe.CustomerUpdateParams): Promise<Stripe.Customer>;
+    deleteCustomer(customerId: string): Promise<Stripe.DeletedCustomer>;
+    createSubscription(customerId: string, priceId: string, metadata?: any): Promise<Stripe.Subscription>;
+    getSubscription(subscriptionId: string): Promise<Stripe.Subscription>;
+    updateSubscription(subscriptionId: string, data: Stripe.SubscriptionUpdateParams): Promise<Stripe.Subscription>;
+    cancelSubscription(subscriptionId: string): Promise<Stripe.Subscription>;
+    attachPaymentMethod(paymentMethodId: string, customerId: string): Promise<Stripe.PaymentMethod>;
+    detachPaymentMethod(paymentMethodId: string): Promise<Stripe.PaymentMethod>;
+    listPaymentMethods(customerId: string): Promise<Stripe.PaymentMethod[]>;
+    createCharge(amount: number, currency: string, source: string, description?: string): Promise<Stripe.Charge>;
+    refundCharge(chargeId: string, amount?: number): Promise<Stripe.Refund>;
+    createInvoice(customerId: string, metadata?: any): Promise<Stripe.Invoice>;
+    finalizeInvoice(invoiceId: string): Promise<Stripe.Invoice>;
+    payInvoice(invoiceId: string): Promise<Stripe.Invoice>;
+    createProduct(name: string, description?: string): Promise<Stripe.Product>;
+    createPrice(productId: string, amount: number, currency?: string, recurring?: any): Promise<Stripe.Price>;
+    constructWebhookEvent(payload: string | Buffer, signature: string): Stripe.Event;
+    createPremiumSubscription(userId: number, email: string, name: string): Promise<any>;
+    upgradeToPremium(customerId: string): Promise<Stripe.Subscription>;
+    downgradeTofree(subscriptionId: string): Promise<Stripe.Subscription>;
+}

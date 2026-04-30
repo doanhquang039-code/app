@@ -1,0 +1,328 @@
+type Query {
+  # User queries
+  me: User!
+  user(id: ID!): User
+  users(limit: Int, offset: Int): [User!]!
+  
+  # Transaction queries
+  transaction(id: ID!): Transaction
+  transactions(
+    userId: ID
+    type: TransactionType
+    startDate: DateTime
+    endDate: DateTime
+    limit: Int
+    offset: Int
+  ): TransactionConnection!
+  
+  # Budget queries
+  budget(id: ID!): Budget
+  budgets(userId: ID): [Budget!]!
+  
+  # Analytics queries
+  analytics(userId: ID!, period: Period!): Analytics!
+  
+  # Search
+  searchTransactions(query: String!): [Transaction!]!
+  
+  # AI Insights
+  aiInsights(userId: ID!): [AIInsight!]!
+}
+
+type Mutation {
+  # Auth mutations
+  register(input: RegisterInput!): AuthPayload!
+  login(input: LoginInput!): AuthPayload!
+  refreshToken(token: String!): AuthPayload!
+  
+  # Transaction mutations
+  createTransaction(input: CreateTransactionInput!): Transaction!
+  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
+  deleteTransaction(id: ID!): Boolean!
+  
+  # Budget mutations
+  createBudget(input: CreateBudgetInput!): Budget!
+  updateBudget(id: ID!, input: UpdateBudgetInput!): Budget!
+  deleteBudget(id: ID!): Boolean!
+  
+  # OCR mutation
+  scanReceipt(image: Upload!): ReceiptData!
+  
+  # Export mutation
+  exportData(format: ExportFormat!, startDate: DateTime!, endDate: DateTime!): String!
+}
+
+type Subscription {
+  # Real-time subscriptions
+  transactionCreated(userId: ID!): Transaction!
+  transactionUpdated(userId: ID!): Transaction!
+  transactionDeleted(userId: ID!): ID!
+  budgetAlert(userId: ID!): BudgetAlert!
+  notification(userId: ID!): Notification!
+}
+
+# Types
+type User {
+  id: ID!
+  email: String!
+  username: String!
+  fullName: String
+  avatar: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  
+  # Relations
+  transactions: [Transaction!]!
+  budgets: [Budget!]!
+  wallets: [Wallet!]!
+  
+  # Stats
+  stats: UserStats!
+}
+
+type Transaction {
+  id: ID!
+  userId: ID!
+  type: TransactionType!
+  amount: Float!
+  categoryId: ID
+  walletId: ID
+  note: String
+  date: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  
+  # Relations
+  user: User!
+  category: Category
+  wallet: Wallet
+  tags: [Tag!]!
+}
+
+type Budget {
+  id: ID!
+  userId: ID!
+  categoryId: ID!
+  amount: Float!
+  period: Period!
+  startDate: DateTime!
+  endDate: DateTime!
+  
+  # Relations
+  user: User!
+  category: Category!
+  
+  # Computed
+  spent: Float!
+  remaining: Float!
+  percentage: Float!
+}
+
+type Analytics {
+  totalIncome: Float!
+  totalExpense: Float!
+  balance: Float!
+  topCategories: [CategoryStat!]!
+  dailyTrend: [DailyTrend!]!
+  monthlyComparison: [MonthlyComparison!]!
+}
+
+type AIInsight {
+  type: InsightType!
+  title: String!
+  message: String!
+  priority: Priority!
+  actionable: Boolean!
+  action: String
+}
+
+type ReceiptData {
+  merchantName: String
+  date: DateTime
+  totalAmount: Float
+  items: [ReceiptItem!]!
+  confidence: Float!
+}
+
+type ReceiptItem {
+  name: String!
+  quantity: Int!
+  price: Float!
+}
+
+# Inputs
+input RegisterInput {
+  email: String!
+  username: String!
+  password: String!
+  fullName: String
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateTransactionInput {
+  type: TransactionType!
+  amount: Float!
+  categoryId: ID
+  walletId: ID
+  note: String
+  date: DateTime
+  tags: [ID!]
+}
+
+input UpdateTransactionInput {
+  type: TransactionType
+  amount: Float
+  categoryId: ID
+  walletId: ID
+  note: String
+  date: DateTime
+  tags: [ID!]
+}
+
+input CreateBudgetInput {
+  categoryId: ID!
+  amount: Float!
+  period: Period!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+input UpdateBudgetInput {
+  amount: Float
+  period: Period
+  startDate: DateTime
+  endDate: DateTime
+}
+
+# Enums
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum Period {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum InsightType {
+  WARNING
+  TIP
+  ACHIEVEMENT
+  PREDICTION
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ExportFormat {
+  EXCEL
+  PDF
+  CSV
+}
+
+# Scalars
+scalar DateTime
+scalar Upload
+
+# Connection types
+type TransactionConnection {
+  edges: [TransactionEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type TransactionEdge {
+  node: Transaction!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+# Other types
+type AuthPayload {
+  token: String!
+  refreshToken: String!
+  user: User!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  icon: String
+  color: String
+}
+
+type Wallet {
+  id: ID!
+  name: String!
+  balance: Float!
+  currency: String!
+}
+
+type Tag {
+  id: ID!
+  name: String!
+}
+
+type UserStats {
+  level: Int!
+  points: Int!
+  badges: [Badge!]!
+  streak: Int!
+  rank: Int!
+}
+
+type Badge {
+  id: String!
+  name: String!
+  icon: String!
+  rarity: String!
+  earnedAt: DateTime
+}
+
+type CategoryStat {
+  category: Category!
+  amount: Float!
+  percentage: Float!
+}
+
+type DailyTrend {
+  date: DateTime!
+  income: Float!
+  expense: Float!
+}
+
+type MonthlyComparison {
+  month: String!
+  income: Float!
+  expense: Float!
+}
+
+type BudgetAlert {
+  budgetId: ID!
+  message: String!
+  percentage: Float!
+}
+
+type Notification {
+  id: ID!
+  type: String!
+  title: String!
+  message: String!
+  createdAt: DateTime!
+}

@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package analytics;
+
+service AnalyticsService {
+  rpc GetUserAnalytics (UserAnalyticsRequest) returns (UserAnalyticsResponse);
+  rpc GetSpendingTrends (SpendingTrendsRequest) returns (SpendingTrendsResponse);
+  rpc GetCategoryBreakdown (CategoryBreakdownRequest) returns (CategoryBreakdownResponse);
+  rpc PredictFutureSpending (PredictionRequest) returns (PredictionResponse);
+  rpc GetAnomalies (AnomalyRequest) returns (AnomalyResponse);
+}
+
+message UserAnalyticsRequest {
+  int32 userId = 1;
+  string period = 2;
+  string startDate = 3;
+  string endDate = 4;
+}
+
+message UserAnalyticsResponse {
+  double totalIncome = 1;
+  double totalExpense = 2;
+  double balance = 3;
+  int32 transactionCount = 4;
+  double avgTransactionAmount = 5;
+  repeated CategoryStat topCategories = 6;
+  repeated DailyTrend dailyTrends = 7;
+}
+
+message CategoryStat {
+  string categoryId = 1;
+  string categoryName = 2;
+  double amount = 3;
+  double percentage = 4;
+  int32 count = 5;
+}
+
+message DailyTrend {
+  string date = 1;
+  double income = 2;
+  double expense = 3;
+  double balance = 4;
+}
+
+message SpendingTrendsRequest {
+  int32 userId = 1;
+  int32 months = 2;
+}
+
+message SpendingTrendsResponse {
+  repeated MonthlyTrend trends = 1;
+  double avgMonthlySpending = 2;
+  double trendDirection = 3;
+}
+
+message MonthlyTrend {
+  string month = 1;
+  double income = 2;
+  double expense = 3;
+  double savings = 4;
+}
+
+message CategoryBreakdownRequest {
+  int32 userId = 1;
+  string period = 2;
+}
+
+message CategoryBreakdownResponse {
+  repeated CategoryStat categories = 1;
+  string topCategory = 2;
+  double topCategoryPercentage = 3;
+}
+
+message PredictionRequest {
+  int32 userId = 1;
+  int32 daysAhead = 2;
+}
+
+message PredictionResponse {
+  double predictedSpending = 1;
+  double confidence = 2;
+  repeated DailyPrediction dailyPredictions = 3;
+}
+
+message DailyPrediction {
+  string date = 1;
+  double predictedAmount = 2;
+  double lowerBound = 3;
+  double upperBound = 4;
+}
+
+message AnomalyRequest {
+  int32 userId = 1;
+  int32 days = 2;
+}
+
+message AnomalyResponse {
+  repeated Anomaly anomalies = 1;
+  int32 totalAnomalies = 2;
+}
+
+message Anomaly {
+  string date = 1;
+  double amount = 2;
+  string type = 3;
+  double score = 4;
+  string reason = 5;
+}
