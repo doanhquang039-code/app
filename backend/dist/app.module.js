@@ -76,6 +76,11 @@ const scheduled_transaction_entity_1 = require("./entities/scheduled-transaction
 const voice_command_entity_1 = require("./entities/voice-command.entity");
 const receipt_entity_1 = require("./entities/receipt.entity");
 const third_party_integration_entity_1 = require("./entities/third-party-integration.entity");
+const ai_module_1 = require("./ai/ai.module");
+const export_module_1 = require("./export/export.module");
+const ocr_module_1 = require("./ocr/ocr.module");
+const websocket_module_1 = require("./websocket/websocket.module");
+const gamification_module_2 = require("./gamification/gamification.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -153,6 +158,11 @@ exports.AppModule = AppModule = __decorate([
             gamification_module_1.GamificationModule,
             social_module_1.SocialModule,
             subscriptions_module_1.SubscriptionsModule,
+            ai_module_1.AIModule,
+            export_module_1.ExportModule,
+            ocr_module_1.OCRModule,
+            websocket_module_1.WebsocketModule,
+            gamification_module_2.GamificationModule,
         ],
     })
 ], AppModule);

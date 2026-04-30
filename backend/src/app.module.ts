@@ -67,6 +67,11 @@ import { ScheduledTransaction } from './entities/scheduled-transaction.entity';
 import { VoiceCommand } from './entities/voice-command.entity';
 import { Receipt } from './entities/receipt.entity';
 import { ThirdPartyIntegration } from './entities/third-party-integration.entity';
+import { AIModule } from './ai/ai.module';
+import { ExportModule } from './export/export.module';
+import { OCRModule } from './ocr/ocr.module';
+import { WebsocketModule } from './websocket/websocket.module';
+import { GamificationModule as GamificationVIPModule } from './gamification/gamification.module';
 
 @Module({
   imports: [
@@ -141,6 +146,11 @@ import { ThirdPartyIntegration } from './entities/third-party-integration.entity
     GamificationModule,
     SocialModule,
     SubscriptionsModule,
+    AIModule,
+    ExportModule,
+    OCRModule,
+    WebsocketModule,
+    GamificationVIPModule,
   ],
 })
 export class AppModule {}
