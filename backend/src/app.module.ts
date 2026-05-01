@@ -77,6 +77,8 @@ import { RedisModule } from './redis/redis.module';
 import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
 import { QueueModule } from './queue/queue.module';
 import { CloudModule } from './cloud/cloud.module';
+import { MLModule } from './ml/ml.module';
+import { SearchModule } from './modules/search/search.module';
 
 @Module({
   imports: [
@@ -161,6 +163,8 @@ import { CloudModule } from './cloud/cloud.module';
     ElasticsearchModule,
     QueueModule,
     CloudModule,
+    MLModule,
+    SearchModule,
   ],
 })
 export class AppModule {}

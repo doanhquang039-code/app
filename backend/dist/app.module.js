@@ -86,6 +86,8 @@ const redis_module_1 = require("./redis/redis.module");
 const elasticsearch_module_1 = require("./elasticsearch/elasticsearch.module");
 const queue_module_1 = require("./queue/queue.module");
 const cloud_module_1 = require("./cloud/cloud.module");
+const ml_module_1 = require("./ml/ml.module");
+const search_module_1 = require("./modules/search/search.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -173,6 +175,8 @@ exports.AppModule = AppModule = __decorate([
             elasticsearch_module_1.ElasticsearchModule,
             queue_module_1.QueueModule,
             cloud_module_1.CloudModule,
+            ml_module_1.MLModule,
+            search_module_1.SearchModule,
         ],
     })
 ], AppModule);

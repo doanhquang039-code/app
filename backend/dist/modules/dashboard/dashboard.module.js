@@ -11,16 +11,21 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const transaction_entity_1 = require("../../entities/transaction.entity");
 const wallet_entity_1 = require("../../entities/wallet.entity");
+const budget_entity_1 = require("../../entities/budget.entity");
+const user_entity_1 = require("../../entities/user.entity");
 const dashboard_controller_1 = require("./dashboard.controller");
 const dashboard_service_1 = require("./dashboard.service");
+const advanced_dashboard_controller_1 = require("./advanced-dashboard.controller");
+const advanced_dashboard_service_1 = require("./advanced-dashboard.service");
 let DashboardModule = class DashboardModule {
 };
 exports.DashboardModule = DashboardModule;
 exports.DashboardModule = DashboardModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([transaction_entity_1.Transaction, wallet_entity_1.Wallet])],
-        controllers: [dashboard_controller_1.DashboardController],
-        providers: [dashboard_service_1.DashboardService],
+        imports: [typeorm_1.TypeOrmModule.forFeature([transaction_entity_1.Transaction, wallet_entity_1.Wallet, budget_entity_1.Budget, user_entity_1.User])],
+        controllers: [dashboard_controller_1.DashboardController, advanced_dashboard_controller_1.AdvancedDashboardController],
+        providers: [dashboard_service_1.DashboardService, advanced_dashboard_service_1.AdvancedDashboardService],
+        exports: [dashboard_service_1.DashboardService, advanced_dashboard_service_1.AdvancedDashboardService],
     })
 ], DashboardModule);
 //# sourceMappingURL=dashboard.module.js.map
