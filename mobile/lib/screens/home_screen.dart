@@ -20,8 +20,7 @@ import 'analytics_screen.dart';
 import 'shared_expenses_screen.dart';
 import 'multi_currency_screen.dart';
 import 'financial_reports_screen.dart';
-import 'debt_screen.dart';
-import 'investment_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -264,6 +263,44 @@ class _HomeScreenState extends State<HomeScreen> {
                             }),
                             _quickAction('Tài sản ròng', Icons.trending_up_rounded, const Color(0xFF38EF7D), () {
                               Navigator.pushNamed(context, '/net-worth');
+                            }),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        // Quick actions - Row 4 (NEW AI & ADVANCED FEATURES)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('AI Trợ lý', Icons.psychology_rounded, const Color(0xFF6C63FF), () {
+                              Navigator.pushNamed(context, '/ai-assistant');
+                            }),
+                            _quickAction('Dự đoán', Icons.insights_rounded, const Color(0xFFEB5757), () {
+                              Navigator.pushNamed(context, '/expense-prediction');
+                            }),
+                            _quickAction('Ngân sách AI', Icons.auto_awesome_rounded, const Color(0xFF11998E), () {
+                              Navigator.pushNamed(context, '/smart-budgeting');
+                            }),
+                            _quickAction('Mục tiêu', Icons.flag_rounded, const Color(0xFF8E2DE2), () {
+                              Navigator.pushNamed(context, '/financial-goals');
+                            }),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        // Quick actions - Row 5 (INVESTMENT & TAX)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('Thuế', Icons.calculate_rounded, const Color(0xFF2C5364), () {
+                              Navigator.pushNamed(context, '/tax-calculator');
+                            }),
+                            _quickAction('Crypto', Icons.currency_bitcoin_rounded, const Color(0xFFF97316), () {
+                              Navigator.pushNamed(context, '/crypto-portfolio');
+                            }),
+                            _quickAction('Cổ phiếu', Icons.show_chart_rounded, const Color(0xFF1A2980), () {
+                              Navigator.pushNamed(context, '/stock-market');
+                            }),
+                            _quickAction('Quét hóa đơn', Icons.document_scanner_rounded, const Color(0xFF38EF7D), () {
+                              Navigator.pushNamed(context, '/receipt-scanner');
                             }),
                           ],
                         ),

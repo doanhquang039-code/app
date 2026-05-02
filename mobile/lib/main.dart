@@ -34,6 +34,14 @@ import 'screens/debt_screen.dart';
 import 'screens/investment_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/ai_assistant_screen.dart';
+import 'screens/expense_prediction_screen.dart';
+import 'screens/smart_budgeting_screen.dart';
+import 'screens/financial_goals_screen.dart';
+import 'screens/tax_calculator_screen.dart';
+import 'screens/crypto_portfolio_screen.dart';
+import 'screens/stock_market_screen.dart';
+import 'screens/receipt_scanner_screen.dart';
 
 void main() {
   runApp(
@@ -119,6 +127,14 @@ class MyApp extends StatelessWidget {
         '/investments': (_) => const InvestmentScreen(),
         '/search': (_) => const SearchScreen(),
         '/settings': (_) => const SettingsScreen(),
+        '/ai-assistant': (_) => const AIAssistantScreen(),
+        '/expense-prediction': (_) => const ExpensePredictionScreen(),
+        '/smart-budgeting': (_) => const SmartBudgetingScreen(),
+        '/financial-goals': (_) => const FinancialGoalsScreen(),
+        '/tax-calculator': (_) => const TaxCalculatorScreen(),
+        '/crypto-portfolio': (_) => const CryptoPortfolioScreen(),
+        '/stock-market': (_) => const StockMarketScreen(),
+        '/receipt-scanner': (_) => const ReceiptScannerScreen(),
       },
     );
   }
