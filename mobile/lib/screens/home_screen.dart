@@ -304,6 +304,44 @@ class _HomeScreenState extends State<HomeScreen> {
                             }),
                           ],
                         ),
+                        const SizedBox(height: 14),
+                        // Quick actions - Row 6 (NEW ADVANCED FEATURES)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('Bảo hiểm', Icons.shield_rounded, const Color(0xFF11998E), () {
+                              Navigator.pushNamed(context, '/insurance-manager');
+                            }),
+                            _quickAction('Khoản vay', Icons.calculate_rounded, const Color(0xFFEB5757), () {
+                              Navigator.pushNamed(context, '/loan-calculator');
+                            }),
+                            _quickAction('Đăng ký', Icons.subscriptions_rounded, const Color(0xFF8E2DE2), () {
+                              Navigator.pushNamed(context, '/subscription-manager');
+                            }),
+                            _quickAction('Tin tức', Icons.newspaper_rounded, const Color(0xFF6C63FF), () {
+                              Navigator.pushNamed(context, '/financial-news');
+                            }),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        // Quick actions - Row 7 (MORE FEATURES)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('Cảnh báo', Icons.notifications_active_rounded, const Color(0xFFF97316), () {
+                              Navigator.pushNamed(context, '/budget-alerts');
+                            }),
+                            _quickAction('Danh mục', Icons.category_rounded, const Color(0xFF1A2980), () {
+                              Navigator.pushNamed(context, '/category-manager');
+                            }),
+                            _quickAction('Nợ', Icons.credit_card_rounded, const Color(0xFF2C5364), () {
+                              Navigator.pushNamed(context, '/debts');
+                            }),
+                            _quickAction('Đầu tư', Icons.trending_up_rounded, const Color(0xFF38EF7D), () {
+                              Navigator.pushNamed(context, '/investments');
+                            }),
+                          ],
+                        ),
                         const SizedBox(height: 24),
 
                         // Wallets scroll

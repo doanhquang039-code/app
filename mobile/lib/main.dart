@@ -42,6 +42,12 @@ import 'screens/tax_calculator_screen.dart';
 import 'screens/crypto_portfolio_screen.dart';
 import 'screens/stock_market_screen.dart';
 import 'screens/receipt_scanner_screen.dart';
+import 'screens/insurance_manager_screen.dart';
+import 'screens/loan_calculator_screen.dart';
+import 'screens/subscription_manager_screen.dart';
+import 'screens/financial_news_screen.dart';
+import 'screens/budget_alerts_screen.dart';
+import 'screens/category_manager_screen.dart';
 
 void main() {
   runApp(
@@ -135,6 +141,12 @@ class MyApp extends StatelessWidget {
         '/crypto-portfolio': (_) => const CryptoPortfolioScreen(),
         '/stock-market': (_) => const StockMarketScreen(),
         '/receipt-scanner': (_) => const ReceiptScannerScreen(),
+        '/insurance-manager': (_) => const InsuranceManagerScreen(),
+        '/loan-calculator': (_) => const LoanCalculatorScreen(),
+        '/subscription-manager': (_) => const SubscriptionManagerScreen(),
+        '/financial-news': (_) => const FinancialNewsScreen(),
+        '/budget-alerts': (_) => const BudgetAlertsScreen(),
+        '/category-manager': (_) => const CategoryManagerScreen(),
       },
     );
   }
