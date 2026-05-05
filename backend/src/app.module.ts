@@ -67,18 +67,11 @@ import { ScheduledTransaction } from './entities/scheduled-transaction.entity';
 import { VoiceCommand } from './entities/voice-command.entity';
 import { Receipt } from './entities/receipt.entity';
 import { ThirdPartyIntegration } from './entities/third-party-integration.entity';
-import { AIModule } from './ai/ai.module';
-import { ExportModule } from './export/export.module';
-import { OCRModule } from './ocr/ocr.module';
-import { WebsocketModule } from './websocket/websocket.module';
-import { GamificationModule as GamificationVIPModule } from './gamification/gamification.module';
-import { GraphqlModule } from './graphql/graphql.module';
-import { RedisModule } from './redis/redis.module';
-import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
-import { QueueModule } from './queue/queue.module';
-import { CloudModule } from './cloud/cloud.module';
-import { MLModule } from './ml/ml.module';
 import { SearchModule } from './modules/search/search.module';
+
+// ⚠️  GraphQL, Redis, Elasticsearch, Queue, Cloud, ML, WebSocket, OCR modules
+// đã được TẮT vì cần external services không có trên local.
+// Bật lại khi deploy production.
 
 @Module({
   imports: [
@@ -93,7 +86,21 @@ import { SearchModule } from './modules/search/search.module';
         username: configService.get('DB_USERNAME', 'sa'),
         password: configService.get('DB_PASSWORD', '123456789'),
         database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-        entities: [User, Wallet, Category, Transaction, Budget, RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder, BankAccount, CreditCard, SmartNotification, NotificationRule, AnalyticsData, SpendingForecast, SharedExpenseGroup, SharedExpense, GroupSettlement, FinancialReport, Currency, MultiCurrencyWallet, ExchangeRateHistory, UserProfile, TransactionAttachment, Debt, DebtPayment, Investment, InvestmentTransaction, AuditLog, NetWorthSnapshot, BankTransaction, ScheduledTransaction, VoiceCommand, Receipt, ThirdPartyIntegration],
+        entities: [
+          User, Wallet, Category, Transaction, Budget,
+          RecurringTransaction, SavingsGoal, Tag, BudgetAlert, BillReminder,
+          BankAccount, CreditCard, SmartNotification, NotificationRule,
+          AnalyticsData, SpendingForecast,
+          SharedExpenseGroup, SharedExpense, GroupSettlement,
+          FinancialReport,
+          Currency, MultiCurrencyWallet, ExchangeRateHistory,
+          UserProfile, TransactionAttachment,
+          Debt, DebtPayment,
+          Investment, InvestmentTransaction,
+          AuditLog, NetWorthSnapshot,
+          BankTransaction, ScheduledTransaction,
+          VoiceCommand, Receipt, ThirdPartyIntegration,
+        ],
         synchronize: false,
         options: {
           encrypt: false,
@@ -117,6 +124,7 @@ import { SearchModule } from './modules/search/search.module';
         },
       }),
     }),
+    // --- Core Modules ---
     AuthModule,
     TransactionsModule,
     CategoriesModule,
@@ -153,18 +161,19 @@ import { SearchModule } from './modules/search/search.module';
     GamificationModule,
     SocialModule,
     SubscriptionsModule,
-    AIModule,
-    ExportModule,
-    OCRModule,
-    WebsocketModule,
-    GamificationVIPModule,
-    GraphqlModule,
-    RedisModule,
-    ElasticsearchModule,
-    QueueModule,
-    CloudModule,
-    MLModule,
     SearchModule,
+    // --- DISABLED (cần external services) ---
+    // AIModule,       // requires OpenAI key
+    // ExportModule,   // duplicate
+    // OCRModule,      // requires Tesseract/cloud OCR
+    // WebsocketModule,
+    // GamificationVIPModule,
+    // GraphqlModule,  // requires @apollo/server
+    // RedisModule,    // requires Redis server
+    // ElasticsearchModule, // requires Elasticsearch server
+    // QueueModule,    // requires Bull/Redis
+    // CloudModule,    // requires AWS credentials
+    // MLModule,       // requires ML endpoints
   ],
 })
 export class AppModule {}

@@ -66,8 +66,8 @@ export class Receipt {
   @Column({ nullable: true })
   paymentMethod: string;
 
-  @Column({ type: 'json', nullable: true })
-  items: string; // Array of line items
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  items: string; // JSON string of line items
 
   @Column({ type: 'text', nullable: true })
   rawText: string; // Full OCR text
@@ -90,7 +90,7 @@ export class Receipt {
   @Column({ type: 'text', nullable: true })
   notes: string;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
   metadata: string;
 
   @CreateDateColumn()

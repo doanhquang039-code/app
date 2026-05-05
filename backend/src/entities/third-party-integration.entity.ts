@@ -45,10 +45,10 @@ export class ThirdPartyIntegration {
   @Column({ default: 'ACTIVE' })
   status: string; // ACTIVE, INACTIVE, ERROR, EXPIRED
 
-  @Column({ type: 'json', nullable: true })
-  permissions: string; // JSON array of permissions
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  permissions: string; // JSON string of permissions
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
   settings: string; // Provider-specific settings
 
   @Column({ default: true })

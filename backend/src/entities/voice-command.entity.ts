@@ -29,8 +29,8 @@ export class VoiceCommand {
   @Column()
   intent: string; // ADD_TRANSACTION, GET_BALANCE, VIEW_BUDGET, etc.
 
-  @Column({ type: 'json', nullable: true })
-  entities: string; // Extracted entities (amount, category, date, etc.)
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  entities: string; // JSON string of extracted entities
 
   @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
   confidence: number; // 0-100

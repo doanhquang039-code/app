@@ -12,6 +12,7 @@ export declare class AuthController {
         user: {
             id: number;
             email: string;
+            username: string;
             fullName: string;
         };
     }>;

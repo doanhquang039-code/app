@@ -1,8 +1,8 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class LoginDto {
-  @IsEmail()
-  email: string;
+  @IsString()
+  username: string; // username hoặc email đều được chấp nhận
 
   @IsString()
   password: string;

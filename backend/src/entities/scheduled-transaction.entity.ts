@@ -75,14 +75,14 @@ export class ScheduledTransaction {
   @Column({ nullable: true })
   customPattern: string; // e.g., "every 2 weeks on Monday"
 
-  @Column({ type: 'json', nullable: true })
-  daysOfWeek: string; // [1,3,5] for Mon, Wed, Fri
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  daysOfWeek: string; // JSON string: '[1,3,5]' for Mon, Wed, Fri
 
-  @Column({ type: 'json', nullable: true })
-  daysOfMonth: string; // [1,15] for 1st and 15th
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  daysOfMonth: string; // JSON string: '[1,15]' for 1st and 15th
 
-  @Column({ type: 'json', nullable: true })
-  monthsOfYear: string; // [1,6,12] for Jan, Jun, Dec
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  monthsOfYear: string; // JSON string: '[1,6,12]' for Jan, Jun, Dec
 
   // Smart features
   @Column({ default: false })

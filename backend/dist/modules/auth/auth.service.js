@@ -60,36 +60,55 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async register(dto) {
-        const exists = await this.userRepository.findOne({
+        const emailExists = await this.userRepository.findOne({
             where: { email: dto.email },
         });
-        if (exists)
+        if (emailExists)
             throw new common_1.ConflictException('Email đã tồn tại');
+        const usernameExists = await this.userRepository.findOne({
+            where: { username: dto.username },
+        });
+        if (usernameExists)
+            throw new common_1.ConflictException('Tên đăng nhập đã tồn tại');
         const hashed = await bcrypt.hash(dto.password, 10);
         const user = this.userRepository.create({
+            username: dto.username,
             email: dto.email,
             password: hashed,
-            fullName: dto.fullName,
+            fullName: dto.fullName || dto.username,
         });
         await this.userRepository.save(user);
         return { message: 'Đăng ký thành công' };
     }
     async login(dto) {
-        const user = await this.userRepository.findOne({
-            where: { email: dto.email },
-        });
-        if (!user)
-            throw new common_1.UnauthorizedException('Email hoặc mật khẩu không đúng');
+        const usernameOrEmail = dto.username;
+        const isEmail = usernameOrEmail.includes('@');
+        let user = null;
+        if (isEmail) {
+            user = await this.userRepository.findOne({
+                where: { email: usernameOrEmail },
+            });
+        }
+        else {
+            user = await this.userRepository.findOne({
+                where: { username: usernameOrEmail },
+            });
+        }
+        if (!user) {
+            throw new common_1.UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng');
+        }
         const isMatch = await bcrypt.compare(dto.password, user.password);
-        if (!isMatch)
-            throw new common_1.UnauthorizedException('Email hoặc mật khẩu không đúng');
-        const payload = { sub: user.id, email: user.email };
+        if (!isMatch) {
+            throw new common_1.UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng');
+        }
+        const payload = { sub: user.id, email: user.email, username: user.username };
         const token = this.jwtService.sign(payload);
         return {
             access_token: token,
             user: {
                 id: user.id,
                 email: user.email,
+                username: user.username,
                 fullName: user.fullName,
             },
         };

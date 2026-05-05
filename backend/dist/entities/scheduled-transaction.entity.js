@@ -130,15 +130,15 @@ __decorate([
     __metadata("design:type", String)
 ], ScheduledTransaction.prototype, "customPattern", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'json', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'nvarchar', length: 'max', nullable: true }),
     __metadata("design:type", String)
 ], ScheduledTransaction.prototype, "daysOfWeek", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'json', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'nvarchar', length: 'max', nullable: true }),
     __metadata("design:type", String)
 ], ScheduledTransaction.prototype, "daysOfMonth", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'json', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'nvarchar', length: 'max', nullable: true }),
     __metadata("design:type", String)
 ], ScheduledTransaction.prototype, "monthsOfYear", void 0);
 __decorate([

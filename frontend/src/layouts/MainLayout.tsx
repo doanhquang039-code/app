@@ -1,10 +1,11 @@
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/Header'
+import QuickAddExpense from '../components/QuickAddExpense'
 
 export default function MainLayout() {
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen" style={{ background: 'var(--color-bg)' }}>
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
@@ -12,6 +13,8 @@ export default function MainLayout() {
           <Outlet />
         </main>
       </div>
+      {/* Floating Quick Add - available on all pages */}
+      <QuickAddExpense />
     </div>
   )
 }

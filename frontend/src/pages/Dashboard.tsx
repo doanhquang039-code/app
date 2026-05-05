@@ -1,199 +1,240 @@
 import { useQuery } from 'react-query'
 import {
-  TrendingUp,
-  TrendingDown,
-  Wallet,
-  Target,
-  CreditCard,
-  AlertCircle,
+  TrendingUp, TrendingDown, Wallet, Target, CreditCard, AlertCircle,
+  ArrowUpRight, ArrowDownRight, Sparkles, Activity,
 } from 'lucide-react'
 import api from '../lib/api'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, Legend,
+} from 'recharts'
 
-const COLORS = ['#0ea5e9', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
+const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#38bdf8']
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass rounded-xl p-3 text-sm">
+        <p className="text-muted mb-1">{label}</p>
+        {payload.map((p: any) => (
+          <p key={p.name} style={{ color: p.color }} className="font-semibold">
+            {p.name}: {formatCurrencyStatic(p.value)}
+          </p>
+        ))}
+      </div>
+    )
+  }
+  return null
+}
+
+function formatCurrencyStatic(amount: number) {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
+}
 
 export default function Dashboard() {
   const { data: stats } = useQuery('dashboard-stats', async () => {
-    const response = await api.get('/dashboard/stats')
-    return response.data
+    const res = await api.get('/dashboard/stats')
+    return res.data
   })
 
   const { data: recentTransactions } = useQuery('recent-transactions', async () => {
-    const response = await api.get('/transactions?limit=5')
-    return response.data
+    const res = await api.get('/transactions?limit=5')
+    return res.data
   })
 
   const { data: monthlyTrend } = useQuery('monthly-trend', async () => {
-    const response = await api.get('/financial-insights/monthly-trend?months=6')
-    return response.data
+    const res = await api.get('/financial-insights/monthly-trend?months=6')
+    return res.data
   })
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(amount)
-  }
+  const formatCurrency = (amount: number) => formatCurrencyStatic(amount)
 
   const trendData = monthlyTrend
     ? Object.entries(monthlyTrend).map(([month, data]: [string, any]) => ({
         month,
-        income: data.income,
-        expense: data.expense,
+        'Thu nhập': data.income,
+        'Chi tiêu':  data.expense,
         net: data.net,
       }))
     : []
 
+  const statCards = [
+    {
+      label: 'Thu nhập tháng này',
+      value: stats?.monthlyIncome || 0,
+      icon: <TrendingUp className="w-5 h-5" />,
+      cls: 'stat-card-success',
+      iconCls: 'icon-bubble-success',
+      textCls: 'text-emerald-400',
+      change: '+12.5%',
+      up: true,
+    },
+    {
+      label: 'Chi tiêu tháng này',
+      value: stats?.monthlyExpense || 0,
+      icon: <TrendingDown className="w-5 h-5" />,
+      cls: 'stat-card-danger',
+      iconCls: 'icon-bubble-danger',
+      textCls: 'text-rose-400',
+      change: '+3.2%',
+      up: false,
+    },
+    {
+      label: 'Số dư ví',
+      value: stats?.totalBalance || 0,
+      icon: <Wallet className="w-5 h-5" />,
+      cls: 'stat-card-primary',
+      iconCls: 'icon-bubble-primary',
+      textCls: 'text-indigo-400',
+      change: '+8.1%',
+      up: true,
+    },
+    {
+      label: 'Mục tiêu tiết kiệm',
+      value: stats?.savingsGoalsCount || 0,
+      icon: <Target className="w-5 h-5" />,
+      cls: 'stat-card-warning',
+      iconCls: 'icon-bubble-warning',
+      textCls: 'text-amber-400',
+      isCounting: true,
+      change: '+2',
+      up: true,
+    },
+  ]
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Tổng quan tài chính của bạn</p>
+    <div className="space-y-6 animate-fade-in-up">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+            <Sparkles className="w-7 h-7 text-indigo-400" />
+            Dashboard
+          </h1>
+          <p className="text-muted mt-1">Tổng quan tài chính của bạn hôm nay</p>
+        </div>
+        <div className="badge badge-primary flex items-center gap-1.5">
+          <Activity className="w-3 h-3" />
+          Live
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Thu nhập tháng này</p>
-              <p className="text-2xl font-bold text-success-600 mt-1">
-                {formatCurrency(stats?.monthlyIncome || 0)}
-              </p>
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+        {statCards.map((s, i) => (
+          <div key={i} className={`stat-card ${s.cls}`} style={{ animationDelay: `${i * 0.07}s` }}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-muted text-sm font-medium">{s.label}</p>
+              <div className={`icon-bubble ${s.iconCls}`}>{s.icon}</div>
             </div>
-            <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-success-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Chi tiêu tháng này</p>
-              <p className="text-2xl font-bold text-danger-600 mt-1">
-                {formatCurrency(stats?.monthlyExpense || 0)}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
-              <TrendingDown className="w-6 h-6 text-danger-600" />
+            <p className={`text-2xl font-bold ${s.textCls}`}>
+              {s.isCounting ? s.value : formatCurrency(s.value)}
+            </p>
+            <div className="flex items-center gap-1 mt-2">
+              {s.up
+                ? <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
+                : <ArrowDownRight className="w-3.5 h-3.5 text-rose-400" />}
+              <span className={`text-xs font-semibold ${s.up ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {s.change}
+              </span>
+              <span className="text-muted text-xs">so với tháng trước</span>
             </div>
           </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Số dư ví</p>
-              <p className="text-2xl font-bold text-primary-600 mt-1">
-                {formatCurrency(stats?.totalBalance || 0)}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-              <Wallet className="w-6 h-6 text-primary-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Mục tiêu tiết kiệm</p>
-              <p className="text-2xl font-bold text-warning-600 mt-1">
-                {stats?.savingsGoalsCount || 0}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-warning-100 rounded-full flex items-center justify-center">
-              <Target className="w-6 h-6 text-warning-600" />
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Monthly Trend */}
-        <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Xu hướng 6 tháng</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trendData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip formatter={(value: number) => formatCurrency(value)} />
-              <Bar dataKey="income" fill="#22c55e" name="Thu nhập" />
-              <Bar dataKey="expense" fill="#ef4444" name="Chi tiêu" />
-            </BarChart>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        {/* Area Chart - chiếm 2 cột */}
+        <div className="card xl:col-span-2">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-semibold text-white">Xu hướng 6 tháng</h3>
+            <span className="badge badge-primary">6T qua</span>
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={trendData}>
+              <defs>
+                <linearGradient id="income" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#10b981" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}    />
+                </linearGradient>
+                <linearGradient id="expense" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#f43f5e" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}    />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false}
+                     tickFormatter={v => (v / 1000000).toFixed(0) + 'M'} />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend wrapperStyle={{ color: '#9ca3af', fontSize: '12px', paddingTop: '8px' }} />
+              <Area type="monotone" dataKey="Thu nhập" stroke="#10b981" strokeWidth={2.5} fill="url(#income)" dot={false} />
+              <Area type="monotone" dataKey="Chi tiêu"  stroke="#f43f5e" strokeWidth={2.5} fill="url(#expense)" dot={false} />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Category Breakdown */}
+        {/* Pie Chart */}
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Chi tiêu theo danh mục</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-semibold text-white">Chi tiêu theo danh mục</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
                 data={stats?.categoryBreakdown || []}
                 cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={(entry) => entry.name}
-                outerRadius={80}
-                fill="#8884d8"
+                cy="45%"
+                innerRadius={60}
+                outerRadius={95}
+                paddingAngle={3}
                 dataKey="value"
               >
-                {(stats?.categoryBreakdown || []).map((_entry: any, index: number) => (
+                {(stats?.categoryBreakdown || []).map((_: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => formatCurrency(value)} />
+              <Tooltip formatter={(v: number) => formatCurrency(v)} />
+              <Legend wrapperStyle={{ fontSize: '11px', color: '#9ca3af' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Recent Transactions & Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Bottom Section */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         {/* Recent Transactions */}
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Giao dịch gần đây</h3>
-          <div className="space-y-3">
-            {recentTransactions?.map((transaction: any) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-              >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-white">Giao dịch gần đây</h3>
+            <a href="/transactions" className="text-indigo-400 text-sm hover:text-indigo-300 font-medium transition-colors">
+              Xem tất cả →
+            </a>
+          </div>
+          <div className="space-y-2">
+            {(recentTransactions || []).length === 0 && (
+              <p className="text-muted text-sm text-center py-6">Chưa có giao dịch nào</p>
+            )}
+            {(recentTransactions || []).map((t: any) => (
+              <div key={t.id}
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer">
                 <div className="flex items-center gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.type === 'INCOME'
-                        ? 'bg-success-100 text-success-600'
-                        : 'bg-danger-100 text-danger-600'
-                    }`}
-                  >
-                    {transaction.type === 'INCOME' ? (
-                      <TrendingUp className="w-5 h-5" />
-                    ) : (
-                      <TrendingDown className="w-5 h-5" />
-                    )}
+                  <div className={`icon-bubble ${t.type === 'INCOME' ? 'icon-bubble-success' : 'icon-bubble-danger'}`}>
+                    {t.type === 'INCOME'
+                      ? <TrendingUp className="w-4 h-4" />
+                      : <TrendingDown className="w-4 h-4" />}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{transaction.description}</p>
-                    <p className="text-sm text-gray-500">{transaction.category?.name}</p>
+                    <p className="font-medium text-white text-sm">{t.description}</p>
+                    <p className="text-muted text-xs">{t.category?.name}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p
-                    className={`font-semibold ${
-                      transaction.type === 'INCOME' ? 'text-success-600' : 'text-danger-600'
-                    }`}
-                  >
-                    {transaction.type === 'INCOME' ? '+' : '-'}
-                    {formatCurrency(transaction.amount)}
+                  <p className={`font-bold text-sm ${t.type === 'INCOME' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {t.type === 'INCOME' ? '+' : '-'}{formatCurrency(t.amount)}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(transaction.date).toLocaleDateString('vi-VN')}
-                  </p>
+                  <p className="text-muted text-xs">{new Date(t.date).toLocaleDateString('vi-VN')}</p>
                 </div>
               </div>
             ))}
@@ -202,25 +243,27 @@ export default function Dashboard() {
 
         {/* Alerts */}
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Cảnh báo</h3>
+          <h3 className="font-semibold text-white mb-4">Cảnh báo & Thông báo</h3>
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-warning-50 rounded-lg border border-warning-200">
-              <AlertCircle className="w-5 h-5 text-warning-600 mt-0.5" />
+            <div className="alert alert-warning">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-warning-900">Ngân sách sắp vượt</p>
-                <p className="text-sm text-warning-700 mt-1">
-                  Bạn đã chi 85% ngân sách "Ăn uống" tháng này
-                </p>
+                <p className="font-semibold">Ngân sách sắp vượt</p>
+                <p className="text-xs opacity-80 mt-0.5">Bạn đã chi 85% ngân sách "Ăn uống" tháng này</p>
               </div>
             </div>
-
-            <div className="flex items-start gap-3 p-3 bg-primary-50 rounded-lg border border-primary-200">
-              <CreditCard className="w-5 h-5 text-primary-600 mt-0.5" />
+            <div className="alert alert-info">
+              <CreditCard className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-primary-900">Đăng ký sắp hết hạn</p>
-                <p className="text-sm text-primary-700 mt-1">
-                  Netflix Premium sẽ gia hạn vào 3 ngày nữa
-                </p>
+                <p className="font-semibold">Đăng ký sắp gia hạn</p>
+                <p className="text-xs opacity-80 mt-0.5">Netflix Premium sẽ gia hạn vào 3 ngày nữa</p>
+              </div>
+            </div>
+            <div className="alert alert-success">
+              <Target className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold">Đạt mục tiêu tiết kiệm!</p>
+                <p className="text-xs opacity-80 mt-0.5">Mục tiêu "Mua laptop" đã đạt 100% — Chúc mừng!</p>
               </div>
             </div>
           </div>

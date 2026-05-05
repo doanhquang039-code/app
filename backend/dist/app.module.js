@@ -76,17 +76,6 @@ const scheduled_transaction_entity_1 = require("./entities/scheduled-transaction
 const voice_command_entity_1 = require("./entities/voice-command.entity");
 const receipt_entity_1 = require("./entities/receipt.entity");
 const third_party_integration_entity_1 = require("./entities/third-party-integration.entity");
-const ai_module_1 = require("./ai/ai.module");
-const export_module_1 = require("./export/export.module");
-const ocr_module_1 = require("./ocr/ocr.module");
-const websocket_module_1 = require("./websocket/websocket.module");
-const gamification_module_2 = require("./gamification/gamification.module");
-const graphql_module_1 = require("./graphql/graphql.module");
-const redis_module_1 = require("./redis/redis.module");
-const elasticsearch_module_1 = require("./elasticsearch/elasticsearch.module");
-const queue_module_1 = require("./queue/queue.module");
-const cloud_module_1 = require("./cloud/cloud.module");
-const ml_module_1 = require("./ml/ml.module");
 const search_module_1 = require("./modules/search/search.module");
 let AppModule = class AppModule {
 };
@@ -105,7 +94,21 @@ exports.AppModule = AppModule = __decorate([
                     username: configService.get('DB_USERNAME', 'sa'),
                     password: configService.get('DB_PASSWORD', '123456789'),
                     database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
-                    entities: [user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget, recurring_transaction_entity_1.RecurringTransaction, savings_goal_entity_1.SavingsGoal, tag_entity_1.Tag, budget_alert_entity_1.BudgetAlert, bill_reminder_entity_1.BillReminder, bank_account_entity_1.BankAccount, credit_card_entity_1.CreditCard, smart_notification_entity_1.SmartNotification, smart_notification_entity_1.NotificationRule, analytics_entity_1.AnalyticsData, analytics_entity_1.SpendingForecast, shared_expense_entity_1.SharedExpenseGroup, shared_expense_entity_1.SharedExpense, shared_expense_entity_1.GroupSettlement, financial_report_entity_1.FinancialReport, multi_currency_entity_1.Currency, multi_currency_entity_1.MultiCurrencyWallet, multi_currency_entity_1.ExchangeRateHistory, user_profile_entity_1.UserProfile, transaction_attachment_entity_1.TransactionAttachment, debt_entity_1.Debt, debt_entity_1.DebtPayment, investment_entity_1.Investment, investment_entity_1.InvestmentTransaction, audit_log_entity_1.AuditLog, net_worth_snapshot_entity_1.NetWorthSnapshot, bank_transaction_entity_1.BankTransaction, scheduled_transaction_entity_1.ScheduledTransaction, voice_command_entity_1.VoiceCommand, receipt_entity_1.Receipt, third_party_integration_entity_1.ThirdPartyIntegration],
+                    entities: [
+                        user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget,
+                        recurring_transaction_entity_1.RecurringTransaction, savings_goal_entity_1.SavingsGoal, tag_entity_1.Tag, budget_alert_entity_1.BudgetAlert, bill_reminder_entity_1.BillReminder,
+                        bank_account_entity_1.BankAccount, credit_card_entity_1.CreditCard, smart_notification_entity_1.SmartNotification, smart_notification_entity_1.NotificationRule,
+                        analytics_entity_1.AnalyticsData, analytics_entity_1.SpendingForecast,
+                        shared_expense_entity_1.SharedExpenseGroup, shared_expense_entity_1.SharedExpense, shared_expense_entity_1.GroupSettlement,
+                        financial_report_entity_1.FinancialReport,
+                        multi_currency_entity_1.Currency, multi_currency_entity_1.MultiCurrencyWallet, multi_currency_entity_1.ExchangeRateHistory,
+                        user_profile_entity_1.UserProfile, transaction_attachment_entity_1.TransactionAttachment,
+                        debt_entity_1.Debt, debt_entity_1.DebtPayment,
+                        investment_entity_1.Investment, investment_entity_1.InvestmentTransaction,
+                        audit_log_entity_1.AuditLog, net_worth_snapshot_entity_1.NetWorthSnapshot,
+                        bank_transaction_entity_1.BankTransaction, scheduled_transaction_entity_1.ScheduledTransaction,
+                        voice_command_entity_1.VoiceCommand, receipt_entity_1.Receipt, third_party_integration_entity_1.ThirdPartyIntegration,
+                    ],
                     synchronize: false,
                     options: {
                         encrypt: false,
@@ -165,17 +168,6 @@ exports.AppModule = AppModule = __decorate([
             gamification_module_1.GamificationModule,
             social_module_1.SocialModule,
             subscriptions_module_1.SubscriptionsModule,
-            ai_module_1.AIModule,
-            export_module_1.ExportModule,
-            ocr_module_1.OCRModule,
-            websocket_module_1.WebsocketModule,
-            gamification_module_2.GamificationModule,
-            graphql_module_1.GraphqlModule,
-            redis_module_1.RedisModule,
-            elasticsearch_module_1.ElasticsearchModule,
-            queue_module_1.QueueModule,
-            cloud_module_1.CloudModule,
-            ml_module_1.MLModule,
             search_module_1.SearchModule,
         ],
     })

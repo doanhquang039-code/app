@@ -20,17 +20,25 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const exists = await this.userRepository.findOne({
+    // Check email trùng
+    const emailExists = await this.userRepository.findOne({
       where: { email: dto.email },
     });
-    if (exists) throw new ConflictException('Email đã tồn tại');
+    if (emailExists) throw new ConflictException('Email đã tồn tại');
+
+    // Check username trùng
+    const usernameExists = await this.userRepository.findOne({
+      where: { username: dto.username },
+    });
+    if (usernameExists) throw new ConflictException('Tên đăng nhập đã tồn tại');
 
     const hashed = await bcrypt.hash(dto.password, 10);
 
     const user = this.userRepository.create({
+      username: dto.username,
       email: dto.email,
       password: hashed,
-      fullName: dto.fullName,
+      fullName: dto.fullName || dto.username,
     });
 
     await this.userRepository.save(user);
@@ -38,17 +46,32 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: dto.email },
-    });
-    if (!user)
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
+    // Hỗ trợ đăng nhập bằng username hoặc email
+    const usernameOrEmail = dto.username;
+    const isEmail = usernameOrEmail.includes('@');
+
+    let user: User | null = null;
+
+    if (isEmail) {
+      user = await this.userRepository.findOne({
+        where: { email: usernameOrEmail },
+      });
+    } else {
+      user = await this.userRepository.findOne({
+        where: { username: usernameOrEmail },
+      });
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng');
+    }
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
-    if (!isMatch)
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
+    if (!isMatch) {
+      throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng');
+    }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, username: user.username };
     const token = this.jwtService.sign(payload);
 
     return {
@@ -56,6 +79,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        username: user.username,
         fullName: user.fullName,
       },
     };
