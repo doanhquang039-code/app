@@ -10,7 +10,6 @@ import {
   Button,
   Switch,
   FormControlLabel,
-  Grid,
   Avatar,
   IconButton,
   Divider,
@@ -18,8 +17,11 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Alert,
+  Alert
+,
+  Grid,
 } from '@mui/material';
+
 import {
   Person,
   Security,
@@ -86,7 +88,7 @@ export const SettingsPanel: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
+      <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
         Settings
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -112,7 +114,7 @@ export const SettingsPanel: React.FC = () => {
         {/* Profile Tab */}
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Grid size={{ xs: 12 }} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Avatar sx={{ width: 100, height: 100 }}>
                 {profileData.name.charAt(0)}
               </Avatar>
@@ -129,7 +131,7 @@ export const SettingsPanel: React.FC = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 label="Full Name"
@@ -138,7 +140,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 label="Email"
@@ -148,7 +150,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 label="Phone"
@@ -157,7 +159,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" startIcon={<Save />} onClick={handleSave}>
                 Save Changes
               </Button>
@@ -168,13 +170,13 @@ export const SettingsPanel: React.FC = () => {
         {/* Security Tab */}
         <TabPanel value={tabValue} index={1}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Typography variant="h6" gutterBottom>
                 Change Password
               </Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Current Password"
@@ -184,7 +186,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 label="New Password"
@@ -194,7 +196,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 label="Confirm New Password"
@@ -204,7 +206,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" gutterBottom>
                 Two-Factor Authentication
@@ -220,7 +222,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" startIcon={<Save />} onClick={handleSave}>
                 Update Security Settings
               </Button>
@@ -231,13 +233,13 @@ export const SettingsPanel: React.FC = () => {
         {/* Notifications Tab */}
         <TabPanel value={tabValue} index={2}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Typography variant="h6" gutterBottom>
                 Notification Preferences
               </Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -249,7 +251,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -261,14 +263,14 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" gutterBottom>
                 Alert Types
               </Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -280,7 +282,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -292,7 +294,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -304,7 +306,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -316,7 +318,7 @@ export const SettingsPanel: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" startIcon={<Save />} onClick={handleSave}>
                 Save Notification Settings
               </Button>
@@ -327,7 +329,7 @@ export const SettingsPanel: React.FC = () => {
         {/* Appearance Tab */}
         <TabPanel value={tabValue} index={3}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Theme</InputLabel>
                 <Select
@@ -342,7 +344,7 @@ export const SettingsPanel: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Language</InputLabel>
                 <Select
@@ -359,7 +361,7 @@ export const SettingsPanel: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Currency</InputLabel>
                 <Select
@@ -376,7 +378,7 @@ export const SettingsPanel: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Date Format</InputLabel>
                 <Select
@@ -391,7 +393,7 @@ export const SettingsPanel: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" startIcon={<Save />} onClick={handleSave}>
                 Save Appearance Settings
               </Button>

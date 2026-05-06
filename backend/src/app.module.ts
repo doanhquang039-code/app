@@ -68,6 +68,7 @@ import { VoiceCommand } from './entities/voice-command.entity';
 import { Receipt } from './entities/receipt.entity';
 import { ThirdPartyIntegration } from './entities/third-party-integration.entity';
 import { SearchModule } from './modules/search/search.module';
+import { AIModule } from './ai/ai.module';
 
 // ⚠️  GraphQL, Redis, Elasticsearch, Queue, Cloud, ML, WebSocket, OCR modules
 // đã được TẮT vì cần external services không có trên local.
@@ -162,8 +163,9 @@ import { SearchModule } from './modules/search/search.module';
     SocialModule,
     SubscriptionsModule,
     SearchModule,
+    // --- AI Module (OpenAI Integration) ---
+    AIModule,
     // --- DISABLED (cần external services) ---
-    // AIModule,       // requires OpenAI key
     // ExportModule,   // duplicate
     // OCRModule,      // requires Tesseract/cloud OCR
     // WebsocketModule,

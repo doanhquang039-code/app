@@ -4,15 +4,17 @@ import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Chip,
   Avatar,
-  LinearProgress,
+  LinearProgress
+,
+  Grid,
 } from '@mui/material';
+
 import {
   TrendingUp,
   TrendingDown,
@@ -138,7 +140,7 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
             Analytics Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -164,15 +166,15 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
       {predictions && (
         <Card sx={{ mb: 3, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
           <CardContent>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }} gutterBottom>
               🤖 AI Predictions for Next Month
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
                   Predicted Expenses
                 </Typography>
-                <Typography variant="h5" fontWeight="bold">
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                   ${predictions.predictedExpenses?.toFixed(2) || '0.00'}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
@@ -182,11 +184,11 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
                   Budget Overrun Risk
                 </Typography>
-                <Typography variant="h5" fontWeight="bold">
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                   {predictions.overrunRisk || 'Low'}
                 </Typography>
                 <LinearProgress
@@ -199,19 +201,19 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
                   Savings Potential
                 </Typography>
-                <Typography variant="h5" fontWeight="bold">
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                   ${predictions.savingsPotential?.toFixed(2) || '0.00'}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
                   Goal Achievement
                 </Typography>
-                <Typography variant="h5" fontWeight="bold">
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                   {predictions.goalAchievement || 78}%
                 </Typography>
               </Grid>
@@ -224,12 +226,12 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
       {anomalies.length > 0 && (
         <Card sx={{ mb: 3 }}>
           <CardContent>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }} gutterBottom>
               🔍 Detected Anomalies
             </Typography>
             <Grid container spacing={2}>
               {anomalies.slice(0, 4).map((anomaly, index) => (
-                <Grid item xs={12} md={6} key={index}>
+                <Grid size={{ xs: 12, md: 6 }} key={index}>
                   <Box
                     sx={{
                       p: 2,
@@ -239,7 +241,7 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
                     }}
                   >
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="subtitle2" fontWeight="bold">
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
                         {anomaly.type}
                       </Typography>
                       <Chip
@@ -265,14 +267,14 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
       {/* Charts Grid */}
       <Grid container spacing={3}>
         {/* Spending Pattern */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'primary.main' }}>
                   <ShowChart />
                 </Avatar>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                   Weekly Spending Pattern
                 </Typography>
               </Box>
@@ -284,14 +286,14 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
         </Grid>
 
         {/* Category Distribution */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'secondary.main' }}>
                   <PieChart />
                 </Avatar>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                   Category Distribution
                 </Typography>
               </Box>
@@ -303,14 +305,14 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
         </Grid>
 
         {/* Income vs Expenses */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'success.main' }}>
                   <BarChart />
                 </Avatar>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                   Income vs Expenses Comparison
                 </Typography>
               </Box>
@@ -322,14 +324,14 @@ export const AnalyticsDashboard: React.FC<{ userId: number }> = ({ userId }) => 
         </Grid>
 
         {/* Financial Health Radar */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'info.main' }}>
                   <Timeline />
                 </Avatar>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                   Financial Health
                 </Typography>
               </Box>

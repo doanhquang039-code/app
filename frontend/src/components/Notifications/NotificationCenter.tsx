@@ -181,7 +181,7 @@ export const NotificationCenter: React.FC = () => {
             <Notifications fontSize="large" />
           </Badge>
           <Box>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
               Notifications
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -259,7 +259,7 @@ export const NotificationCenter: React.FC = () => {
                     <ListItemText
                       primary={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="subtitle1" fontWeight={notification.read ? 'normal' : 'bold'}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: notification.read ? 'normal' : 'bold' }}>
                             {notification.title}
                           </Typography>
                           {!notification.read && (

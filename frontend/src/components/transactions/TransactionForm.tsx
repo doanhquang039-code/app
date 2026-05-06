@@ -11,7 +11,6 @@ import {
   FormControl,
   InputLabel,
   Box,
-  Grid,
   InputAdornment,
   Chip,
   Autocomplete,
@@ -19,6 +18,7 @@ import {
   ToggleButtonGroup,
   IconButton,
   Typography,
+  Grid,
 } from '@mui/material';
 import {
   AttachMoney,
@@ -130,7 +130,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       <DialogContent dividers>
         <Grid container spacing={3}>
           {/* Transaction Type */}
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <ToggleButtonGroup
                 value={formData.type}
@@ -151,26 +151,26 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </Grid>
 
           {/* Amount */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               fullWidth
               label="Amount"
               type="number"
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              InputProps={{
+              slotProps={{ input: {
                 startAdornment: (
                   <InputAdornment position="start">
                     <AttachMoney />
                   </InputAdornment>
                 ),
-              }}
+              } }}
               required
             />
           </Grid>
 
           {/* Date */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Date"
@@ -182,7 +182,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </Grid>
 
           {/* Category */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth required>
               <InputLabel>Category</InputLabel>
               <Select
@@ -200,7 +200,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </Grid>
 
           {/* Wallet */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth required>
               <InputLabel>Wallet</InputLabel>
               <Select
@@ -218,7 +218,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </Grid>
 
           {/* Tags */}
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Autocomplete
               multiple
               options={tags}
@@ -227,16 +227,11 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
               renderInput={(params) => (
                 <TextField {...params} label="Tags" placeholder="Add tags" />
               )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip label={option} {...getTagProps({ index })} />
-                ))
-              }
             />
           </Grid>
 
           {/* Note */}
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Note"
@@ -249,7 +244,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </Grid>
 
           {/* Attachments */}
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Box>
               <Typography variant="subtitle2" gutterBottom>
                 Attachments

@@ -77,6 +77,7 @@ const voice_command_entity_1 = require("./entities/voice-command.entity");
 const receipt_entity_1 = require("./entities/receipt.entity");
 const third_party_integration_entity_1 = require("./entities/third-party-integration.entity");
 const search_module_1 = require("./modules/search/search.module");
+const ai_module_1 = require("./ai/ai.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -169,6 +170,7 @@ exports.AppModule = AppModule = __decorate([
             social_module_1.SocialModule,
             subscriptions_module_1.SubscriptionsModule,
             search_module_1.SearchModule,
+            ai_module_1.AIModule,
         ],
     })
 ], AppModule);

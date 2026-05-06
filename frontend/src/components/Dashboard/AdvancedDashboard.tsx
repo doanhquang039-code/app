@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
   Button,
-  LinearProgress,
   Chip,
   Avatar,
   IconButton,
   Menu,
   MenuItem,
+  Grid,
 } from '@mui/material';
+
 import {
   TrendingUp,
   TrendingDown,
@@ -166,7 +166,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
+          <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
             Financial Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -190,7 +190,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -198,7 +198,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                   <Typography variant="body2" sx={{ opacity: 0.9 }}>
                     Total Balance
                   </Typography>
-                  <Typography variant="h4" fontWeight="bold" sx={{ mt: 1 }}>
+                  <Typography variant="h4"  sx={{  mt: 1 , fontWeight: 'bold' }}>
                     $12,450
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
@@ -216,7 +216,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card sx={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -224,7 +224,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                   <Typography variant="body2" sx={{ opacity: 0.9 }}>
                     Monthly Income
                   </Typography>
-                  <Typography variant="h4" fontWeight="bold" sx={{ mt: 1 }}>
+                  <Typography variant="h4"  sx={{  mt: 1 , fontWeight: 'bold' }}>
                     $5,600
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
@@ -242,7 +242,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card sx={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -250,7 +250,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                   <Typography variant="body2" sx={{ opacity: 0.9 }}>
                     Monthly Expenses
                   </Typography>
-                  <Typography variant="h4" fontWeight="bold" sx={{ mt: 1 }}>
+                  <Typography variant="h4"  sx={{  mt: 1 , fontWeight: 'bold' }}>
                     $4,200
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
@@ -268,7 +268,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card sx={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', color: 'white' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -276,7 +276,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                   <Typography variant="body2" sx={{ opacity: 0.9 }}>
                     Savings Rate
                   </Typography>
-                  <Typography variant="h4" fontWeight="bold" sx={{ mt: 1 }}>
+                  <Typography variant="h4"  sx={{  mt: 1 , fontWeight: 'bold' }}>
                     25%
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
@@ -297,11 +297,11 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
 
       {/* Charts Row */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                   Spending Trend
                 </Typography>
                 <Button size="small" variant="outlined">
@@ -315,10 +315,10 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }} gutterBottom>
                 Spending by Category
               </Typography>
               <Box sx={{ height: 300 }}>
@@ -331,10 +331,10 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
 
       {/* Budget Progress & Recommendations */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }} gutterBottom>
                 Budget Overview
               </Typography>
               <Box sx={{ height: 300 }}>
@@ -344,10 +344,10 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }} gutterBottom>
                 AI Recommendations
               </Typography>
               <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
@@ -364,7 +364,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                     }}
                   >
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="subtitle2" fontWeight="bold">
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
                         {rec.title}
                       </Typography>
                       <Chip
@@ -392,7 +392,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
       {/* Recent Transactions */}
       <Card>
         <CardContent>
-          <Typography variant="h6" fontWeight="bold" gutterBottom>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }} gutterBottom>
             Recent Transactions
           </Typography>
           <Box>
@@ -421,7 +421,7 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                     {transaction.icon}
                   </Avatar>
                   <Box>
-                    <Typography variant="subtitle2" fontWeight="bold">
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
                       {transaction.name}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -429,9 +429,8 @@ export const AdvancedDashboard: React.FC<DashboardProps> = ({ userId }) => {
                     </Typography>
                   </Box>
                 </Box>
-                <Typography
-                  variant="h6"
-                  fontWeight="bold"
+                <Typography variant="h6"
+                  sx={{ fontWeight: 'bold' }}
                   color={transaction.amount > 0 ? 'success.main' : 'error.main'}
                 >
                   {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}

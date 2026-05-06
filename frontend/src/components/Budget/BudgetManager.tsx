@@ -5,7 +5,6 @@ import {
   CardContent,
   Typography,
   Button,
-  Grid,
   LinearProgress,
   Chip,
   IconButton,
@@ -19,8 +18,11 @@ import {
   FormControl,
   InputLabel,
   Alert,
-  Tooltip,
+  Tooltip
+,
+  Grid,
 } from '@mui/material';
+
 import {
   Add,
   Edit,
@@ -142,7 +144,7 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
       case 'exceeded':
         return 'error';
       default:
-        return 'default';
+        return 'primary';
     }
   };
 
@@ -170,7 +172,7 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
       <Card sx={{ mb: 3, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
         <CardContent>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h5" fontWeight="bold">
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
               Budget Overview
             </Typography>
             <Button
@@ -184,27 +186,27 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
           </Box>
 
           <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="body2" sx={{ opacity: 0.9 }}>
                 Total Budget
               </Typography>
-              <Typography variant="h4" fontWeight="bold">
+              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                 ${totalBudget.toFixed(2)}
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="body2" sx={{ opacity: 0.9 }}>
                 Total Spent
               </Typography>
-              <Typography variant="h4" fontWeight="bold">
+              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                 ${totalSpent.toFixed(2)}
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="body2" sx={{ opacity: 0.9 }}>
                 Remaining
               </Typography>
-              <Typography variant="h4" fontWeight="bold">
+              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                 ${totalRemaining.toFixed(2)}
               </Typography>
             </Grid>
@@ -234,13 +236,13 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
       {/* Budget List */}
       <Grid container spacing={3}>
         {budgets.map((budget) => (
-          <Grid item xs={12} md={6} key={budget.id}>
+          <Grid size={{ xs: 12, md: 6 }} key={budget.id}>
             <Card>
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {getStatusIcon(budget.status)}
-                    <Typography variant="h6" fontWeight="bold">
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                       {budget.categoryName}
                     </Typography>
                   </Box>
@@ -282,7 +284,7 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
                     <Typography variant="body2" color="text.secondary">
                       Remaining
                     </Typography>
-                    <Typography variant="h6" fontWeight="bold" color={budget.remaining < 0 ? 'error' : 'success.main'}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }} color={budget.remaining < 0 ? 'error' : 'success.main'}>
                       ${Math.abs(budget.remaining).toFixed(2)}
                       {budget.remaining < 0 && ' over'}
                     </Typography>
@@ -317,7 +319,7 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth required>
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -333,7 +335,7 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Budget Amount"
@@ -343,14 +345,14 @@ export const BudgetManager: React.FC<BudgetManagerProps> = ({ userId, categories
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Month"
                 type="month"
                 value={formData.month}
                 onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{ inputLabel: { shrink: true } }}
                 required
               />
             </Grid>

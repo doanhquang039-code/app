@@ -11,11 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIAdvisorService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const config_1 = require("@nestjs/config");
+const openai_1 = __importDefault(require("openai"));
 const transaction_entity_1 = require("../entities/transaction.entity");
 const budget_entity_1 = require("../entities/budget.entity");
 const savings_goal_entity_1 = require("../entities/savings-goal.entity");
@@ -23,10 +28,23 @@ let AIAdvisorService = class AIAdvisorService {
     transactionRepo;
     budgetRepo;
     savingsGoalRepo;
-    constructor(transactionRepo, budgetRepo, savingsGoalRepo) {
+    configService;
+    openai = null;
+    useAI = false;
+    constructor(transactionRepo, budgetRepo, savingsGoalRepo, configService) {
         this.transactionRepo = transactionRepo;
         this.budgetRepo = budgetRepo;
         this.savingsGoalRepo = savingsGoalRepo;
+        this.configService = configService;
+        const apiKey = this.configService.get('OPENAI_API_KEY');
+        if (apiKey && apiKey !== 'your-openai-api-key-here') {
+            this.openai = new openai_1.default({ apiKey });
+            this.useAI = true;
+            console.log('✅ OpenAI initialized successfully');
+        }
+        else {
+            console.log('⚠️  OpenAI API key not found, using rule-based responses');
+        }
     }
     async getFinancialInsights(userId) {
         const insights = [];
@@ -193,6 +211,71 @@ let AIAdvisorService = class AIAdvisorService {
         return insights;
     }
     async getChatbotResponse(userId, message) {
+        if (this.useAI && this.openai) {
+            return this.getAIChatResponse(userId, message);
+        }
+        return this.getRuleBasedResponse(userId, message);
+    }
+    async getAIChatResponse(userId, message) {
+        try {
+            if (!this.openai) {
+                return this.getRuleBasedResponse(userId, message);
+            }
+            const context = await this.getUserFinancialContext(userId);
+            const systemPrompt = `Bạn là một trợ lý tài chính AI thông minh, chuyên nghiệp và thân thiện. 
+Nhiệm vụ của bạn là giúp người dùng quản lý tài chính cá nhân, đưa ra lời khuyên về chi tiêu, tiết kiệm và đầu tư.
+
+Thông tin tài chính của người dùng:
+${context}
+
+Hãy trả lời bằng tiếng Việt, ngắn gọn (2-3 câu), thân thiện và hữu ích. 
+Sử dụng emoji phù hợp để làm cho câu trả lời sinh động hơn.`;
+            const completion = await this.openai.chat.completions.create({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: message },
+                ],
+                temperature: 0.7,
+                max_tokens: 300,
+            });
+            return (completion.choices[0]?.message?.content ||
+                'Xin lỗi, tôi không thể xử lý yêu cầu của bạn lúc này.');
+        }
+        catch (error) {
+            console.error('OpenAI API error:', error);
+            return this.getRuleBasedResponse(userId, message);
+        }
+    }
+    async getUserFinancialContext(userId) {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const transactions = await this.transactionRepo.find({
+            where: {
+                userId,
+                date: (0, typeorm_2.Between)(startOfMonth, now),
+            },
+            take: 50,
+        });
+        const totalIncome = transactions
+            .filter((t) => t.type === 'income')
+            .reduce((sum, t) => sum + Number(t.amount), 0);
+        const totalExpense = transactions
+            .filter((t) => t.type === 'expense')
+            .reduce((sum, t) => sum + Number(t.amount), 0);
+        const budgets = await this.budgetRepo.find({ where: { userId } });
+        const goals = await this.savingsGoalRepo.find({
+            where: { userId, status: 'active' },
+        });
+        return `
+- Tháng này: Thu nhập ${totalIncome.toLocaleString('vi-VN')}đ, Chi tiêu ${totalExpense.toLocaleString('vi-VN')}đ
+- Số giao dịch: ${transactions.length}
+- Số ngân sách: ${budgets.length}
+- Số mục tiêu tiết kiệm: ${goals.length}
+- Tổng mục tiêu tiết kiệm: ${goals.reduce((sum, g) => sum + Number(g.targetAmount), 0).toLocaleString('vi-VN')}đ
+    `.trim();
+    }
+    async getRuleBasedResponse(userId, message) {
         const lowerMessage = message.toLowerCase();
         if (lowerMessage.includes('chi tiêu') ||
             lowerMessage.includes('spending')) {
@@ -206,24 +289,33 @@ let AIAdvisorService = class AIAdvisorService {
                 },
             });
             const total = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
-            return `Tháng này bạn đã chi ${total.toLocaleString('vi-VN')}đ qua ${transactions.length} giao dịch.`;
+            return `💰 Tháng này bạn đã chi ${total.toLocaleString('vi-VN')}đ qua ${transactions.length} giao dịch.`;
         }
         if (lowerMessage.includes('tiết kiệm') || lowerMessage.includes('save')) {
             const goals = await this.savingsGoalRepo.find({
                 where: { userId, status: 'active' },
             });
             if (goals.length === 0) {
-                return 'Bạn chưa có mục tiêu tiết kiệm nào. Hãy tạo mục tiêu để bắt đầu!';
+                return '🎯 Bạn chưa có mục tiêu tiết kiệm nào. Hãy tạo mục tiêu để bắt đầu!';
             }
             const totalTarget = goals.reduce((sum, g) => sum + Number(g.targetAmount), 0);
             const totalCurrent = goals.reduce((sum, g) => sum + Number(g.currentAmount), 0);
-            return `Bạn có ${goals.length} mục tiêu tiết kiệm với tổng ${totalTarget.toLocaleString('vi-VN')}đ. Đã đạt ${totalCurrent.toLocaleString('vi-VN')}đ (${((totalCurrent / totalTarget) * 100).toFixed(1)}%).`;
+            return `🎯 Bạn có ${goals.length} mục tiêu tiết kiệm với tổng ${totalTarget.toLocaleString('vi-VN')}đ. Đã đạt ${totalCurrent.toLocaleString('vi-VN')}đ (${((totalCurrent / totalTarget) * 100).toFixed(1)}%).`;
         }
         if (lowerMessage.includes('ngân sách') || lowerMessage.includes('budget')) {
             const budgets = await this.budgetRepo.find({ where: { userId } });
-            return `Bạn có ${budgets.length} ngân sách đang hoạt động. Sử dụng lệnh "xem ngân sách" để biết chi tiết.`;
+            return `📊 Bạn có ${budgets.length} ngân sách đang hoạt động. Sử dụng lệnh "xem ngân sách" để biết chi tiết.`;
         }
-        return 'Tôi có thể giúp bạn về: chi tiêu, tiết kiệm, ngân sách, và phân tích tài chính. Bạn muốn biết gì?';
+        if (lowerMessage.includes('phân tích') ||
+            lowerMessage.includes('analyze')) {
+            const insights = await this.getFinancialInsights(userId);
+            if (insights.length === 0) {
+                return '✅ Tài chính của bạn đang ổn định! Không có cảnh báo nào.';
+            }
+            const topInsight = insights[0];
+            return `${topInsight.type === 'warning' ? '⚠️' : '💡'} ${topInsight.title}: ${topInsight.message}`;
+        }
+        return '👋 Xin chào! Tôi có thể giúp bạn về: chi tiêu 💰, tiết kiệm 🎯, ngân sách 📊, và phân tích tài chính 📈. Bạn muốn biết gì?';
     }
 };
 exports.AIAdvisorService = AIAdvisorService;
@@ -234,6 +326,7 @@ exports.AIAdvisorService = AIAdvisorService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(savings_goal_entity_1.SavingsGoal)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        config_1.ConfigService])
 ], AIAdvisorService);
 //# sourceMappingURL=ai-advisor.service.js.map

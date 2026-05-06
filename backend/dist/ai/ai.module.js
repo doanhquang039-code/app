@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const config_1 = require("@nestjs/config");
 const ai_advisor_controller_1 = require("./ai-advisor.controller");
 const ai_advisor_service_1 = require("./ai-advisor.service");
 const transaction_entity_1 = require("../entities/transaction.entity");
@@ -19,7 +20,10 @@ let AIModule = class AIModule {
 exports.AIModule = AIModule;
 exports.AIModule = AIModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([transaction_entity_1.Transaction, budget_entity_1.Budget, savings_goal_entity_1.SavingsGoal])],
+        imports: [
+            config_1.ConfigModule,
+            typeorm_1.TypeOrmModule.forFeature([transaction_entity_1.Transaction, budget_entity_1.Budget, savings_goal_entity_1.SavingsGoal]),
+        ],
         controllers: [ai_advisor_controller_1.AIAdvisorController],
         providers: [ai_advisor_service_1.AIAdvisorService],
         exports: [ai_advisor_service_1.AIAdvisorService],
