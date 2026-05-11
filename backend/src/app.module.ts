@@ -69,6 +69,19 @@ import { Receipt } from './entities/receipt.entity';
 import { ThirdPartyIntegration } from './entities/third-party-integration.entity';
 import { SearchModule } from './modules/search/search.module';
 import { AIModule } from './ai/ai.module';
+import { CommonModule } from './common/common.module';
+// New optimization entities
+import { QueryCache } from './entities/query-cache.entity';
+import { DailyStatistics } from './entities/daily-statistics.entity';
+import { MonthlyStatistics } from './entities/monthly-statistics.entity';
+import { CategoryPattern } from './entities/category-pattern.entity';
+import { ApiLog } from './entities/api-log.entity';
+import { ErrorLog } from './entities/error-log.entity';
+import { SessionCache } from './entities/session-cache.entity';
+import { UserPreference } from './entities/user-preference.entity';
+import { UserSetting } from './entities/user-setting.entity';
+import { LoginHistory } from './entities/login-history.entity';
+import { SecurityEvent } from './entities/security-event.entity';
 
 // ⚠️  GraphQL, Redis, Elasticsearch, Queue, Cloud, ML, WebSocket, OCR modules
 // đã được TẮT vì cần external services không có trên local.
@@ -101,6 +114,11 @@ import { AIModule } from './ai/ai.module';
           AuditLog, NetWorthSnapshot,
           BankTransaction, ScheduledTransaction,
           VoiceCommand, Receipt, ThirdPartyIntegration,
+          // Optimization entities
+          QueryCache, DailyStatistics, MonthlyStatistics,
+          CategoryPattern, ApiLog, ErrorLog,
+          SessionCache, UserPreference, UserSetting,
+          LoginHistory, SecurityEvent,
         ],
         synchronize: false,
         options: {
@@ -165,6 +183,8 @@ import { AIModule } from './ai/ai.module';
     SearchModule,
     // --- AI Module (OpenAI Integration) ---
     AIModule,
+    // --- Common Module (Cache & Performance) ---
+    CommonModule,
     // --- DISABLED (cần external services) ---
     // ExportModule,   // duplicate
     // OCRModule,      // requires Tesseract/cloud OCR
