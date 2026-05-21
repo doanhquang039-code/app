@@ -29,13 +29,15 @@ let SavingsGoalsService = class SavingsGoalsService {
         if (dto.targetAmount <= 0) {
             throw new common_1.BadRequestException('Mục tiêu tiết kiệm phải lớn hơn 0');
         }
-        const wallet = await this.walletRepository.findOne({
-            where: { id: dto.walletId, userId },
-        });
+        const wallet = dto.walletId
+            ? await this.walletRepository.findOne({
+                where: { id: dto.walletId, userId },
+            })
+            : await this.getOrCreateDefaultWallet(userId);
         if (!wallet) {
             throw new common_1.NotFoundException('Ví không tìm thấy');
         }
-        const startDate = new Date(dto.startDate);
+        const startDate = dto.startDate ? new Date(dto.startDate) : new Date();
         const targetDate = dto.targetDate ? new Date(dto.targetDate) : null;
         if (isNaN(startDate.getTime())) {
             throw new common_1.BadRequestException('Ngày bắt đầu không hợp lệ');
@@ -45,7 +47,7 @@ let SavingsGoalsService = class SavingsGoalsService {
         }
         const goal = this.savingsGoalRepository.create({
             userId,
-            walletId: dto.walletId,
+            walletId: wallet.id,
             name: dto.name,
             description: dto.description,
             targetAmount: dto.targetAmount,
@@ -185,6 +187,22 @@ let SavingsGoalsService = class SavingsGoalsService {
                     (1000 * 60 * 60 * 24)), 0)
                 : null,
         };
+    }
+    async getOrCreateDefaultWallet(userId) {
+        const existingWallet = await this.walletRepository.findOne({
+            where: { userId },
+            order: { createdAt: 'ASC' },
+        });
+        if (existingWallet) {
+            return existingWallet;
+        }
+        const wallet = this.walletRepository.create({
+            userId,
+            name: 'Default Wallet',
+            balance: 0,
+            icon: 'wallet',
+        });
+        return this.walletRepository.save(wallet);
     }
 };
 exports.SavingsGoalsService = SavingsGoalsService;

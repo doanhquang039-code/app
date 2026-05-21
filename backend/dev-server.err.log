@@ -1,0 +1,876 @@
+[31m[Nest] 22284  - [39m05/21/2026, 5:00:00 PM [31m  ERROR[39m [38;5;3m[Scheduler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'DECLARE @OutputTable TABLE ("id" int, "createdAt" datetime2);\n\nINSERT INTO "Transactions"("userId", "walletId", "categoryId", "amount", "type", "note", "date", "createdAt") OUTPUT INSERTED."id", INSERTED."createdAt" INTO @OutputTable VALUES (@0, @1, @2, @3, @4, @5, @6, DEFAULT);\n\nSELECT * FROM @OutputTable'[39m,
+  parameters: [
+    MssqlParameter {
+      value: [33m4[39m,
+      type: [32m'int'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    },
+    MssqlParameter {
+      value: [33m2[39m,
+      type: [32m'int'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    },
+    MssqlParameter {
+      value: [33m12[39m,
+      type: [32m'int'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    },
+    MssqlParameter {
+      value: [33m50000[39m,
+      type: [32m'decimal'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: [
+        [33m18[39m,
+        [33m2[39m
+      ]
+    },
+    MssqlParameter {
+      value: [32m'expense'[39m,
+      type: [32m'nvarchar'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    },
+    MssqlParameter {
+      value: [32m'[Auto] Daily coffee'[39m,
+      type: [32m'nvarchar'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    },
+    MssqlParameter {
+      value: [35m2026-05-21T10:00:00.000Z[39m,
+      type: [32m'datetime'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    }
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m3[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m3[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: [
+      RequestError: Invalid column name 'createdAt'.
+          at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+      [90m    at Connection.emit (node:events:508:28)[39m
+          at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+          at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+          at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+      [90m    at Readable.emit (node:events:508:28)[39m
+      [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+      [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+      [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+      [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+      [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+        code: [32m'EREQUEST'[39m,
+        originalError: Error: Invalid column name 'createdAt'.
+            at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+        [90m    at Connection.emit (node:events:508:28)[39m
+            at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+            at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+            at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+        [90m    at Readable.emit (node:events:508:28)[39m
+        [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+        [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+        [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+        [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+        [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+          info: ErrorMessageToken {
+            name: [32m'ERROR'[39m,
+            handlerName: [32m'onErrorMessage'[39m,
+            number: [33m207[39m,
+            state: [33m1[39m,
+            class: [33m16[39m,
+            message: [32m"Invalid column name 'createdAt'."[39m,
+            serverName: [32m'DESKTOP-4QKA5D5'[39m,
+            procName: [32m''[39m,
+            lineNumber: [33m3[39m
+          }
+        },
+        number: [33m207[39m,
+        lineNumber: [33m3[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m
+      }
+    ]
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m3[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m3[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: [
+    RequestError: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      code: [32m'EREQUEST'[39m,
+      originalError: Error: Invalid column name 'createdAt'.
+          at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+      [90m    at Connection.emit (node:events:508:28)[39m
+          at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+          at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+          at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+      [90m    at Readable.emit (node:events:508:28)[39m
+      [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+      [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+      [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+      [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+      [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+        info: ErrorMessageToken {
+          name: [32m'ERROR'[39m,
+          handlerName: [32m'onErrorMessage'[39m,
+          number: [33m207[39m,
+          state: [33m1[39m,
+          class: [33m16[39m,
+          message: [32m"Invalid column name 'createdAt'."[39m,
+          serverName: [32m'DESKTOP-4QKA5D5'[39m,
+          procName: [32m''[39m,
+          lineNumber: [33m3[39m
+        }
+      },
+      number: [33m207[39m,
+      lineNumber: [33m3[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m
+    }
+  ]
+}
+[31m[Nest] 22284  - [39m05/21/2026, 5:01:56 PM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'SELECT "t"."id" AS "t_id", "t"."userId" AS "t_userId", "t"."walletId" AS "t_walletId", "t"."categoryId" AS "t_categoryId", "t"."amount" AS "t_amount", "t"."type" AS "t_type", "t"."note" AS "t_note", "t"."date" AS "t_date", "t"."createdAt" AS "t_createdAt", "category"."id" AS "category_id", "category"."userId" AS "category_userId", "category"."name" AS "category_name", "category"."icon" AS "category_icon", "category"."color" AS "category_color", "category"."type" AS "category_type", "category"."parentId" AS "category_parentId", "category"."isDefault" AS "category_isDefault", "category"."isActive" AS "category_isActive", "wallet"."id" AS "wallet_id", "wallet"."userId" AS "wallet_userId", "wallet"."name" AS "wallet_name", "wallet"."balance" AS "wallet_balance", "wallet"."icon" AS "wallet_icon", "wallet"."createdAt" AS "wallet_createdAt" FROM "Transactions" "t" LEFT JOIN "Categories" "category" ON "category"."id"="t"."categoryId"  LEFT JOIN "Wallets" "wallet" ON "wallet"."id"="t"."walletId" WHERE "t"."userId" = @0 ORDER BY "t"."date" DESC'[39m,
+  parameters: [
+    [33m7[39m
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m1[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m1[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: []
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m1[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m1[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: []
+}
+[31m[Nest] 22284  - [39m05/21/2026, 5:02:18 PM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'SELECT "t"."id" AS "t_id", "t"."userId" AS "t_userId", "t"."walletId" AS "t_walletId", "t"."categoryId" AS "t_categoryId", "t"."amount" AS "t_amount", "t"."type" AS "t_type", "t"."note" AS "t_note", "t"."date" AS "t_date", "t"."createdAt" AS "t_createdAt", "category"."id" AS "category_id", "category"."userId" AS "category_userId", "category"."name" AS "category_name", "category"."icon" AS "category_icon", "category"."color" AS "category_color", "category"."type" AS "category_type", "category"."parentId" AS "category_parentId", "category"."isDefault" AS "category_isDefault", "category"."isActive" AS "category_isActive", "wallet"."id" AS "wallet_id", "wallet"."userId" AS "wallet_userId", "wallet"."name" AS "wallet_name", "wallet"."balance" AS "wallet_balance", "wallet"."icon" AS "wallet_icon", "wallet"."createdAt" AS "wallet_createdAt" FROM "Transactions" "t" LEFT JOIN "Categories" "category" ON "category"."id"="t"."categoryId"  LEFT JOIN "Wallets" "wallet" ON "wallet"."id"="t"."walletId" WHERE "t"."userId" = @0 ORDER BY "t"."date" DESC'[39m,
+  parameters: [
+    [33m7[39m
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m1[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m1[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: []
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m1[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m1[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: []
+}
+[31m[Nest] 22284  - [39m05/21/2026, 5:02:18 PM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'SELECT DISTINCT "distinctAlias"."Transaction_id" AS "ids_Transaction_id", "distinctAlias"."Transaction_date" FROM (SELECT "Transaction"."id" AS "Transaction_id", "Transaction"."userId" AS "Transaction_userId", "Transaction"."walletId" AS "Transaction_walletId", "Transaction"."categoryId" AS "Transaction_categoryId", "Transaction"."amount" AS "Transaction_amount", "Transaction"."type" AS "Transaction_type", "Transaction"."note" AS "Transaction_note", "Transaction"."date" AS "Transaction_date", "Transaction"."createdAt" AS "Transaction_createdAt", "Transaction__Transaction_category"."id" AS "Transaction__Transaction_category_id", "Transaction__Transaction_category"."userId" AS "Transaction__Transaction_category_userId", "Transaction__Transaction_category"."name" AS "Transaction__Transaction_category_name", "Transaction__Transaction_category"."icon" AS "Transaction__Transaction_category_icon", "Transaction__Transaction_category"."color" AS "Transaction__Transaction_category_color", "Transaction__Transaction_category"."type" AS "Transaction__Transaction_category_type", "Transaction__Transaction_category"."parentId" AS "Transaction__Transaction_category_parentId", "Transaction__Transaction_category"."isDefault" AS "Transaction__Transaction_category_isDefault", "Transaction__Transaction_category"."isActive" AS "Transaction__Transaction_category_isActive", "Transaction__Transaction_wallet"."id" AS "Transaction__Transaction_wallet_id", "Transaction__Transaction_wallet"."userId" AS "Transaction__Transaction_wallet_userId", "Transaction__Transaction_wallet"."name" AS "Transaction__Transaction_wallet_name", "Transaction__Transaction_wallet"."balance" AS "Transaction__Transaction_wallet_balance", "Transaction__Transaction_wallet"."icon" AS "Transaction__Transaction_wallet_icon", "Transaction__Transaction_wallet"."createdAt" AS "Transaction__Transaction_wallet_createdAt" FROM "Transactions" "Transaction" LEFT JOIN "Categories" "Transaction__Transaction_category" ON "Transaction__Transaction_category"."id"="Transaction"."categoryId"  LEFT JOIN "Wallets" "Transaction__Transaction_wallet" ON "Transaction__Transaction_wallet"."id"="Transaction"."walletId" WHERE (("Transaction"."userId" = @0))) "distinctAlias" ORDER BY "distinctAlias"."Transaction_date" DESC, "Transaction_id" ASC OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY'[39m,
+  parameters: [
+    MssqlParameter {
+      value: [33m7[39m,
+      type: [32m'int'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    }
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m1[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m1[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: []
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m1[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m1[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: []
+}
+[31m[Nest] 22284  - [39m05/21/2026, 5:02:20 PM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'SELECT "Transaction"."id" AS "Transaction_id", "Transaction"."userId" AS "Transaction_userId", "Transaction"."walletId" AS "Transaction_walletId", "Transaction"."categoryId" AS "Transaction_categoryId", "Transaction"."amount" AS "Transaction_amount", "Transaction"."type" AS "Transaction_type", "Transaction"."note" AS "Transaction_note", "Transaction"."date" AS "Transaction_date", "Transaction"."createdAt" AS "Transaction_createdAt" FROM "Transactions" "Transaction" WHERE (("Transaction"."userId" = @0))'[39m,
+  parameters: [
+    MssqlParameter {
+      value: [33m7[39m,
+      type: [32m'int'[39m,
+      [32m'@instanceof'[39m: [32mSymbol(MssqlParameter)[39m,
+      params: []
+    }
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m1[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m1[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: []
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m1[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m1[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: []
+}
+[31m[Nest] 22284  - [39m05/21/2026, 5:02:26 PM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'SELECT "t"."id" AS "t_id", "t"."userId" AS "t_userId", "t"."walletId" AS "t_walletId", "t"."categoryId" AS "t_categoryId", "t"."amount" AS "t_amount", "t"."type" AS "t_type", "t"."note" AS "t_note", "t"."date" AS "t_date", "t"."createdAt" AS "t_createdAt", "category"."id" AS "category_id", "category"."userId" AS "category_userId", "category"."name" AS "category_name", "category"."icon" AS "category_icon", "category"."color" AS "category_color", "category"."type" AS "category_type", "category"."parentId" AS "category_parentId", "category"."isDefault" AS "category_isDefault", "category"."isActive" AS "category_isActive", "wallet"."id" AS "wallet_id", "wallet"."userId" AS "wallet_userId", "wallet"."name" AS "wallet_name", "wallet"."balance" AS "wallet_balance", "wallet"."icon" AS "wallet_icon", "wallet"."createdAt" AS "wallet_createdAt" FROM "Transactions" "t" LEFT JOIN "Categories" "category" ON "category"."id"="t"."categoryId"  LEFT JOIN "Wallets" "wallet" ON "wallet"."id"="t"."walletId" WHERE "t"."userId" = @0 ORDER BY "t"."date" DESC'[39m,
+  parameters: [
+    [33m7[39m
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m1[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m1[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: []
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m1[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m1[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: []
+}
+[31m[Nest] 22284  - [39m05/21/2026, 5:02:29 PM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mQueryFailedError: Error: Invalid column name 'createdAt'.
+    at <anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtypeorm[24m\driver\src\driver\sqlserver\SqlServerQueryRunner.ts:277:30[90m)[39m
+    at [90mC:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\base\request.js:443:25
+    at Request.userCallback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:492:15[90m)[39m
+    at Request.Request.callback [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\request.ts:379:14[90m)[39m
+    at Parser.onEndOfMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:3782:22[90m)[39m
+[90m    at Object.onceWrapper (node:events:622:28)[39m
+[90m    at Parser.emit (node:events:508:28)[39m
+    at Readable.<anonymous> [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:31:12[90m)[39m
+[90m    at Readable.emit (node:events:508:28)[39m
+[90m    at endReadableNT (node:internal/streams/readable:1729:12)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m {
+  query: [32m'SELECT "t"."id" AS "t_id", "t"."userId" AS "t_userId", "t"."walletId" AS "t_walletId", "t"."categoryId" AS "t_categoryId", "t"."amount" AS "t_amount", "t"."type" AS "t_type", "t"."note" AS "t_note", "t"."date" AS "t_date", "t"."createdAt" AS "t_createdAt", "category"."id" AS "category_id", "category"."userId" AS "category_userId", "category"."name" AS "category_name", "category"."icon" AS "category_icon", "category"."color" AS "category_color", "category"."type" AS "category_type", "category"."parentId" AS "category_parentId", "category"."isDefault" AS "category_isDefault", "category"."isActive" AS "category_isActive", "wallet"."id" AS "wallet_id", "wallet"."userId" AS "wallet_userId", "wallet"."name" AS "wallet_name", "wallet"."balance" AS "wallet_balance", "wallet"."icon" AS "wallet_icon", "wallet"."createdAt" AS "wallet_createdAt" FROM "Transactions" "t" LEFT JOIN "Categories" "category" ON "category"."id"="t"."categoryId"  LEFT JOIN "Wallets" "wallet" ON "wallet"."id"="t"."walletId" WHERE "t"."userId" = @0 ORDER BY "t"."date" DESC'[39m,
+  parameters: [
+    [33m7[39m
+  ],
+  driverError: RequestError: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:384:15[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    code: [32m'EREQUEST'[39m,
+    originalError: Error: Invalid column name 'createdAt'.
+        at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+    [90m    at Connection.emit (node:events:508:28)[39m
+        at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+        at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+        at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+    [90m    at Readable.emit (node:events:508:28)[39m
+    [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+    [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+    [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+    [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+      info: ErrorMessageToken {
+        name: [32m'ERROR'[39m,
+        handlerName: [32m'onErrorMessage'[39m,
+        number: [33m207[39m,
+        state: [33m1[39m,
+        class: [33m16[39m,
+        message: [32m"Invalid column name 'createdAt'."[39m,
+        serverName: [32m'DESKTOP-4QKA5D5'[39m,
+        procName: [32m''[39m,
+        lineNumber: [33m1[39m
+      }
+    },
+    number: [33m207[39m,
+    lineNumber: [33m1[39m,
+    state: [33m1[39m,
+    class: [33m16[39m,
+    serverName: [32m'DESKTOP-4QKA5D5'[39m,
+    procName: [32m''[39m,
+    precedingErrors: []
+  },
+  code: [32m'EREQUEST'[39m,
+  originalError: Error: Invalid column name 'createdAt'.
+      at handleError [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mmssql[24m\lib\tedious\request.js:382:19[90m)[39m
+  [90m    at Connection.emit (node:events:508:28)[39m
+      at Connection.emit [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\connection.ts:1974:18[90m)[39m
+      at RequestTokenHandler.onErrorMessage [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\handler.ts:386:21[90m)[39m
+      at Readable.token [90m(C:\Users\admoi\app\backend\[39mnode_modules\[4mtedious[24m\src\token\token-stream-parser.ts:23:55[90m)[39m
+  [90m    at Readable.emit (node:events:508:28)[39m
+  [90m    at addChunk (node:internal/streams/readable:563:12)[39m
+  [90m    at readableAddChunkPushObjectMode (node:internal/streams/readable:540:3)[39m
+  [90m    at Readable.push (node:internal/streams/readable:395:5)[39m
+  [90m    at nextAsync (node:internal/streams/from:194:22)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+    info: ErrorMessageToken {
+      name: [32m'ERROR'[39m,
+      handlerName: [32m'onErrorMessage'[39m,
+      number: [33m207[39m,
+      state: [33m1[39m,
+      class: [33m16[39m,
+      message: [32m"Invalid column name 'createdAt'."[39m,
+      serverName: [32m'DESKTOP-4QKA5D5'[39m,
+      procName: [32m''[39m,
+      lineNumber: [33m1[39m
+    }
+  },
+  number: [33m207[39m,
+  lineNumber: [33m1[39m,
+  state: [33m1[39m,
+  class: [33m16[39m,
+  serverName: [32m'DESKTOP-4QKA5D5'[39m,
+  procName: [32m''[39m,
+  precedingErrors: []
+}
+node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\admoi\app\backend\dist\main'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v24.14.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\admoi\app\backend\dist\main'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v24.14.0
+node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\admoi\app\backend\dist\main'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v24.14.0
+[31m[Nest] 27340  - [39m05/21/2026, 4:59:49 PM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3000[39m[38;5;3m +13ms[39m
+node:net:1948
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+    at listenInCluster (node:net:2005:12)
+    at Server.listen (node:net:2110:7)
+    at ExpressAdapter.listen (C:\Users\admoi\app\backend\node_modules\@nestjs\platform-express\adapters\express-adapter.js:127:32)
+    at C:\Users\admoi\app\backend\node_modules\@nestjs\core\nest-application.js:188:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\admoi\app\backend\node_modules\@nestjs\core\nest-application.js:178:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async bootstrap (C:\Users\admoi\app\backend\src\main.ts:65:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v24.14.0

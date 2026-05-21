@@ -29,20 +29,28 @@ let FinancialReportsService = class FinancialReportsService {
         this.budgetRepository = budgetRepository;
     }
     async generateMonthlyReport(userId, month, year) {
+        await this.ensureReportsTable();
         const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 0);
-        const transactions = await this.transactionRepository.find({
-            where: { userId },
-        });
-        const monthTransactions = transactions.filter(t => {
-            const tDate = new Date(t.date);
-            return tDate >= startDate && tDate <= endDate;
-        });
+        const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+        const monthTransactions = await this.transactionRepository
+            .createQueryBuilder('transaction')
+            .select([
+            'transaction.id',
+            'transaction.userId',
+            'transaction.categoryId',
+            'transaction.amount',
+            'transaction.type',
+            'transaction.date',
+        ])
+            .where('transaction.userId = :userId', { userId })
+            .andWhere('transaction.date >= :startDate', { startDate })
+            .andWhere('transaction.date <= :endDate', { endDate })
+            .getMany();
         const totalIncome = monthTransactions
-            .filter(t => t.type === 'income')
+            .filter(t => this.isIncome(t.type))
             .reduce((sum, t) => sum + Number(t.amount), 0);
         const totalExpense = monthTransactions
-            .filter(t => t.type === 'expense')
+            .filter(t => this.isExpense(t.type))
             .reduce((sum, t) => sum + Number(t.amount), 0);
         const netSavings = totalIncome - totalExpense;
         const reportData = {
@@ -54,8 +62,8 @@ let FinancialReportsService = class FinancialReportsService {
             categoryBreakdown: await this.getCategoryBreakdown(monthTransactions),
             budgetStatus: await this.getBudgetStatus(userId, month, year),
             topExpenseCategories: await this.getTopCategories(monthTransactions, 5),
-            dailyAverage: monthTransactions.filter(t => t.type === 'expense').length > 0
-                ? totalExpense / monthTransactions.filter(t => t.type === 'expense').length
+            dailyAverage: monthTransactions.filter(t => this.isExpense(t.type)).length > 0
+                ? totalExpense / monthTransactions.filter(t => this.isExpense(t.type)).length
                 : 0,
         };
         const report = this.reportRepository.create({
@@ -134,7 +142,7 @@ let FinancialReportsService = class FinancialReportsService {
             })),
             averageMonthlyExpense: totalExpense / 12,
             averageMonthlyIncome: totalIncome / 12,
-            savingsRate: (netSavings / totalIncome) * 100,
+            savingsRate: totalIncome > 0 ? (netSavings / totalIncome) * 100 : 0,
         };
         const yearlyReport = this.reportRepository.create({
             userId,
@@ -150,11 +158,13 @@ let FinancialReportsService = class FinancialReportsService {
         return this.reportRepository.save(yearlyReport);
     }
     async getReport(reportId, userId) {
+        await this.ensureReportsTable();
         return this.reportRepository.findOne({
             where: { id: reportId, userId },
         });
     }
     async getReportsByUser(userId, reportType) {
+        await this.ensureReportsTable();
         const query = this.reportRepository.createQueryBuilder('report')
             .where('report.userId = :userId', { userId });
         if (reportType) {
@@ -163,6 +173,7 @@ let FinancialReportsService = class FinancialReportsService {
         return query.orderBy('report.createdAt', 'DESC').getMany();
     }
     async deleteReport(reportId, userId) {
+        await this.ensureReportsTable();
         await this.reportRepository.delete({ id: reportId, userId });
     }
     async exportReportAsJSON(reportId, userId) {
@@ -197,10 +208,37 @@ let FinancialReportsService = class FinancialReportsService {
         }
         return csv;
     }
+    async ensureReportsTable() {
+        await this.reportRepository.query(`
+      IF OBJECT_ID('dbo.FinancialReports', 'U') IS NULL
+      BEGIN
+        CREATE TABLE dbo.FinancialReports (
+          id INT IDENTITY(1,1) PRIMARY KEY,
+          userId INT NOT NULL,
+          month INT NOT NULL,
+          year INT NOT NULL,
+          reportType NVARCHAR(50) NOT NULL,
+          reportData NVARCHAR(MAX) NOT NULL,
+          totalIncome DECIMAL(18, 2) NOT NULL DEFAULT 0,
+          totalExpense DECIMAL(18, 2) NOT NULL DEFAULT 0,
+          netSavings DECIMAL(18, 2) NOT NULL DEFAULT 0,
+          filePath NVARCHAR(500) NULL,
+          status NVARCHAR(50) NOT NULL DEFAULT 'pending',
+          createdAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+        )
+      END
+    `);
+    }
+    isIncome(type) {
+        return type?.toUpperCase() === 'INCOME';
+    }
+    isExpense(type) {
+        return type?.toUpperCase() === 'EXPENSE';
+    }
     async getCategoryBreakdown(transactions) {
         const breakdown = {};
         for (const transaction of transactions) {
-            if (transaction.type === 'expense') {
+            if (this.isExpense(transaction.type)) {
                 const categoryName = transaction.categoryId;
                 breakdown[categoryName] = (breakdown[categoryName] || 0) + Number(transaction.amount);
             }
@@ -223,7 +261,7 @@ let FinancialReportsService = class FinancialReportsService {
     async getTopCategories(transactions, limit) {
         const categorySpending = {};
         transactions
-            .filter(t => t.type === 'expense')
+            .filter(t => this.isExpense(t.type))
             .forEach(t => {
             const categoryId = t.categoryId;
             categorySpending[categoryId] = (categorySpending[categoryId] || 0) + Number(t.amount);

@@ -70,6 +70,7 @@ import { ThirdPartyIntegration } from './entities/third-party-integration.entity
 import { SearchModule } from './modules/search/search.module';
 import { AIModule } from './ai/ai.module';
 import { CommonModule } from './common/common.module';
+import { CashFlowModule } from './modules/cash-flow/cash-flow.module';
 // New optimization entities
 import { QueryCache } from './entities/query-cache.entity';
 import { DailyStatistics } from './entities/daily-statistics.entity';
@@ -185,6 +186,7 @@ import { SecurityEvent } from './entities/security-event.entity';
     AIModule,
     // --- Common Module (Cache & Performance) ---
     CommonModule,
+    CashFlowModule,
     // --- DISABLED (cần external services) ---
     // ExportModule,   // duplicate
     // OCRModule,      // requires Tesseract/cloud OCR

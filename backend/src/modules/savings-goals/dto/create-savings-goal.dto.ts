@@ -1,7 +1,8 @@
-import { IsString, IsNumber, IsDate, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsNumber, IsDate, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateSavingsGoalDto {
+  @IsOptional()
   @IsNumber()
   walletId: number;
 
@@ -19,6 +20,7 @@ export class CreateSavingsGoalDto {
   @IsString()
   icon?: string;
 
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
   startDate: Date;

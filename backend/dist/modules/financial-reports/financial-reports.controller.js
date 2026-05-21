@@ -22,29 +22,29 @@ let FinancialReportsController = class FinancialReportsController {
         this.reportsService = reportsService;
     }
     generateMonthly(req, month, year) {
-        return this.reportsService.generateMonthlyReport(req.user.id, month, year);
+        return this.reportsService.generateMonthlyReport(req.user.userId, Number(month), Number(year));
     }
     generateQuarterly(req, quarter, year) {
-        return this.reportsService.generateQuarterlyReport(req.user.id, quarter, year);
+        return this.reportsService.generateQuarterlyReport(req.user.userId, Number(quarter), Number(year));
     }
     generateYearly(req, year) {
-        return this.reportsService.generateYearlyReport(req.user.id, year);
+        return this.reportsService.generateYearlyReport(req.user.userId, Number(year));
     }
     getReports(req, reportType) {
-        return this.reportsService.getReportsByUser(req.user.id, reportType);
+        return this.reportsService.getReportsByUser(req.user.userId, reportType);
     }
     getReport(id, req) {
-        return this.reportsService.getReport(+id, req.user.id);
+        return this.reportsService.getReport(+id, req.user.userId);
     }
     exportAsJSON(id, req) {
-        return this.reportsService.exportReportAsJSON(+id, req.user.id);
+        return this.reportsService.exportReportAsJSON(+id, req.user.userId);
     }
     async exportAsCSV(id, req) {
-        const csv = await this.reportsService.exportReportAsCSV(+id, req.user.id);
+        const csv = await this.reportsService.exportReportAsCSV(+id, req.user.userId);
         return { csv };
     }
     deleteReport(id, req) {
-        return this.reportsService.deleteReport(+id, req.user.id);
+        return this.reportsService.deleteReport(+id, req.user.userId);
     }
 };
 exports.FinancialReportsController = FinancialReportsController;

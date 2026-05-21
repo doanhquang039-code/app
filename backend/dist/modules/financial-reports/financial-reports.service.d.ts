@@ -15,6 +15,9 @@ export declare class FinancialReportsService {
     deleteReport(reportId: number, userId: number): Promise<void>;
     exportReportAsJSON(reportId: number, userId: number): Promise<any>;
     exportReportAsCSV(reportId: number, userId: number): Promise<string>;
+    private ensureReportsTable;
+    private isIncome;
+    private isExpense;
     private getCategoryBreakdown;
     private getBudgetStatus;
     private getTopCategories;

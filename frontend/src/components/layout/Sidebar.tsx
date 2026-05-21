@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, ArrowLeftRight, Wallet, Target,
   BarChart3, CreditCard, Brain, Users, Trophy, Settings,
-  TrendingUp,
+  TrendingUp, WalletCards,
 } from 'lucide-react'
 
 const navigation = [
@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Ngân sách',   href: '/budgets',       icon: Wallet          },
   { name: 'Mục tiêu',    href: '/savings-goals', icon: Target          },
   { name: 'Phân tích',   href: '/analytics',     icon: BarChart3       },
+  { name: 'Cash Flow',   href: '/cash-flow',     icon: WalletCards     },
   { name: 'Đăng ký',     href: '/subscriptions', icon: CreditCard      },
   { name: 'AI Insights', href: '/ai-insights',   icon: Brain           },
   { name: 'Xã hội',      href: '/social',        icon: Users           },

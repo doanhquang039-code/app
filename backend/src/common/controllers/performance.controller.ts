@@ -1,7 +1,7 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { PerformanceService } from '../services/performance.service';
 import { CacheService } from '../services/cache.service';
-import { JwtAuthGuard } from '../../modules/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('api/performance')
 @UseGuards(JwtAuthGuard)

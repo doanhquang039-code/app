@@ -22,15 +22,17 @@ export class SavingsGoalsService {
     }
 
     // Verify wallet exists
-    const wallet = await this.walletRepository.findOne({
-      where: { id: dto.walletId, userId },
-    });
+    const wallet = dto.walletId
+      ? await this.walletRepository.findOne({
+          where: { id: dto.walletId, userId },
+        })
+      : await this.getOrCreateDefaultWallet(userId);
     if (!wallet) {
       throw new NotFoundException('Ví không tìm thấy');
     }
 
     // Ensure dates are properly converted
-    const startDate = new Date(dto.startDate);
+    const startDate = dto.startDate ? new Date(dto.startDate) : new Date();
     const targetDate = dto.targetDate ? new Date(dto.targetDate) : null;
     
     if (isNaN(startDate.getTime())) {
@@ -42,7 +44,7 @@ export class SavingsGoalsService {
 
     const goal = this.savingsGoalRepository.create({
       userId,
-      walletId: dto.walletId,
+      walletId: wallet.id,
       name: dto.name,
       description: dto.description,
       targetAmount: dto.targetAmount,
@@ -243,5 +245,25 @@ export class SavingsGoalsService {
           )
         : null,
     };
+  }
+
+  private async getOrCreateDefaultWallet(userId: number): Promise<Wallet> {
+    const existingWallet = await this.walletRepository.findOne({
+      where: { userId },
+      order: { createdAt: 'ASC' },
+    });
+
+    if (existingWallet) {
+      return existingWallet;
+    }
+
+    const wallet = this.walletRepository.create({
+      userId,
+      name: 'Default Wallet',
+      balance: 0,
+      icon: 'wallet',
+    });
+
+    return this.walletRepository.save(wallet);
   }
 }

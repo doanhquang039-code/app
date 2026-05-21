@@ -23,6 +23,7 @@ class CreateSavingsGoalDto {
 }
 exports.CreateSavingsGoalDto = CreateSavingsGoalDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateSavingsGoalDto.prototype, "walletId", void 0);
@@ -45,6 +46,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateSavingsGoalDto.prototype, "icon", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDate)(),
     (0, class_transformer_1.Type)(() => Date),
     __metadata("design:type", Date)

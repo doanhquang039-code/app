@@ -19,6 +19,7 @@ import AIInsights from './pages/AIInsights'
 import Social from './pages/Social'
 import Gamification from './pages/Gamification'
 import Settings from './pages/Settings'
+import CashFlow from './pages/CashFlow'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
@@ -49,6 +50,7 @@ function App() {
             <Route path="/budgets" element={<Budgets />} />
             <Route path="/savings-goals" element={<SavingsGoals />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/cash-flow" element={<CashFlow />} />
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/ai-insights" element={<AIInsights />} />
             <Route path="/social" element={<Social />} />

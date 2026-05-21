@@ -133,4 +133,5 @@ export declare class SavingsGoalsService {
         targetDate: Date | null;
         daysRemaining: number | null;
     }>;
+    private getOrCreateDefaultWallet;
 }

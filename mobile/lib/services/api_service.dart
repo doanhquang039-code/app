@@ -25,15 +25,17 @@ class ApiService {
 
   // ─── AUTH ─────────────────────────────────────────────────────────────────
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final res = await _dio.post('/auth/login', data: {'email': email, 'password': password});
+    final res = await _dio.post('/auth/login', data: {'username': email, 'password': password});
     return res.data;
   }
 
   Future<Map<String, dynamic>> register(String email, String password, {String? name}) async {
+    final username = email.split('@').first.trim();
     final res = await _dio.post('/auth/register', data: {
+      'username': email,
       'email': email,
       'password': password,
-      if (name != null) 'name': name,
+      'fullName': name?.trim().isNotEmpty == true ? name!.trim() : username,
     });
     return res.data;
   }

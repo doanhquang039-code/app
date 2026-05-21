@@ -33,11 +33,11 @@ class SavingsGoal {
             double.tryParse(json['targetAmount']?.toString() ?? '0') ?? 0,
         currentAmount:
             double.tryParse(json['currentAmount']?.toString() ?? '0') ?? 0,
-        deadline: json['deadline'] != null
-            ? DateTime.tryParse(json['deadline'])
+        deadline: (json['targetDate'] ?? json['deadline']) != null
+            ? DateTime.tryParse((json['targetDate'] ?? json['deadline']).toString())
             : null,
         icon: json['icon'],
         color: json['color'],
-        isCompleted: json['isCompleted'] ?? false,
+        isCompleted: json['isCompleted'] ?? json['status'] == 'completed',
       );
 }

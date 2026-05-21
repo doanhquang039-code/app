@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 import '../services/api_service.dart';
 import '../models/savings_goal.dart';
 import 'dart:math' as math;
@@ -15,6 +16,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   final ApiService _api = ApiService();
   List<SavingsGoal> _goals = [];
   bool _isLoading = true;
+  bool _isCreatingGoal = false;
 
   @override
   void initState() {
@@ -327,18 +329,36 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       backgroundColor: const Color(0xFF8E2DE2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    onPressed: () async {
-                      try {
-                        await _api.createSavingsGoal({
-                          'name': nameCtrl.text,
-                          'targetAmount': double.tryParse(targetCtrl.text) ?? 0,
-                          'currentAmount': 0,
-                          if (deadline != null) 'deadline': deadline!.toIso8601String(),
-                        });
-                        Navigator.pop(ctx);
-                        _loadData();
-                      } catch (_) {}
-                    },
+                    onPressed: _isCreatingGoal
+                        ? null
+                        : () async {
+                            FocusScope.of(ctx).unfocus();
+                            final name = nameCtrl.text.trim();
+                            final amount = double.tryParse(targetCtrl.text.replaceAll(',', '.')) ?? 0;
+
+                            if (name.isEmpty || amount <= 0) {
+                              _showMessage('Vui long nhap ten va so tien muc tieu hop le', isError: true);
+                              return;
+                            }
+
+                            setStateModal(() => _isCreatingGoal = true);
+                            try {
+                              await _api.createSavingsGoal({
+                                'name': name,
+                                'targetAmount': amount,
+                                'currentAmount': 0,
+                                'startDate': DateTime.now().toIso8601String(),
+                                if (deadline != null) 'targetDate': deadline!.toIso8601String(),
+                              });
+                              if (mounted) Navigator.pop(ctx);
+                              await _loadData();
+                              _showMessage('Da tao muc tieu tiet kiem');
+                            } catch (e) {
+                              _showMessage(_errorMessage(e), isError: true);
+                            } finally {
+                              if (mounted) setState(() => _isCreatingGoal = false);
+                            }
+                          },
                     child: const Text('Tạo mục tiêu', style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
@@ -362,6 +382,32 @@ class _SavingsScreenState extends State<SavingsScreen> {
         filled: true,
         fillColor: const Color(0xFF1E1E2E),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+      ),
+    );
+  }
+
+  String _errorMessage(Object error) {
+    if (error is DioException) {
+      final data = error.response?.data;
+      if (data is Map && data['message'] != null) {
+        final message = data['message'];
+        return message is List ? message.join(', ') : message.toString();
+      }
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.connectionError) {
+        return 'Khong ket noi duoc backend. Kiem tra server http://10.0.2.2:3000';
+      }
+    }
+    return 'Thao tac that bai. Vui long thu lai';
+  }
+
+  void _showMessage(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : const Color(0xFF11998E),
       ),
     );
   }

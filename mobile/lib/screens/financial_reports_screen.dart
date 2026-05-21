@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 import '../services/api_service.dart';
 
 class FinancialReportsScreen extends StatefulWidget {
@@ -24,7 +25,9 @@ class _FinancialReportsScreenState extends State<FinancialReportsScreen> {
     setState(() => _isLoading = true);
     try {
       _reports = await _api.getFinancialReports();
-    } catch (_) {}
+    } catch (e) {
+      _showMessage(_errorMessage(e), isError: true);
+    }
     setState(() => _isLoading = false);
   }
 
@@ -284,5 +287,31 @@ class _FinancialReportsScreenState extends State<FinancialReportsScreen> {
         );
       }
     }
+  }
+
+  String _errorMessage(Object error) {
+    if (error is DioException) {
+      final data = error.response?.data;
+      if (data is Map && data['message'] != null) {
+        final message = data['message'];
+        return message is List ? message.join(', ') : message.toString();
+      }
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.connectionError) {
+        return 'Khong ket noi duoc backend. Kiem tra server http://10.0.2.2:3000';
+      }
+    }
+    return 'Tao bao cao that bai. Vui long thu lai';
+  }
+
+  void _showMessage(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : const Color(0xFF11998E),
+      ),
+    );
   }
 }

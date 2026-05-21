@@ -78,6 +78,19 @@ const receipt_entity_1 = require("./entities/receipt.entity");
 const third_party_integration_entity_1 = require("./entities/third-party-integration.entity");
 const search_module_1 = require("./modules/search/search.module");
 const ai_module_1 = require("./ai/ai.module");
+const common_module_1 = require("./common/common.module");
+const cash_flow_module_1 = require("./modules/cash-flow/cash-flow.module");
+const query_cache_entity_1 = require("./entities/query-cache.entity");
+const daily_statistics_entity_1 = require("./entities/daily-statistics.entity");
+const monthly_statistics_entity_1 = require("./entities/monthly-statistics.entity");
+const category_pattern_entity_1 = require("./entities/category-pattern.entity");
+const api_log_entity_1 = require("./entities/api-log.entity");
+const error_log_entity_1 = require("./entities/error-log.entity");
+const session_cache_entity_1 = require("./entities/session-cache.entity");
+const user_preference_entity_1 = require("./entities/user-preference.entity");
+const user_setting_entity_1 = require("./entities/user-setting.entity");
+const login_history_entity_1 = require("./entities/login-history.entity");
+const security_event_entity_1 = require("./entities/security-event.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -109,6 +122,10 @@ exports.AppModule = AppModule = __decorate([
                         audit_log_entity_1.AuditLog, net_worth_snapshot_entity_1.NetWorthSnapshot,
                         bank_transaction_entity_1.BankTransaction, scheduled_transaction_entity_1.ScheduledTransaction,
                         voice_command_entity_1.VoiceCommand, receipt_entity_1.Receipt, third_party_integration_entity_1.ThirdPartyIntegration,
+                        query_cache_entity_1.QueryCache, daily_statistics_entity_1.DailyStatistics, monthly_statistics_entity_1.MonthlyStatistics,
+                        category_pattern_entity_1.CategoryPattern, api_log_entity_1.ApiLog, error_log_entity_1.ErrorLog,
+                        session_cache_entity_1.SessionCache, user_preference_entity_1.UserPreference, user_setting_entity_1.UserSetting,
+                        login_history_entity_1.LoginHistory, security_event_entity_1.SecurityEvent,
                     ],
                     synchronize: false,
                     options: {
@@ -171,6 +188,8 @@ exports.AppModule = AppModule = __decorate([
             subscriptions_module_1.SubscriptionsModule,
             search_module_1.SearchModule,
             ai_module_1.AIModule,
+            common_module_1.CommonModule,
+            cash_flow_module_1.CashFlowModule,
         ],
     })
 ], AppModule);
