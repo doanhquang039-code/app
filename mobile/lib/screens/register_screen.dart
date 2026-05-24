@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/social_auth_buttons.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,13 +22,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               const Icon(Icons.person_add, size: 80, color: Color(0xFF6C63FF)),
               const SizedBox(height: 16),
               const Text('Tạo tài khoản', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
-              const SizedBox(height: 40),
+              const SizedBox(height: 28),
+              const SocialAuthButtons(actionLabel: 'Đăng ký'),
+              const SizedBox(height: 22),
               TextField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
@@ -60,7 +64,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Đã có tài khoản? Đăng nhập', style: TextStyle(color: Color(0xFF6C63FF))),
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

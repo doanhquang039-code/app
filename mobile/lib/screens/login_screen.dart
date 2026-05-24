@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/social_auth_buttons.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,15 +22,18 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               const Icon(Icons.account_balance_wallet, size: 80, color: Color(0xFF6C63FF)),
               const SizedBox(height: 16),
               const Text('Quản lý Chi tiêu', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
               const SizedBox(height: 8),
               const Text('Đăng nhập để tiếp tục', style: TextStyle(color: Colors.grey)),
-              const SizedBox(height: 40),
+              const SizedBox(height: 28),
+              const SocialAuthButtons(actionLabel: 'Đăng nhập'),
+              const SizedBox(height: 22),
               TextField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
@@ -62,7 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => Navigator.pushNamed(context, '/register'),
                 child: const Text('Chưa có tài khoản? Đăng ký', style: TextStyle(color: Color(0xFF6C63FF))),
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

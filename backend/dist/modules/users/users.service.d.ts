@@ -21,6 +21,10 @@ export declare class UsersService {
         fullName: string;
         username: string;
         isActive: boolean;
+        authProvider?: string;
+        socialProviderId?: string;
+        avatarUrl?: string;
+        lastLoginAt?: Date;
         createdAt: Date;
     }>;
     updateProfile(userId: number, dto: UpdateProfileDto): Promise<{
@@ -32,6 +36,10 @@ export declare class UsersService {
             fullName: string;
             username: string;
             isActive: boolean;
+            authProvider?: string;
+            socialProviderId?: string;
+            avatarUrl?: string;
+            lastLoginAt?: Date;
             createdAt: Date;
         };
     }>;

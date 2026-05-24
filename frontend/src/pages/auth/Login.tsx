@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { LogIn } from 'lucide-react'
 import api from '../../lib/api'
 import { useAuthStore } from '../../stores/authStore'
+import SocialLoginButtons from '../../components/auth/SocialLoginButtons'
 
 interface LoginForm {
   username: string
@@ -13,8 +14,16 @@ interface LoginForm {
 
 export default function Login() {
   const navigate = useNavigate()
+  const [params] = useSearchParams()
   const { login } = useAuthStore()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const socialError = params.get('social_error')
+    if (socialError) {
+      toast.error(socialError)
+    }
+  }, [params])
 
   const {
     register,
@@ -43,6 +52,10 @@ export default function Login() {
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Đăng nhập</h2>
         <p className="text-gray-600 mt-2">Chào mừng bạn quay trở lại!</p>
+      </div>
+
+      <div className="mb-6">
+        <SocialLoginButtons mode="login" />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

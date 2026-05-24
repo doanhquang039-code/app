@@ -31,6 +31,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> completeSocialLogin(String token) async {
+    _token = token;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    _isLoggedIn = true;
+    notifyListeners();
+  }
+
   Future<bool> register(String email, String password) async {
     try {
       await _api.register(email, password);

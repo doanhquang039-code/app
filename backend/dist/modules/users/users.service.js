@@ -116,6 +116,9 @@ let UsersService = class UsersService {
         });
         if (!user)
             throw new common_1.NotFoundException('Không tìm thấy người dùng');
+        if (!user.password) {
+            throw new common_1.UnauthorizedException('Tai khoan nay dang dung dang nhap mang xa hoi');
+        }
         const isMatch = await bcrypt.compare(dto.oldPassword, user.password);
         if (!isMatch) {
             throw new common_1.UnauthorizedException('Mật khẩu cũ không đúng');

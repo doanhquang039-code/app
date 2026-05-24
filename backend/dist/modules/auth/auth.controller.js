@@ -28,6 +28,25 @@ let AuthController = class AuthController {
     login(dto) {
         return this.authService.login(dto);
     }
+    socialLogin(provider, target, res) {
+        try {
+            return res.redirect(this.authService.getSocialAuthUrl(provider, target));
+        }
+        catch (authError) {
+            return res.redirect(this.authService.getSocialErrorRedirect(authError?.message || 'Social login failed', target));
+        }
+    }
+    async socialCallback(provider, code, state, error, res) {
+        try {
+            if (error)
+                throw new Error(error);
+            const redirectUrl = await this.authService.handleSocialCallback(provider, code, state);
+            return res.redirect(redirectUrl);
+        }
+        catch (callbackError) {
+            return res.redirect(this.authService.getSocialErrorRedirect(callbackError?.message || 'Social login failed', state));
+        }
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -44,6 +63,26 @@ __decorate([
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Get)('social/:provider'),
+    __param(0, (0, common_1.Param)('provider')),
+    __param(1, (0, common_1.Query)('target')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "socialLogin", null);
+__decorate([
+    (0, common_1.Get)('social/:provider/callback'),
+    __param(0, (0, common_1.Param)('provider')),
+    __param(1, (0, common_1.Query)('code')),
+    __param(2, (0, common_1.Query)('state')),
+    __param(3, (0, common_1.Query)('error')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "socialCallback", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { UserPlus } from 'lucide-react'
 import api from '../../lib/api'
+import SocialLoginButtons from '../../components/auth/SocialLoginButtons'
 
 interface RegisterForm {
   username: string
@@ -50,6 +51,10 @@ export default function Register() {
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Đăng ký</h2>
         <p className="text-gray-600 mt-2">Tạo tài khoản mới</p>
+      </div>
+
+      <div className="mb-6">
+        <SocialLoginButtons mode="register" />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

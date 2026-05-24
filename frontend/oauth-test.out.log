@@ -1,0 +1,9 @@
+
+> expense-tracker-frontend@1.0.0 dev
+> vite --host 127.0.0.1 --port 3001
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m1036[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3001[22m/[39m
+[2m11:11:55 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/pages/auth/SocialCallback.tsx, /src/layouts/AuthLayout.tsx, /src/pages/auth/Login.tsx, /src/pages/Settings.tsx, /src/pages/Transactions.tsx, /src/pages/Budgets.tsx, /src/pages/auth/Register.tsx, /src/pages/Dashboard.tsx, /src/pages/CashFlow.tsx, /src/pages/Gamification.tsx, /src/pages/Analytics.tsx, /src/pages/SavingsGoals.tsx, /src/pages/AIInsights.tsx, /src/pages/Subscriptions.tsx, /src/pages/Social.tsx, /src/components/budgets/BudgetModal.tsx, /src/components/savings/SavingsGoalModal.tsx, /src/components/transactions/TransactionModal.tsx, /src/components/subscriptions/SubscriptionModal.tsx, /src/components/QuickAddExpense.tsx, /src/components/layout/Header.tsx[22m

@@ -14,6 +14,10 @@ export declare class AuthController {
             email: string;
             username: string;
             fullName: string;
+            authProvider: string;
+            avatarUrl: string | undefined;
         };
     }>;
+    socialLogin(provider: string, target: string, res: any): any;
+    socialCallback(provider: string, code: string, state: string, error: string, res: any): Promise<any>;
 }

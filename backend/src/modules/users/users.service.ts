@@ -91,6 +91,10 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');
 
+    if (!user.password) {
+      throw new UnauthorizedException('Tai khoan nay dang dung dang nhap mang xa hoi');
+    }
+
     // Verify mật khẩu cũ
     const isMatch = await bcrypt.compare(dto.oldPassword, user.password);
     if (!isMatch) {

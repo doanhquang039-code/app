@@ -48,6 +48,7 @@ import 'screens/subscription_manager_screen.dart';
 import 'screens/financial_news_screen.dart';
 import 'screens/budget_alerts_screen.dart';
 import 'screens/category_manager_screen.dart';
+import 'widgets/oauth_deep_link_handler.dart';
 
 void main() {
   runApp(
@@ -72,7 +73,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return OAuthDeepLinkHandler(
+      child: MaterialApp(
+        navigatorKey: oauthNavigatorKey,
       title: 'Quản lý Chi tiêu',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
@@ -148,6 +151,7 @@ class MyApp extends StatelessWidget {
         '/budget-alerts': (_) => const BudgetAlertsScreen(),
         '/category-manager': (_) => const CategoryManagerScreen(),
       },
+      ),
     );
   }
 }

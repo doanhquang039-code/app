@@ -9,6 +9,7 @@ import AuthLayout from './layouts/AuthLayout'
 // Pages
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
+import SocialCallback from './pages/auth/SocialCallback'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Budgets from './pages/Budgets'
@@ -35,6 +36,7 @@ function App() {
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/auth/social/callback" element={<SocialCallback />} />
           </Route>
 
           {/* Main Routes */}

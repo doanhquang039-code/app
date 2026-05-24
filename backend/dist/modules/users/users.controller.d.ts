@@ -14,6 +14,10 @@ export declare class UsersController {
         fullName: string;
         username: string;
         isActive: boolean;
+        authProvider?: string;
+        socialProviderId?: string;
+        avatarUrl?: string;
+        lastLoginAt?: Date;
         createdAt: Date;
     }>;
     updateProfile(req: any, dto: UpdateProfileDto): Promise<{
@@ -25,6 +29,10 @@ export declare class UsersController {
             fullName: string;
             username: string;
             isActive: boolean;
+            authProvider?: string;
+            socialProviderId?: string;
+            avatarUrl?: string;
+            lastLoginAt?: Date;
             createdAt: Date;
         };
     }>;

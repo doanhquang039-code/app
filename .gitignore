@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+!.env.cloud.example
+
+node_modules/
+dist/
+
+*.log
+*.out.log
+*.err.log

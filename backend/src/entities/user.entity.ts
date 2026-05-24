@@ -8,8 +8,8 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  @Column({ type: 'nvarchar', length: 255, nullable: true })
+  password: string | null;
 
   @Column()
   fullName: string;
@@ -19,6 +19,18 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ nullable: true })
+  authProvider?: string;
+
+  @Column({ nullable: true })
+  socialProviderId?: string;
+
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
+  @Column({ nullable: true })
+  lastLoginAt?: Date;
 
   @CreateDateColumn()
   createdAt: Date;
