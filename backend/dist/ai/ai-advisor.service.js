@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var AIAdvisorService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIAdvisorService = void 0;
 const common_1 = require("@nestjs/common");
@@ -24,11 +25,12 @@ const openai_1 = __importDefault(require("openai"));
 const transaction_entity_1 = require("../entities/transaction.entity");
 const budget_entity_1 = require("../entities/budget.entity");
 const savings_goal_entity_1 = require("../entities/savings-goal.entity");
-let AIAdvisorService = class AIAdvisorService {
+let AIAdvisorService = AIAdvisorService_1 = class AIAdvisorService {
     transactionRepo;
     budgetRepo;
     savingsGoalRepo;
     configService;
+    logger = new common_1.Logger(AIAdvisorService_1.name);
     openai = null;
     useAI = false;
     constructor(transactionRepo, budgetRepo, savingsGoalRepo, configService) {
@@ -40,14 +42,13 @@ let AIAdvisorService = class AIAdvisorService {
         if (apiKey && apiKey !== 'your-openai-api-key-here') {
             this.openai = new openai_1.default({ apiKey });
             this.useAI = true;
-            console.log('✅ OpenAI initialized successfully');
+            this.logger.log('OpenAI initialized successfully');
         }
         else {
-            console.log('⚠️  OpenAI API key not found, using rule-based responses');
+            this.logger.log('OpenAI API key not configured, using rule-based responses');
         }
     }
     async getFinancialInsights(userId) {
-        const insights = [];
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -57,28 +58,24 @@ let AIAdvisorService = class AIAdvisorService {
                 date: (0, typeorm_2.Between)(startOfMonth, endOfMonth),
             },
         });
-        const spendingInsights = this.analyzeSpendingPatterns(transactions);
-        insights.push(...spendingInsights);
-        const budgetInsights = await this.analyzeBudgets(userId);
-        insights.push(...budgetInsights);
-        const savingsInsights = await this.analyzeSavingsGoals(userId);
-        insights.push(...savingsInsights);
-        const predictions = this.predictFutureSpending(transactions);
-        insights.push(...predictions);
-        return insights.sort((a, b) => {
-            const priorityOrder = { high: 0, medium: 1, low: 2 };
-            return priorityOrder[a.priority] - priorityOrder[b.priority];
-        });
+        const insights = [
+            ...this.analyzeSpendingPatterns(transactions),
+            ...(await this.analyzeBudgets(userId)),
+            ...(await this.analyzeSavingsGoals(userId)),
+            ...this.predictFutureSpending(transactions),
+        ];
+        const priorityOrder = { high: 0, medium: 1, low: 2 };
+        return insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
     }
     analyzeSpendingPatterns(transactions) {
         const insights = [];
-        const totalSpending = transactions
-            .filter((t) => t.type === 'expense')
-            .reduce((sum, t) => sum + Number(t.amount), 0);
-        const categorySpending = transactions
-            .filter((t) => t.type === 'expense')
-            .reduce((acc, t) => {
-            const category = t.categoryId || 'other';
+        const expenses = transactions.filter((t) => t.type === 'expense' || t.type === 'EXPENSE');
+        const totalSpending = expenses.reduce((sum, t) => sum + Number(t.amount), 0);
+        if (totalSpending <= 0) {
+            return insights;
+        }
+        const categorySpending = expenses.reduce((acc, t) => {
+            const category = t.categoryId?.toString() || 'khac';
             acc[category] = (acc[category] || 0) + Number(t.amount);
             return acc;
         }, {});
@@ -86,32 +83,30 @@ let AIAdvisorService = class AIAdvisorService {
         if (highestCategory && highestCategory[1] > totalSpending * 0.3) {
             insights.push({
                 type: 'warning',
-                title: 'Chi tiêu cao trong danh mục',
-                message: `Bạn đã chi ${highestCategory[1].toLocaleString('vi-VN')}đ cho danh mục này, chiếm ${((highestCategory[1] / totalSpending) * 100).toFixed(1)}% tổng chi tiêu.`,
+                title: 'Chi tiêu cao trong một danh mục',
+                message: `Bạn đã chi ${highestCategory[1].toLocaleString('vi-VN')}đ cho danh mục này, chiếm ${((highestCategory[1] / totalSpending) * 100).toFixed(1)}% tổng chi tiêu tháng.`,
                 priority: 'high',
                 actionable: true,
-                action: 'Xem chi tiết',
+                action: 'Xem giao dịch',
             });
         }
-        const avgDailySpending = totalSpending / new Date().getDate();
-        const recentSpending = transactions
-            .filter((t) => t.type === 'expense' &&
-            new Date(t.date) >
-                new Date(Date.now() - 3 * 24 * 60 * 60 * 1000))
+        const avgDailySpending = totalSpending / Math.max(new Date().getDate(), 1);
+        const recentSpending = expenses
+            .filter((t) => new Date(t.date) > new Date(Date.now() - 3 * 24 * 60 * 60 * 1000))
             .reduce((sum, t) => sum + Number(t.amount), 0);
-        if (recentSpending > avgDailySpending * 3 * 1.5) {
+        if (recentSpending > avgDailySpending * 4.5) {
             insights.push({
                 type: 'warning',
                 title: 'Chi tiêu tăng đột biến',
-                message: `Chi tiêu 3 ngày qua cao hơn 50% so với mức trung bình. Hãy cân nhắc giảm chi tiêu!`,
+                message: 'Chi tiêu 3 ngày gần đây cao hơn đáng kể so với mức trung bình. Bạn nên kiểm tra lại các khoản lớn.',
                 priority: 'high',
             });
         }
-        if (totalSpending < avgDailySpending * 20) {
+        if (transactions.length >= 5 && recentSpending <= avgDailySpending * 3) {
             insights.push({
                 type: 'achievement',
-                title: 'Tiết kiệm tốt! 🎉',
-                message: `Bạn đang chi tiêu thấp hơn mức trung bình. Tiếp tục duy trì!`,
+                title: 'Nhịp chi tiêu ổn định',
+                message: 'Các khoản chi gần đây vẫn trong vùng kiểm soát. Tiếp tục ghi chép đều để dự báo chính xác hơn.',
                 priority: 'low',
             });
         }
@@ -119,29 +114,30 @@ let AIAdvisorService = class AIAdvisorService {
     }
     async analyzeBudgets(userId) {
         const insights = [];
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const budgets = await this.budgetRepo.find({
-            where: { userId },
-        });
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const budgets = await this.budgetRepo.find({ where: { userId } });
         for (const budget of budgets) {
             const spent = await this.transactionRepo
                 .createQueryBuilder('t')
                 .where('t.userId = :userId', { userId })
-                .andWhere('t.categoryId = :categoryId', {
-                categoryId: budget.categoryId,
+                .andWhere('t.categoryId = :categoryId', { categoryId: budget.categoryId })
+                .andWhere('(t.type = :expenseLower OR t.type = :expenseUpper)', {
+                expenseLower: 'expense',
+                expenseUpper: 'EXPENSE',
             })
-                .andWhere('t.type = :type', { type: 'expense' })
                 .andWhere('t.date >= :startDate', { startDate: startOfMonth })
                 .select('SUM(t.amount)', 'total')
                 .getRawOne();
             const spentAmount = Number(spent?.total || 0);
-            const percentage = (spentAmount / Number(budget.amount)) * 100;
+            const budgetAmount = Number(budget.amount);
+            if (budgetAmount <= 0)
+                continue;
+            const percentage = (spentAmount / budgetAmount) * 100;
             if (percentage >= 90) {
                 insights.push({
                     type: 'warning',
-                    title: 'Ngân sách sắp vượt!',
-                    message: `Bạn đã dùng ${percentage.toFixed(0)}% ngân sách cho danh mục này.`,
+                    title: 'Ngân sách sắp vượt',
+                    message: `Bạn đã dùng ${percentage.toFixed(0)}% ngân sách của danh mục này.`,
                     priority: 'high',
                     actionable: true,
                     action: 'Xem ngân sách',
@@ -151,7 +147,7 @@ let AIAdvisorService = class AIAdvisorService {
                 insights.push({
                     type: 'tip',
                     title: 'Cảnh báo ngân sách',
-                    message: `Đã dùng ${percentage.toFixed(0)}% ngân sách. Hãy cân nhắc chi tiêu!`,
+                    message: `Bạn đã dùng ${percentage.toFixed(0)}% ngân sách. Hãy hạn chế thêm chi tiêu ở danh mục này.`,
                     priority: 'medium',
                 });
             }
@@ -160,31 +156,32 @@ let AIAdvisorService = class AIAdvisorService {
     }
     async analyzeSavingsGoals(userId) {
         const insights = [];
-        const goals = await this.savingsGoalRepo.find({
-            where: { userId, status: 'active' },
-        });
+        const goals = await this.savingsGoalRepo.find({ where: { userId, status: 'active' } });
         for (const goal of goals) {
-            const progress = (Number(goal.currentAmount) / Number(goal.targetAmount)) * 100;
+            const targetAmount = Number(goal.targetAmount);
+            if (targetAmount <= 0)
+                continue;
+            const currentAmount = Number(goal.currentAmount);
+            const progress = (currentAmount / targetAmount) * 100;
             if (progress >= 75) {
                 insights.push({
                     type: 'achievement',
-                    title: 'Gần đạt mục tiêu! 🎯',
-                    message: `Bạn đã đạt ${progress.toFixed(0)}% mục tiêu "${goal.name}". Còn ${(Number(goal.targetAmount) - Number(goal.currentAmount)).toLocaleString('vi-VN')}đ nữa!`,
+                    title: 'Gần đạt mục tiêu tiết kiệm',
+                    message: `Bạn đã đạt ${progress.toFixed(0)}% mục tiêu "${goal.name}". Còn ${(targetAmount - currentAmount).toLocaleString('vi-VN')}đ nữa.`,
                     priority: 'medium',
                     actionable: true,
                     action: 'Xem mục tiêu',
                 });
             }
             if (goal.targetDate) {
-                const daysLeft = Math.ceil((new Date(goal.targetDate).getTime() - Date.now()) /
-                    (1000 * 60 * 60 * 24));
-                const amountLeft = Number(goal.targetAmount) - Number(goal.currentAmount);
-                const dailyRequired = amountLeft / daysLeft;
+                const daysLeft = Math.ceil((new Date(goal.targetDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                const amountLeft = targetAmount - currentAmount;
+                const dailyRequired = amountLeft / Math.max(daysLeft, 1);
                 if (dailyRequired > 0 && daysLeft > 0 && daysLeft < 30) {
                     insights.push({
                         type: 'tip',
-                        title: 'Tăng tốc tiết kiệm',
-                        message: `Để đạt mục tiêu "${goal.name}", bạn cần tiết kiệm ${dailyRequired.toLocaleString('vi-VN')}đ/ngày trong ${daysLeft} ngày tới.`,
+                        title: 'Cần tăng tốc tiết kiệm',
+                        message: `Để đạt mục tiêu "${goal.name}", bạn cần tiết kiệm khoảng ${dailyRequired.toLocaleString('vi-VN')}đ mỗi ngày trong ${daysLeft} ngày tới.`,
                         priority: 'medium',
                     });
                 }
@@ -193,22 +190,23 @@ let AIAdvisorService = class AIAdvisorService {
         return insights;
     }
     predictFutureSpending(transactions) {
-        const insights = [];
-        const expenses = transactions.filter((t) => t.type === 'expense');
+        const expenses = transactions.filter((t) => t.type === 'expense' || t.type === 'EXPENSE');
         if (expenses.length === 0)
-            return insights;
+            return [];
         const totalSpending = expenses.reduce((sum, t) => sum + Number(t.amount), 0);
-        const avgDailySpending = totalSpending / new Date().getDate();
-        const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-        const daysLeft = daysInMonth - new Date().getDate();
+        const today = new Date();
+        const avgDailySpending = totalSpending / Math.max(today.getDate(), 1);
+        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const daysLeft = Math.max(daysInMonth - today.getDate(), 0);
         const predictedTotal = totalSpending + avgDailySpending * daysLeft;
-        insights.push({
-            type: 'prediction',
-            title: 'Dự đoán chi tiêu tháng này',
-            message: `Dựa trên xu hướng hiện tại, bạn sẽ chi khoảng ${predictedTotal.toLocaleString('vi-VN')}đ trong tháng này.`,
-            priority: 'low',
-        });
-        return insights;
+        return [
+            {
+                type: 'prediction',
+                title: 'Dự đoán chi tiêu tháng này',
+                message: `Nếu giữ nhịp hiện tại, bạn có thể chi khoảng ${predictedTotal.toLocaleString('vi-VN')}đ trong tháng này.`,
+                priority: 'low',
+            },
+        ];
     }
     async getChatbotResponse(userId, message) {
         if (this.useAI && this.openai) {
@@ -222,14 +220,11 @@ let AIAdvisorService = class AIAdvisorService {
                 return this.getRuleBasedResponse(userId, message);
             }
             const context = await this.getUserFinancialContext(userId);
-            const systemPrompt = `Bạn là một trợ lý tài chính AI thông minh, chuyên nghiệp và thân thiện. 
-Nhiệm vụ của bạn là giúp người dùng quản lý tài chính cá nhân, đưa ra lời khuyên về chi tiêu, tiết kiệm và đầu tư.
+            const systemPrompt = `Bạn là trợ lý tài chính cá nhân trong ứng dụng quản lý chi tiêu.
+Trả lời bằng tiếng Việt, ngắn gọn trong 2-3 câu, ưu tiên lời khuyên thực tế.
 
 Thông tin tài chính của người dùng:
-${context}
-
-Hãy trả lời bằng tiếng Việt, ngắn gọn (2-3 câu), thân thiện và hữu ích. 
-Sử dụng emoji phù hợp để làm cho câu trả lời sinh động hơn.`;
+${context}`;
             const completion = await this.openai.chat.completions.create({
                 model: 'gpt-4o-mini',
                 messages: [
@@ -239,11 +234,10 @@ Sử dụng emoji phù hợp để làm cho câu trả lời sinh động hơn.`
                 temperature: 0.7,
                 max_tokens: 300,
             });
-            return (completion.choices[0]?.message?.content ||
-                'Xin lỗi, tôi không thể xử lý yêu cầu của bạn lúc này.');
+            return completion.choices[0]?.message?.content || 'Tôi chưa có đủ dữ liệu để trả lời câu hỏi này.';
         }
         catch (error) {
-            console.error('OpenAI API error:', error);
+            this.logger.error('OpenAI API error', error);
             return this.getRuleBasedResponse(userId, message);
         }
     }
@@ -251,75 +245,67 @@ Sử dụng emoji phù hợp để làm cho câu trả lời sinh động hơn.`
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const transactions = await this.transactionRepo.find({
-            where: {
-                userId,
-                date: (0, typeorm_2.Between)(startOfMonth, now),
-            },
+            where: { userId, date: (0, typeorm_2.Between)(startOfMonth, now) },
             take: 50,
         });
         const totalIncome = transactions
-            .filter((t) => t.type === 'income')
+            .filter((t) => t.type === 'income' || t.type === 'INCOME')
             .reduce((sum, t) => sum + Number(t.amount), 0);
         const totalExpense = transactions
-            .filter((t) => t.type === 'expense')
+            .filter((t) => t.type === 'expense' || t.type === 'EXPENSE')
             .reduce((sum, t) => sum + Number(t.amount), 0);
         const budgets = await this.budgetRepo.find({ where: { userId } });
-        const goals = await this.savingsGoalRepo.find({
-            where: { userId, status: 'active' },
-        });
-        return `
-- Tháng này: Thu nhập ${totalIncome.toLocaleString('vi-VN')}đ, Chi tiêu ${totalExpense.toLocaleString('vi-VN')}đ
-- Số giao dịch: ${transactions.length}
-- Số ngân sách: ${budgets.length}
-- Số mục tiêu tiết kiệm: ${goals.length}
-- Tổng mục tiêu tiết kiệm: ${goals.reduce((sum, g) => sum + Number(g.targetAmount), 0).toLocaleString('vi-VN')}đ
-    `.trim();
+        const goals = await this.savingsGoalRepo.find({ where: { userId, status: 'active' } });
+        return [
+            `Tháng này: thu nhập ${totalIncome.toLocaleString('vi-VN')}đ, chi tiêu ${totalExpense.toLocaleString('vi-VN')}đ`,
+            `Số giao dịch: ${transactions.length}`,
+            `Số ngân sách: ${budgets.length}`,
+            `Số mục tiêu tiết kiệm: ${goals.length}`,
+            `Tổng mục tiêu tiết kiệm: ${goals.reduce((sum, g) => sum + Number(g.targetAmount), 0).toLocaleString('vi-VN')}đ`,
+        ].join('\n');
     }
     async getRuleBasedResponse(userId, message) {
         const lowerMessage = message.toLowerCase();
-        if (lowerMessage.includes('chi tiêu') ||
-            lowerMessage.includes('spending')) {
+        if (lowerMessage.includes('chi tiêu') || lowerMessage.includes('spending')) {
             const now = new Date();
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
             const transactions = await this.transactionRepo.find({
-                where: {
-                    userId,
-                    type: 'expense',
-                    date: (0, typeorm_2.Between)(startOfMonth, now),
-                },
+                where: { userId, type: 'expense', date: (0, typeorm_2.Between)(startOfMonth, now) },
             });
-            const total = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
-            return `💰 Tháng này bạn đã chi ${total.toLocaleString('vi-VN')}đ qua ${transactions.length} giao dịch.`;
+            const upperTransactions = await this.transactionRepo.find({
+                where: { userId, type: 'EXPENSE', date: (0, typeorm_2.Between)(startOfMonth, now) },
+            });
+            const expenses = [...transactions, ...upperTransactions];
+            const total = expenses.reduce((sum, t) => sum + Number(t.amount), 0);
+            return `Tháng này bạn đã chi ${total.toLocaleString('vi-VN')}đ qua ${expenses.length} giao dịch.`;
         }
         if (lowerMessage.includes('tiết kiệm') || lowerMessage.includes('save')) {
-            const goals = await this.savingsGoalRepo.find({
-                where: { userId, status: 'active' },
-            });
+            const goals = await this.savingsGoalRepo.find({ where: { userId, status: 'active' } });
             if (goals.length === 0) {
-                return '🎯 Bạn chưa có mục tiêu tiết kiệm nào. Hãy tạo mục tiêu để bắt đầu!';
+                return 'Bạn chưa có mục tiêu tiết kiệm nào. Hãy tạo một mục tiêu cụ thể để dễ theo dõi tiến độ.';
             }
             const totalTarget = goals.reduce((sum, g) => sum + Number(g.targetAmount), 0);
             const totalCurrent = goals.reduce((sum, g) => sum + Number(g.currentAmount), 0);
-            return `🎯 Bạn có ${goals.length} mục tiêu tiết kiệm với tổng ${totalTarget.toLocaleString('vi-VN')}đ. Đã đạt ${totalCurrent.toLocaleString('vi-VN')}đ (${((totalCurrent / totalTarget) * 100).toFixed(1)}%).`;
+            const percent = totalTarget > 0 ? (totalCurrent / totalTarget) * 100 : 0;
+            return `Bạn có ${goals.length} mục tiêu tiết kiệm với tổng mục tiêu ${totalTarget.toLocaleString('vi-VN')}đ. Hiện đã đạt ${totalCurrent.toLocaleString('vi-VN')}đ (${percent.toFixed(1)}%).`;
         }
         if (lowerMessage.includes('ngân sách') || lowerMessage.includes('budget')) {
             const budgets = await this.budgetRepo.find({ where: { userId } });
-            return `📊 Bạn có ${budgets.length} ngân sách đang hoạt động. Sử dụng lệnh "xem ngân sách" để biết chi tiết.`;
+            return `Bạn có ${budgets.length} ngân sách đang theo dõi. Hãy kiểm tra các ngân sách đã dùng trên 70% trước khi chi thêm.`;
         }
-        if (lowerMessage.includes('phân tích') ||
-            lowerMessage.includes('analyze')) {
+        if (lowerMessage.includes('phân tích') || lowerMessage.includes('analyze')) {
             const insights = await this.getFinancialInsights(userId);
             if (insights.length === 0) {
-                return '✅ Tài chính của bạn đang ổn định! Không có cảnh báo nào.';
+                return 'Tài chính của bạn chưa có cảnh báo lớn. Hãy tiếp tục ghi chép giao dịch để hệ thống phân tích chính xác hơn.';
             }
             const topInsight = insights[0];
-            return `${topInsight.type === 'warning' ? '⚠️' : '💡'} ${topInsight.title}: ${topInsight.message}`;
+            return `${topInsight.title}: ${topInsight.message}`;
         }
-        return '👋 Xin chào! Tôi có thể giúp bạn về: chi tiêu 💰, tiết kiệm 🎯, ngân sách 📊, và phân tích tài chính 📈. Bạn muốn biết gì?';
+        return 'Tôi có thể hỗ trợ về chi tiêu, tiết kiệm, ngân sách và phân tích tài chính. Bạn muốn xem phần nào trước?';
     }
 };
 exports.AIAdvisorService = AIAdvisorService;
-exports.AIAdvisorService = AIAdvisorService = __decorate([
+exports.AIAdvisorService = AIAdvisorService = AIAdvisorService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(transaction_entity_1.Transaction)),
     __param(1, (0, typeorm_1.InjectRepository)(budget_entity_1.Budget)),

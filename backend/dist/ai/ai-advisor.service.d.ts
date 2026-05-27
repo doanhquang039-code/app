@@ -16,6 +16,7 @@ export declare class AIAdvisorService {
     private budgetRepo;
     private savingsGoalRepo;
     private configService;
+    private readonly logger;
     private openai;
     private useAI;
     constructor(transactionRepo: Repository<Transaction>, budgetRepo: Repository<Budget>, savingsGoalRepo: Repository<SavingsGoal>, configService: ConfigService);

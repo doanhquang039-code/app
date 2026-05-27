@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Card,
@@ -18,6 +18,8 @@ import {
   Divider,
   Tabs,
   Tab,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import {
   Notifications,
@@ -28,12 +30,15 @@ import {
   MoreVert,
   Delete,
   DoneAll,
-  FilterList,
+  Refresh,
 } from '@mui/icons-material';
+import api from '../../lib/api';
+
+type NotificationType = 'info' | 'warning' | 'error' | 'success';
 
 interface Notification {
   id: number;
-  type: 'info' | 'warning' | 'error' | 'success';
+  type: NotificationType;
   title: string;
   message: string;
   timestamp: Date;
@@ -41,69 +46,57 @@ interface Notification {
   priority: number;
 }
 
+const normalizeType = (type?: string, severity?: string): NotificationType => {
+  const raw = `${type || ''} ${severity || ''}`.toLowerCase();
+  if (raw.includes('danger') || raw.includes('error')) return 'error';
+  if (raw.includes('warning') || raw.includes('alert')) return 'warning';
+  if (raw.includes('success') || raw.includes('goal')) return 'success';
+  return 'info';
+};
+
+const priorityFromSeverity = (severity?: string) => {
+  const value = (severity || '').toUpperCase();
+  if (value === 'DANGER' || value === 'ERROR') return 9;
+  if (value === 'WARNING') return 7;
+  return 4;
+};
+
+const mapNotification = (item: any): Notification => ({
+  id: Number(item.id),
+  type: normalizeType(item.type, item.severity),
+  title: item.title || 'Thông báo',
+  message: item.message || '',
+  timestamp: new Date(item.createdAt || item.updatedAt || Date.now()),
+  read: Boolean(item.isRead ?? item.read),
+  priority: Number(item.priority ?? priorityFromSeverity(item.severity)),
+});
+
 export const NotificationCenter: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedNotification, setSelectedNotification] = useState<number | null>(null);
   const [tabValue, setTabValue] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
   const fetchNotifications = async () => {
-    // Mock data - replace with actual API call
-    const mockNotifications: Notification[] = [
-      {
-        id: 1,
-        type: 'warning',
-        title: 'Budget Alert',
-        message: 'You have exceeded your Food budget by $50.00',
-        timestamp: new Date(),
-        read: false,
-        priority: 8,
-      },
-      {
-        id: 2,
-        type: 'info',
-        title: 'New Transaction',
-        message: 'Transaction of $45.00 added to Shopping category',
-        timestamp: new Date(Date.now() - 3600000),
-        read: false,
-        priority: 5,
-      },
-      {
-        id: 3,
-        type: 'success',
-        title: 'Savings Goal Achieved',
-        message: 'Congratulations! You reached your Emergency Fund goal',
-        timestamp: new Date(Date.now() - 7200000),
-        read: true,
-        priority: 7,
-      },
-      {
-        id: 4,
-        type: 'error',
-        title: 'Payment Failed',
-        message: 'Your recurring payment for Netflix failed',
-        timestamp: new Date(Date.now() - 86400000),
-        read: false,
-        priority: 9,
-      },
-      {
-        id: 5,
-        type: 'info',
-        title: 'Weekly Report',
-        message: 'Your weekly financial report is ready',
-        timestamp: new Date(Date.now() - 172800000),
-        read: true,
-        priority: 4,
-      },
-    ];
-    setNotifications(mockNotifications);
+    setLoading(true);
+    setError('');
+    try {
+      const { data } = await api.get('/smart-notifications');
+      setNotifications(Array.isArray(data) ? data.map(mapNotification) : []);
+    } catch {
+      setError('Không tải được thông báo. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getIcon = (type: string) => {
+  const getIcon = (type: NotificationType) => {
     switch (type) {
       case 'warning':
         return <Warning />;
@@ -116,7 +109,7 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
-  const getColor = (type: string) => {
+  const getColor = (type: NotificationType) => {
     switch (type) {
       case 'warning':
         return 'warning';
@@ -130,6 +123,7 @@ export const NotificationCenter: React.FC = () => {
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, notificationId: number) => {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setSelectedNotification(notificationId);
   };
@@ -139,57 +133,86 @@ export const NotificationCenter: React.FC = () => {
     setSelectedNotification(null);
   };
 
-  const markAsRead = (id: number) => {
-    setNotifications(notifications.map(n => 
-      n.id === id ? { ...n, read: true } : n
-    ));
+  const markAsRead = async (id: number) => {
+    const previous = notifications;
+    setNotifications((current) => current.map((n) => (n.id === id ? { ...n, read: true } : n)));
     handleMenuClose();
-  };
-
-  const deleteNotification = (id: number) => {
-    setNotifications(notifications.filter(n => n.id !== id));
-    handleMenuClose();
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
-  };
-
-  const getFilteredNotifications = () => {
-    switch (tabValue) {
-      case 1:
-        return notifications.filter(n => !n.read);
-      case 2:
-        return notifications.filter(n => n.read);
-      default:
-        return notifications;
+    try {
+      await api.put(`/smart-notifications/${id}/read`);
+    } catch {
+      setNotifications(previous);
+      setError('Không cập nhật được trạng thái thông báo.');
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-  const filteredNotifications = getFilteredNotifications();
+  const deleteNotification = async (id: number) => {
+    const previous = notifications;
+    setNotifications((current) => current.filter((n) => n.id !== id));
+    handleMenuClose();
+    try {
+      await api.delete(`/smart-notifications/${id}`);
+    } catch {
+      setNotifications(previous);
+      setError('Không xóa được thông báo.');
+    }
+  };
+
+  const markAllAsRead = async () => {
+    const previous = notifications;
+    setNotifications((current) => current.map((n) => ({ ...n, read: true })));
+    try {
+      await api.put('/smart-notifications/all/read');
+    } catch {
+      setNotifications(previous);
+      setError('Không đánh dấu tất cả là đã đọc được.');
+    }
+  };
+
+  const clearReadNotifications = async () => {
+    const readIds = notifications.filter((n) => n.read).map((n) => n.id);
+    if (readIds.length === 0) return;
+    const previous = notifications;
+    setNotifications((current) => current.filter((n) => !n.read));
+    try {
+      await Promise.all(readIds.map((id) => api.delete(`/smart-notifications/${id}`)));
+    } catch {
+      setNotifications(previous);
+      setError('Không xóa được các thông báo đã đọc.');
+    }
+  };
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+  const filteredNotifications = useMemo(() => {
+    switch (tabValue) {
+      case 1:
+        return notifications.filter((n) => !n.read);
+      case 2:
+        return notifications.filter((n) => n.read);
+      default:
+        return notifications;
+    }
+  }, [notifications, tabValue]);
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Badge badgeContent={unreadCount} color="error">
             <Notifications fontSize="large" />
           </Badge>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-              Notifications
+              Thông báo
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
+              {unreadCount} thông báo chưa đọc
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <Button variant="outlined" size="small" startIcon={<Refresh />} onClick={fetchNotifications}>
+            Tải lại
+          </Button>
           <Button
             variant="outlined"
             size="small"
@@ -197,38 +220,51 @@ export const NotificationCenter: React.FC = () => {
             onClick={markAllAsRead}
             disabled={unreadCount === 0}
           >
-            Mark All Read
+            Đánh dấu đã đọc
           </Button>
           <Button
             variant="outlined"
             size="small"
             startIcon={<Delete />}
-            onClick={clearAll}
-            disabled={notifications.length === 0}
+            onClick={clearReadNotifications}
+            disabled={notifications.every((n) => !n.read)}
           >
-            Clear All
+            Xóa đã đọc
           </Button>
         </Box>
       </Box>
 
+      {error && (
+        <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setError('')}>
+          {error}
+        </Alert>
+      )}
+
       <Card>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
-            <Tab label={`All (${notifications.length})`} />
-            <Tab label={`Unread (${unreadCount})`} />
-            <Tab label={`Read (${notifications.length - unreadCount})`} />
+          <Tabs value={tabValue} onChange={(_, value) => setTabValue(value)}>
+            <Tab label={`Tất cả (${notifications.length})`} />
+            <Tab label={`Chưa đọc (${unreadCount})`} />
+            <Tab label={`Đã đọc (${notifications.length - unreadCount})`} />
           </Tabs>
         </Box>
 
         <CardContent sx={{ p: 0 }}>
-          {filteredNotifications.length === 0 ? (
-            <Box sx={{ p: 4, textAlign: 'center' }}>
+          {loading ? (
+            <Box sx={{ p: 5, textAlign: 'center' }}>
+              <CircularProgress />
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                Đang tải thông báo...
+              </Typography>
+            </Box>
+          ) : filteredNotifications.length === 0 ? (
+            <Box sx={{ p: 5, textAlign: 'center' }}>
               <Notifications sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
               <Typography variant="h6" color="text.secondary">
-                No notifications
+                Chưa có thông báo
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                You're all caught up!
+                Các cảnh báo ngân sách, mục tiêu và nhắc nhở sẽ xuất hiện ở đây.
               </Typography>
             </Box>
           ) : (
@@ -242,10 +278,7 @@ export const NotificationCenter: React.FC = () => {
                       cursor: 'pointer',
                     }}
                     secondaryAction={
-                      <IconButton
-                        edge="end"
-                        onClick={(e) => handleMenuOpen(e, notification.id)}
-                      >
+                      <IconButton edge="end" onClick={(e) => handleMenuOpen(e, notification.id)}>
                         <MoreVert />
                       </IconButton>
                     }
@@ -258,16 +291,12 @@ export const NotificationCenter: React.FC = () => {
                     </ListItemAvatar>
                     <ListItemText
                       primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: notification.read ? 'normal' : 'bold' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: notification.read ? 500 : 700 }}>
                             {notification.title}
                           </Typography>
-                          {!notification.read && (
-                            <Chip label="New" size="small" color="primary" />
-                          )}
-                          {notification.priority >= 8 && (
-                            <Chip label="High Priority" size="small" color="error" />
-                          )}
+                          {!notification.read && <Chip label="Mới" size="small" color="primary" />}
+                          {notification.priority >= 8 && <Chip label="Ưu tiên cao" size="small" color="error" />}
                         </Box>
                       }
                       secondary={
@@ -290,16 +319,12 @@ export const NotificationCenter: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={() => selectedNotification && markAsRead(selectedNotification)}>
-          <DoneAll sx={{ mr: 1 }} /> Mark as Read
+          <DoneAll sx={{ mr: 1 }} /> Đánh dấu đã đọc
         </MenuItem>
         <MenuItem onClick={() => selectedNotification && deleteNotification(selectedNotification)}>
-          <Delete sx={{ mr: 1 }} /> Delete
+          <Delete sx={{ mr: 1 }} /> Xóa
         </MenuItem>
       </Menu>
     </Box>
@@ -313,11 +338,11 @@ const formatTimestamp = (date: Date): string => {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
-  return date.toLocaleDateString();
+  if (minutes < 1) return 'Vừa xong';
+  if (minutes < 60) return `${minutes} phút trước`;
+  if (hours < 24) return `${hours} giờ trước`;
+  if (days < 7) return `${days} ngày trước`;
+  return date.toLocaleDateString('vi-VN');
 };
 
 export default NotificationCenter;

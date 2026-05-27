@@ -23,7 +23,7 @@ let SmartNotificationsController = class SmartNotificationsController {
         this.smartNotificationsService = smartNotificationsService;
     }
     findAll(req, unreadOnly) {
-        return this.smartNotificationsService.findAll(req.user.id, unreadOnly === true);
+        return this.smartNotificationsService.findAll(req.user.id, unreadOnly === true || unreadOnly === 'true');
     }
     async getUnreadCount(req) {
         const count = await this.smartNotificationsService.getUnreadCount(req.user.id);
@@ -43,11 +43,11 @@ let SmartNotificationsController = class SmartNotificationsController {
     findOne(id, req) {
         return this.smartNotificationsService.findOne(+id, req.user.id);
     }
-    markAsRead(id, req) {
-        return this.smartNotificationsService.markAsRead(+id, req.user.id);
-    }
     markAllAsRead(req) {
         return this.smartNotificationsService.markAllAsRead(req.user.id);
+    }
+    markAsRead(id, req) {
+        return this.smartNotificationsService.markAsRead(+id, req.user.id);
     }
     delete(id, req) {
         return this.smartNotificationsService.delete(+id, req.user.id);
@@ -83,7 +83,7 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Query)('unreadOnly')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Boolean]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SmartNotificationsController.prototype, "findAll", null);
 __decorate([
@@ -125,6 +125,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SmartNotificationsController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.Put)('all/read'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SmartNotificationsController.prototype, "markAllAsRead", null);
+__decorate([
     (0, common_1.Put)(':id/read'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Request)()),
@@ -132,13 +139,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], SmartNotificationsController.prototype, "markAsRead", null);
-__decorate([
-    (0, common_1.Put)('all/read'),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], SmartNotificationsController.prototype, "markAllAsRead", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),

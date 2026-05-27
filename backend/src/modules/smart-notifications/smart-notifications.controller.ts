@@ -10,8 +10,11 @@ export class SmartNotificationsController {
 
   // Notification endpoints
   @Get()
-  findAll(@Request() req, @Query('unreadOnly') unreadOnly: boolean) {
-    return this.smartNotificationsService.findAll(req.user.id, unreadOnly === true);
+  findAll(@Request() req, @Query('unreadOnly') unreadOnly?: string | boolean) {
+    return this.smartNotificationsService.findAll(
+      req.user.id,
+      unreadOnly === true || unreadOnly === 'true',
+    );
   }
 
   @Get('stats/unread-count')
@@ -42,14 +45,14 @@ export class SmartNotificationsController {
     return this.smartNotificationsService.findOne(+id, req.user.id);
   }
 
-  @Put(':id/read')
-  markAsRead(@Param('id') id: string, @Request() req) {
-    return this.smartNotificationsService.markAsRead(+id, req.user.id);
-  }
-
   @Put('all/read')
   markAllAsRead(@Request() req) {
     return this.smartNotificationsService.markAllAsRead(req.user.id);
+  }
+
+  @Put(':id/read')
+  markAsRead(@Param('id') id: string, @Request() req) {
+    return this.smartNotificationsService.markAsRead(+id, req.user.id);
   }
 
   @Delete(':id')

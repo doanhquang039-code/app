@@ -15,7 +15,7 @@ export class AIAdvisorController {
   constructor(private readonly aiAdvisorService: AIAdvisorService) {}
 
   @Get('insights')
-  @ApiOperation({ summary: 'Lấy insights tài chính từ AI' })
+  @ApiOperation({ summary: 'Lấy insight tài chính từ AI' })
   async getInsights(@Request() req) {
     return this.aiAdvisorService.getFinancialInsights(req.user.userId);
   }

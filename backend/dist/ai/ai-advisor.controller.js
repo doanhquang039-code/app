@@ -36,7 +36,7 @@ let AIAdvisorController = class AIAdvisorController {
 exports.AIAdvisorController = AIAdvisorController;
 __decorate([
     (0, common_1.Get)('insights'),
-    (0, swagger_1.ApiOperation)({ summary: 'Lấy insights tài chính từ AI' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Lấy insight tài chính từ AI' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
