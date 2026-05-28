@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../services/api_service.dart';
+
 class SocialAuthButtons extends StatelessWidget {
   const SocialAuthButtons({
     super.key,
@@ -17,8 +19,6 @@ class SocialAuthButtons extends StatelessWidget {
     _SocialProvider('tiktok', 'TikTok', '♪', Color(0xFF000000), Colors.white),
     _SocialProvider('instagram', 'Instagram', 'IG', Color(0xFFE1306C), Colors.white),
   ];
-
-  static const _oauthBaseUrl = 'http://localhost:3000';
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class SocialAuthButtons extends StatelessWidget {
   }
 
   Future<void> _openSocialAuth(BuildContext context, String provider) async {
-    final uri = Uri.parse('$_oauthBaseUrl/auth/social/$provider?target=mobile');
+    final uri = Uri.parse('${ApiService.baseUrl}/auth/social/$provider?target=mobile');
     final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!opened && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

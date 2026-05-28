@@ -14,37 +14,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionsController = void 0;
 const common_1 = require("@nestjs/common");
-const transactions_service_1 = require("./transactions.service");
 const create_transaction_dto_1 = require("./dto/create-transaction.dto");
 const update_transaction_dto_1 = require("./dto/update-transaction.dto");
 const query_transaction_dto_1 = require("./dto/query-transaction.dto");
 const bulk_import_transactions_dto_1 = require("./dto/bulk-import-transactions.dto");
 const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
+const transactions_view_model_1 = require("./transactions.view-model");
 let TransactionsController = class TransactionsController {
-    transactionsService;
-    constructor(transactionsService) {
-        this.transactionsService = transactionsService;
+    viewModel;
+    constructor(viewModel) {
+        this.viewModel = viewModel;
     }
     create(req, dto) {
-        return this.transactionsService.create(req.user.userId, dto);
+        return this.viewModel.create(req.user.userId, dto);
     }
     bulkCreate(req, dto) {
-        return this.transactionsService.bulkCreate(req.user.userId, dto.items);
+        return this.viewModel.bulkCreate(req.user.userId, dto.items);
     }
     findAll(req, query) {
-        return this.transactionsService.findAll(req.user.userId, query);
+        return this.viewModel.findAll(req.user.userId, query);
     }
     getSummary(req, month) {
-        return this.transactionsService.getSummary(req.user.userId, month);
+        return this.viewModel.getSummary(req.user.userId, month);
     }
     findOne(req, id) {
-        return this.transactionsService.findOne(req.user.userId, +id);
+        return this.viewModel.findOne(req.user.userId, +id);
     }
     update(req, id, dto) {
-        return this.transactionsService.update(req.user.userId, +id, dto);
+        return this.viewModel.update(req.user.userId, +id, dto);
     }
     remove(req, id) {
-        return this.transactionsService.remove(req.user.userId, +id);
+        return this.viewModel.remove(req.user.userId, +id);
     }
 };
 exports.TransactionsController = TransactionsController;
@@ -108,6 +108,6 @@ __decorate([
 exports.TransactionsController = TransactionsController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('transactions'),
-    __metadata("design:paramtypes", [transactions_service_1.TransactionsService])
+    __metadata("design:paramtypes", [transactions_view_model_1.TransactionsViewModel])
 ], TransactionsController);
 //# sourceMappingURL=transactions.controller.js.map

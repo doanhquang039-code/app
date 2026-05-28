@@ -1,87 +1,9 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { Plus, Search, TrendingUp, TrendingDown, Edit, Trash2, Download } from 'lucide-react'
-import { toast } from 'sonner'
-import api from '../lib/api'
 import TransactionModal from '../components/transactions/TransactionModal'
+import { useTransactionsViewModel } from '../viewmodels/useTransactionsViewModel'
 
 export default function Transactions() {
-  const queryClient = useQueryClient()
-  const [showModal, setShowModal] = useState(false)
-  const [editingTransaction, setEditingTransaction] = useState<any>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterType, setFilterType] = useState<'ALL' | 'INCOME' | 'EXPENSE'>('ALL')
-
-  const { data: transactions, isLoading } = useQuery('transactions', async () => {
-    const response = await api.get('/transactions')
-    return response.data
-  })
-
-  const { data: categories } = useQuery('categories', async () => {
-    const response = await api.get('/categories')
-    return response.data
-  })
-
-  const deleteMutation = useMutation(
-    (id: number) => api.delete(`/transactions/${id}`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('transactions')
-        toast.success('Đã xóa giao dịch')
-      },
-      onError: () => {
-        toast.error('Xóa giao dịch thất bại')
-      },
-    }
-  )
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(amount)
-  }
-
-  const filteredTransactions = transactions?.filter((t: any) => {
-    const matchesSearch = t.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         t.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = filterType === 'ALL' || t.type === filterType
-    return matchesSearch && matchesType
-  })
-
-  const handleEdit = (transaction: any) => {
-    setEditingTransaction(transaction)
-    setShowModal(true)
-  }
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('Bạn có chắc muốn xóa giao dịch này?')) {
-      deleteMutation.mutate(id)
-    }
-  }
-
-  const handleExport = async () => {
-    try {
-      const response = await api.post('/export-import/export', {
-        exportType: 'EXCEL',
-        dataType: 'TRANSACTIONS',
-      })
-      toast.success('Đang xuất file...')
-      // Download file
-      const downloadResponse = await api.get(`/export-import/download/${response.data.id}`, {
-        responseType: 'blob',
-      })
-      const url = window.URL.createObjectURL(new Blob([downloadResponse.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', response.data.fileName)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-    } catch (error) {
-      toast.error('Xuất file thất bại')
-    }
-  }
+  const viewModel = useTransactionsViewModel()
 
   return (
     <div className="space-y-6">
@@ -91,15 +13,12 @@ export default function Transactions() {
           <p className="text-gray-600 mt-1">Quản lý thu chi của bạn</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={handleExport} className="btn btn-secondary flex items-center gap-2">
+          <button onClick={viewModel.exportTransactions} className="btn btn-secondary flex items-center gap-2">
             <Download className="w-5 h-5" />
             Xuất Excel
           </button>
           <button
-            onClick={() => {
-              setEditingTransaction(null)
-              setShowModal(true)
-            }}
+            onClick={viewModel.openCreateModal}
             className="btn btn-primary flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
@@ -116,16 +35,16 @@ export default function Transactions() {
             <input
               type="text"
               placeholder="Tìm kiếm giao dịch..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={viewModel.searchTerm}
+              onChange={(e) => viewModel.setSearchTerm(e.target.value)}
               className="input pl-10"
             />
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setFilterType('ALL')}
+              onClick={() => viewModel.setFilterType('ALL')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filterType === 'ALL'
+                viewModel.filterType === 'ALL'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -133,9 +52,9 @@ export default function Transactions() {
               Tất cả
             </button>
             <button
-              onClick={() => setFilterType('INCOME')}
+              onClick={() => viewModel.setFilterType('INCOME')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filterType === 'INCOME'
+                viewModel.filterType === 'INCOME'
                   ? 'bg-success-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -143,9 +62,9 @@ export default function Transactions() {
               Thu nhập
             </button>
             <button
-              onClick={() => setFilterType('EXPENSE')}
+              onClick={() => viewModel.setFilterType('EXPENSE')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filterType === 'EXPENSE'
+                viewModel.filterType === 'EXPENSE'
                   ? 'bg-danger-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -158,12 +77,12 @@ export default function Transactions() {
 
       {/* Transactions List */}
       <div className="card">
-        {isLoading ? (
+        {viewModel.isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
             <p className="text-gray-500 mt-4">Đang tải...</p>
           </div>
-        ) : filteredTransactions?.length === 0 ? (
+        ) : viewModel.filteredTransactions?.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">Không có giao dịch nào</p>
           </div>
@@ -181,7 +100,7 @@ export default function Transactions() {
                 </tr>
               </thead>
               <tbody>
-                {filteredTransactions?.map((transaction: any) => (
+                {viewModel.filteredTransactions?.map((transaction) => (
                   <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-sm text-gray-600">
                       {new Date(transaction.date).toLocaleDateString('vi-VN')}
@@ -224,19 +143,19 @@ export default function Transactions() {
                         }`}
                       >
                         {transaction.type === 'INCOME' ? '+' : '-'}
-                        {formatCurrency(transaction.amount)}
+                        {viewModel.formatCurrency(transaction.amount)}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => handleEdit(transaction)}
+                          onClick={() => viewModel.openEditModal(transaction)}
                           className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(transaction.id)}
+                          onClick={() => viewModel.deleteTransaction(transaction.id)}
                           className="p-2 text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -251,19 +170,12 @@ export default function Transactions() {
         )}
       </div>
 
-      {showModal && (
+      {viewModel.showModal && (
         <TransactionModal
-          transaction={editingTransaction}
-          categories={categories}
-          onClose={() => {
-            setShowModal(false)
-            setEditingTransaction(null)
-          }}
-          onSuccess={() => {
-            queryClient.invalidateQueries('transactions')
-            setShowModal(false)
-            setEditingTransaction(null)
-          }}
+          transaction={viewModel.editingTransaction}
+          categories={viewModel.categories ?? []}
+          onClose={viewModel.closeModal}
+          onSuccess={viewModel.handleMutationSuccess}
         />
       )}
     </div>

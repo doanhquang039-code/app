@@ -1,105 +1,46 @@
-import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
 import { X } from 'lucide-react'
-import { toast } from 'sonner'
-import api from '../../lib/api'
+import { SubscriptionModel } from '../../models/subscription'
+import {
+  SUBSCRIPTION_ICON_OPTIONS,
+  useSubscriptionModalViewModel,
+} from '../../viewmodels/useSubscriptionModalViewModel'
 
 interface SubscriptionModalProps {
-  subscription?: any
+  subscription?: SubscriptionModel | null
   onClose: () => void
   onSuccess: () => void
 }
 
-interface SubscriptionForm {
-  name: string
-  description?: string
-  amount: number
-  billingCycle: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY'
-  provider?: string
-  website?: string
-  icon?: string
-  startDate: string
-  reminderDaysBefore: number
-}
-
-const ICON_OPTIONS = ['📱', '🎬', '🎵', '☁️', '🎮', '📺', '💪', '📚', '🍕', '🚗']
-
-export default function SubscriptionModal({ subscription, onClose, onSuccess }: SubscriptionModalProps) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<SubscriptionForm>({
-    defaultValues: subscription
-      ? {
-          name: subscription.name,
-          description: subscription.description,
-          amount: subscription.amount,
-          billingCycle: subscription.billingCycle,
-          provider: subscription.provider,
-          website: subscription.website,
-          icon: subscription.icon,
-          startDate: new Date(subscription.startDate).toISOString().split('T')[0],
-          reminderDaysBefore: subscription.reminderDaysBefore,
-        }
-      : {
-          billingCycle: 'MONTHLY',
-          icon: '📱',
-          startDate: new Date().toISOString().split('T')[0],
-          reminderDaysBefore: 3,
-        },
-  })
-
-  const selectedIcon = watch('icon')
-
-  const mutation = useMutation(
-    (data: SubscriptionForm) => {
-      if (subscription) {
-        return api.put(`/subscriptions/${subscription.id}`, data)
-      }
-      return api.post('/subscriptions', data)
-    },
-    {
-      onSuccess: () => {
-        toast.success(subscription ? 'Đã cập nhật đăng ký' : 'Đã thêm đăng ký')
-        onSuccess()
-      },
-      onError: () => {
-        toast.error('Có lỗi xảy ra')
-      },
-    }
-  )
-
-  const onSubmit = (data: SubscriptionForm) => {
-    mutation.mutate(data)
-  }
+export default function SubscriptionModal({
+  subscription,
+  onClose,
+  onSuccess,
+}: SubscriptionModalProps) {
+  const viewModel = useSubscriptionModalViewModel({ subscription, onSuccess })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">
-            {subscription ? 'Sửa đăng ký' : 'Thêm đăng ký'}
+            {subscription ? 'Sá»­a Ä‘Äƒng kÃ½' : 'ThÃªm Ä‘Äƒng kÃ½'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-          {/* Icon */}
+        <form onSubmit={viewModel.handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="label">Biểu tượng</label>
+            <label className="label">Biá»ƒu tÆ°á»£ng</label>
             <div className="grid grid-cols-5 gap-2">
-              {ICON_OPTIONS.map((icon) => (
+              {SUBSCRIPTION_ICON_OPTIONS.map((icon) => (
                 <button
                   key={icon}
                   type="button"
-                  onClick={() => setValue('icon', icon)}
+                  onClick={() => viewModel.setValue('icon', icon)}
                   className={`text-3xl p-3 rounded-lg border-2 transition-all ${
-                    selectedIcon === icon
+                    viewModel.selectedIcon === icon
                       ? 'border-primary-600 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
@@ -110,78 +51,74 @@ export default function SubscriptionModal({ subscription, onClose, onSuccess }: 
             </div>
           </div>
 
-          {/* Name */}
           <div>
-            <label className="label">Tên dịch vụ</label>
+            <label className="label">TÃªn dá»‹ch vá»¥</label>
             <input
-              {...register('name', { required: 'Vui lòng nhập tên' })}
+              {...viewModel.register('name', { required: 'Vui lÃ²ng nháº­p tÃªn' })}
               type="text"
               className="input"
               placeholder="Netflix, Spotify, Gym..."
             />
-            {errors.name && <p className="text-sm text-danger-600 mt-1">{errors.name.message}</p>}
+            {viewModel.errors.name && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.name.message}</p>
+            )}
           </div>
 
-          {/* Provider */}
           <div>
-            <label className="label">Nhà cung cấp (tùy chọn)</label>
+            <label className="label">NhÃ  cung cáº¥p (tÃ¹y chá»n)</label>
             <input
-              {...register('provider')}
+              {...viewModel.register('provider')}
               type="text"
               className="input"
               placeholder="Netflix Inc."
             />
           </div>
 
-          {/* Amount */}
           <div>
-            <label className="label">Giá</label>
+            <label className="label">GiÃ¡</label>
             <input
-              {...register('amount', {
-                required: 'Vui lòng nhập giá',
-                min: { value: 0, message: 'Giá phải lớn hơn 0' },
+              {...viewModel.register('amount', {
+                required: 'Vui lÃ²ng nháº­p giÃ¡',
+                min: { value: 0, message: 'GiÃ¡ pháº£i lá»›n hÆ¡n 0' },
               })}
               type="number"
               step="1000"
               className="input"
               placeholder="0"
             />
-            {errors.amount && (
-              <p className="text-sm text-danger-600 mt-1">{errors.amount.message}</p>
+            {viewModel.errors.amount && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.amount.message}</p>
             )}
           </div>
 
-          {/* Billing Cycle */}
           <div>
-            <label className="label">Chu kỳ thanh toán</label>
-            <select {...register('billingCycle')} className="input">
-              <option value="DAILY">Hàng ngày</option>
-              <option value="WEEKLY">Hàng tuần</option>
-              <option value="MONTHLY">Hàng tháng</option>
-              <option value="QUARTERLY">Hàng quý</option>
-              <option value="YEARLY">Hàng năm</option>
+            <label className="label">Chu ká»³ thanh toÃ¡n</label>
+            <select {...viewModel.register('billingCycle')} className="input">
+              <option value="DAILY">HÃ ng ngÃ y</option>
+              <option value="WEEKLY">HÃ ng tuáº§n</option>
+              <option value="MONTHLY">HÃ ng thÃ¡ng</option>
+              <option value="QUARTERLY">HÃ ng quÃ½</option>
+              <option value="YEARLY">HÃ ng nÄƒm</option>
             </select>
           </div>
 
-          {/* Start Date */}
           <div>
-            <label className="label">Ngày bắt đầu</label>
+            <label className="label">NgÃ y báº¯t Ä‘áº§u</label>
             <input
-              {...register('startDate', { required: 'Vui lòng chọn ngày' })}
+              {...viewModel.register('startDate', { required: 'Vui lÃ²ng chá»n ngÃ y' })}
               type="date"
               className="input"
             />
-            {errors.startDate && (
-              <p className="text-sm text-danger-600 mt-1">{errors.startDate.message}</p>
+            {viewModel.errors.startDate && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.startDate.message}</p>
             )}
           </div>
 
-          {/* Reminder Days */}
           <div>
-            <label className="label">Nhắc nhở trước (ngày)</label>
+            <label className="label">Nháº¯c nhá»Ÿ trÆ°á»›c (ngÃ y)</label>
             <input
-              {...register('reminderDaysBefore', {
-                min: { value: 0, message: 'Phải lớn hơn 0' },
+              {...viewModel.register('reminderDaysBefore', {
+                min: { value: 0, message: 'Pháº£i lá»›n hÆ¡n 0' },
               })}
               type="number"
               className="input"
@@ -189,28 +126,26 @@ export default function SubscriptionModal({ subscription, onClose, onSuccess }: 
             />
           </div>
 
-          {/* Description */}
           <div>
-            <label className="label">Ghi chú (tùy chọn)</label>
+            <label className="label">Ghi chÃº (tÃ¹y chá»n)</label>
             <textarea
-              {...register('description')}
+              {...viewModel.register('description')}
               className="input"
               rows={2}
-              placeholder="Thêm ghi chú..."
+              placeholder="ThÃªm ghi chÃº..."
             />
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={onClose} className="btn btn-secondary flex-1">
-              Hủy
+              Há»§y
             </button>
             <button
               type="submit"
-              disabled={mutation.isLoading}
+              disabled={viewModel.isSaving}
               className="btn btn-primary flex-1"
             >
-              {mutation.isLoading ? 'Đang lưu...' : subscription ? 'Cập nhật' : 'Thêm'}
+              {viewModel.isSaving ? 'Äang lÆ°u...' : subscription ? 'Cáº­p nháº­t' : 'ThÃªm'}
             </button>
           </div>
         </form>

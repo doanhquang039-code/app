@@ -1,25 +1,14 @@
-import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
 import { X } from 'lucide-react'
-import { toast } from 'sonner'
-import api from '../../lib/api'
+import { CategoryModel, TransactionModel } from '../../models/transaction'
+import { useTransactionModalViewModel } from '../../viewmodels/useTransactionModalViewModel'
 
 interface TransactionModalProps {
-  transaction?: any
-  categories: any[]
+  transaction?: TransactionModel | null
+  categories: CategoryModel[]
   onClose: () => void
   onSuccess: () => void
 }
 
-interface TransactionForm {
-  type: 'INCOME' | 'EXPENSE'
-  amount: number
-  description: string
-  categoryId: number
-  walletId?: number
-  date: string
-  notes?: string
-}
 
 export default function TransactionModal({
   transaction,
@@ -27,51 +16,7 @@ export default function TransactionModal({
   onClose,
   onSuccess,
 }: TransactionModalProps) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<TransactionForm>({
-    defaultValues: transaction
-      ? {
-          type: transaction.type,
-          amount: transaction.amount,
-          description: transaction.description,
-          categoryId: transaction.categoryId,
-          walletId: transaction.walletId,
-          date: new Date(transaction.date).toISOString().split('T')[0],
-          notes: transaction.notes,
-        }
-      : {
-          type: 'EXPENSE',
-          date: new Date().toISOString().split('T')[0],
-        },
-  })
-
-  const mutation = useMutation(
-    (data: TransactionForm) => {
-      if (transaction) {
-        return api.put(`/transactions/${transaction.id}`, data)
-      }
-      return api.post('/transactions', data)
-    },
-    {
-      onSuccess: () => {
-        toast.success(transaction ? 'Đã cập nhật giao dịch' : 'Đã thêm giao dịch')
-        onSuccess()
-      },
-      onError: () => {
-        toast.error('Có lỗi xảy ra')
-      },
-    }
-  )
-
-  const onSubmit = (data: TransactionForm) => {
-    mutation.mutate(data)
-  }
-
-  const transactionType = watch('type')
+  const viewModel = useTransactionModalViewModel({ transaction, onSuccess })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -88,14 +33,14 @@ export default function TransactionModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+        <form onSubmit={viewModel.handleSubmit} className="p-6 space-y-4">
           {/* Type */}
           <div>
             <label className="label">Loại giao dịch</label>
             <div className="grid grid-cols-2 gap-3">
               <label className="relative">
                 <input
-                  {...register('type')}
+                  {...viewModel.register('type')}
                   type="radio"
                   value="INCOME"
                   className="peer sr-only"
@@ -106,7 +51,7 @@ export default function TransactionModal({
               </label>
               <label className="relative">
                 <input
-                  {...register('type')}
+                  {...viewModel.register('type')}
                   type="radio"
                   value="EXPENSE"
                   className="peer sr-only"
@@ -122,7 +67,7 @@ export default function TransactionModal({
           <div>
             <label className="label">Số tiền</label>
             <input
-              {...register('amount', {
+              {...viewModel.register('amount', {
                 required: 'Vui lòng nhập số tiền',
                 min: { value: 0, message: 'Số tiền phải lớn hơn 0' },
               })}
@@ -131,8 +76,8 @@ export default function TransactionModal({
               className="input"
               placeholder="0"
             />
-            {errors.amount && (
-              <p className="text-sm text-danger-600 mt-1">{errors.amount.message}</p>
+            {viewModel.errors.amount && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.amount.message}</p>
             )}
           </div>
 
@@ -140,13 +85,13 @@ export default function TransactionModal({
           <div>
             <label className="label">Mô tả</label>
             <input
-              {...register('description', { required: 'Vui lòng nhập mô tả' })}
+              {...viewModel.register('description', { required: 'Vui lòng nhập mô tả' })}
               type="text"
               className="input"
               placeholder="Ví dụ: Mua sắm, Lương tháng 4..."
             />
-            {errors.description && (
-              <p className="text-sm text-danger-600 mt-1">{errors.description.message}</p>
+            {viewModel.errors.description && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.description.message}</p>
             )}
           </div>
 
@@ -154,20 +99,20 @@ export default function TransactionModal({
           <div>
             <label className="label">Danh mục</label>
             <select
-              {...register('categoryId', { required: 'Vui lòng chọn danh mục' })}
+              {...viewModel.register('categoryId', { required: 'Vui lòng chọn danh mục' })}
               className="input"
             >
               <option value="">Chọn danh mục</option>
               {categories
-                ?.filter((c: any) => c.type === transactionType)
-                .map((category: any) => (
+                ?.filter((category) => category.type === viewModel.transactionType)
+                .map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
             </select>
-            {errors.categoryId && (
-              <p className="text-sm text-danger-600 mt-1">{errors.categoryId.message}</p>
+            {viewModel.errors.categoryId && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.categoryId.message}</p>
             )}
           </div>
 
@@ -175,12 +120,12 @@ export default function TransactionModal({
           <div>
             <label className="label">Ngày</label>
             <input
-              {...register('date', { required: 'Vui lòng chọn ngày' })}
+              {...viewModel.register('date', { required: 'Vui lòng chọn ngày' })}
               type="date"
               className="input"
             />
-            {errors.date && (
-              <p className="text-sm text-danger-600 mt-1">{errors.date.message}</p>
+            {viewModel.errors.date && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.date.message}</p>
             )}
           </div>
 
@@ -188,7 +133,7 @@ export default function TransactionModal({
           <div>
             <label className="label">Ghi chú (tùy chọn)</label>
             <textarea
-              {...register('notes')}
+              {...viewModel.register('notes')}
               className="input"
               rows={3}
               placeholder="Thêm ghi chú..."
@@ -202,10 +147,10 @@ export default function TransactionModal({
             </button>
             <button
               type="submit"
-              disabled={mutation.isLoading}
+              disabled={viewModel.isSaving}
               className="btn btn-primary flex-1"
             >
-              {mutation.isLoading ? 'Đang lưu...' : transaction ? 'Cập nhật' : 'Thêm'}
+              {viewModel.isSaving ? 'Đang lưu...' : transaction ? 'Cập nhật' : 'Thêm'}
             </button>
           </div>
         </form>

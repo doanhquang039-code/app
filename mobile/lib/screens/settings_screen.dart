@@ -127,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const Text('Về ứng dụng', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 _infoTile('Phiên bản', '1.0.0'),
-                _infoTile('Backend API', 'http://localhost:3000'),
+                _infoTile('Backend API', ApiService.baseUrl),
                 _infoTile('Database', 'SQL Server'),
               ],
             ),

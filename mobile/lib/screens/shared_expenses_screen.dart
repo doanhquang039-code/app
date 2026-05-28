@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import '../models/shared_expense.dart';
 import '../services/api_service.dart';
@@ -26,8 +27,11 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
     try {
       final data = await _api.getSharedExpenseGroups();
       _groups = data.map((e) => SharedExpenseGroup.fromJson(e)).toList();
-    } catch (_) {}
-    setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) _showError(_errorMessage(e));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -39,11 +43,16 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
       backgroundColor: const Color(0xFF1E1E2E),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E1E2E),
-        title: const Text('Chi tiêu chung', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Chi tiêu chung',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF6C63FF)))
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
+            )
           : RefreshIndicator(
               onRefresh: _loadGroups,
               color: const Color(0xFF6C63FF),
@@ -83,28 +92,52 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                                   color: Colors.white.withOpacity(0.15),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(Icons.group, color: Colors.white, size: 22),
+                                child: const Icon(
+                                  Icons.group,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
                               ),
                               const SizedBox(width: 10),
-                              const Text('Tổng chi tiêu chung', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                              const Text(
+                                'Tổng chi tiêu chung',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 12),
                           Text(
                             formatter.format(totalShared),
-                            style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '${_groups.length} nhóm',
-                            style: const TextStyle(color: Colors.white54, fontSize: 13),
+                            style: const TextStyle(
+                              color: Colors.white54,
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 24),
 
-                    const Text('Nhóm chi tiêu', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Nhóm chi tiêu',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 12),
 
                     if (_groups.isEmpty)
@@ -130,11 +163,21 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
         padding: const EdgeInsets.symmetric(vertical: 60),
         child: Column(
           children: [
-            Icon(Icons.group_outlined, size: 64, color: Colors.white.withOpacity(0.2)),
+            Icon(
+              Icons.group_outlined,
+              size: 64,
+              color: Colors.white.withOpacity(0.2),
+            ),
             const SizedBox(height: 16),
-            const Text('Chưa có nhóm chi tiêu nào', style: TextStyle(color: Colors.grey, fontSize: 16)),
+            const Text(
+              'Chưa có nhóm chi tiêu nào',
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
             const SizedBox(height: 8),
-            const Text('Tạo nhóm để chia sẻ chi phí', style: TextStyle(color: Colors.grey, fontSize: 13)),
+            const Text(
+              'Tạo nhóm để chia sẻ chi phí',
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            ),
           ],
         ),
       ),
@@ -142,7 +185,13 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
   }
 
   Widget _groupCard(SharedExpenseGroup group, NumberFormat formatter) {
-    final icons = [Icons.restaurant, Icons.flight, Icons.home, Icons.shopping_bag, Icons.celebration];
+    final icons = [
+      Icons.restaurant,
+      Icons.flight,
+      Icons.home,
+      Icons.shopping_bag,
+      Icons.celebration,
+    ];
     final colors = [
       [const Color(0xFF6C63FF), const Color(0xFF9C88FF)],
       [const Color(0xFF11998E), const Color(0xFF38EF7D)],
@@ -178,19 +227,35 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(group.groupName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text(
+                    group.groupName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   if (group.description != null)
-                    Text(group.description!, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(
+                      group.description!,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       Icon(Icons.people, color: Colors.grey[600], size: 14),
                       const SizedBox(width: 4),
-                      Text('${group.memberCount} thành viên', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                      Text(
+                        '${group.memberCount} thành viên',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      ),
                       const SizedBox(width: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: group.isActive
                               ? Colors.green.withOpacity(0.15)
@@ -200,7 +265,9 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                         child: Text(
                           group.isActive ? 'Đang hoạt động' : 'Đã đóng',
                           style: TextStyle(
-                            color: group.isActive ? Colors.greenAccent : Colors.redAccent,
+                            color: group.isActive
+                                ? Colors.greenAccent
+                                : Colors.redAccent,
                             fontSize: 11,
                           ),
                         ),
@@ -215,17 +282,31 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
               children: [
                 Text(
                   formatter.format(group.totalAmount),
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: Colors.grey, size: 20),
+                  icon: const Icon(
+                    Icons.more_vert,
+                    color: Colors.grey,
+                    size: 20,
+                  ),
                   color: const Color(0xFF2A2A3E),
                   onSelected: (val) {
                     if (val == 'delete') _confirmDelete(group);
                   },
                   itemBuilder: (_) => [
-                    const PopupMenuItem(value: 'delete', child: Text('Xóa nhóm', style: TextStyle(color: Colors.redAccent))),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Text(
+                        'Xóa nhóm',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -241,10 +322,14 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: const Color(0xFF2A2A3E),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (ctx) {
         return Container(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.7),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(ctx).size.height * 0.7,
+          ),
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +337,14 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(group.groupName, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(
+                    group.groupName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.grey),
                     onPressed: () => Navigator.pop(ctx),
@@ -261,14 +353,28 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
               ),
               const Divider(color: Colors.white12),
               const SizedBox(height: 8),
-              Text('Tổng: ${formatter.format(group.totalAmount)}',
-                  style: const TextStyle(color: Color(0xFF6C63FF), fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Tổng: ${formatter.format(group.totalAmount)}',
+                style: const TextStyle(
+                  color: Color(0xFF6C63FF),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 16),
-              const Text('Chi tiêu trong nhóm', style: TextStyle(color: Colors.white70, fontSize: 14)),
+              const Text(
+                'Chi tiêu trong nhóm',
+                style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
               const SizedBox(height: 8),
               Expanded(
                 child: group.expenses.isEmpty
-                    ? const Center(child: Text('Chưa có chi tiêu nào', style: TextStyle(color: Colors.grey)))
+                    ? const Center(
+                        child: Text(
+                          'Chưa có chi tiêu nào',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
                     : ListView.builder(
                         itemCount: group.expenses.length,
                         itemBuilder: (_, i) {
@@ -284,16 +390,34 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(exp.description, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                                      Text(
+                                        exp.description,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                                       if (exp.paidByName != null)
-                                        Text('Trả bởi: ${exp.paidByName}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                                        Text(
+                                          'Trả bởi: ${exp.paidByName}',
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),
-                                Text(formatter.format(exp.amount),
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                Text(
+                                  formatter.format(exp.amount),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -306,10 +430,15 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                 height: 48,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.add, color: Colors.white),
-                  label: const Text('Thêm chi tiêu', style: TextStyle(color: Colors.white)),
+                  label: const Text(
+                    'Thêm chi tiêu',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   onPressed: () {
                     Navigator.pop(ctx);
@@ -332,15 +461,29 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: const Color(0xFF2A2A3E),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (ctx) {
         return Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(ctx).viewInsets.bottom + 20),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Tạo nhóm mới', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              const Text(
+                'Tạo nhóm mới',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 20),
               _buildTextField(nameCtrl, 'Tên nhóm', Icons.group),
               const SizedBox(height: 12),
@@ -352,25 +495,37 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   onPressed: () async {
+                    final groupName = nameCtrl.text.trim();
+                    final description = descCtrl.text.trim();
+                    if (groupName.isEmpty) {
+                      _showError('Vui lòng nhập tên nhóm');
+                      return;
+                    }
+
                     try {
                       await _api.createSharedExpenseGroup({
-                        'groupName': nameCtrl.text,
-                        'description': descCtrl.text,
+                        'groupName': groupName,
+                        if (description.isNotEmpty) 'description': description,
                       });
                       if (ctx.mounted) Navigator.pop(ctx);
                       _loadGroups();
-                    } catch (_) {
+                    } catch (e) {
                       if (ctx.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Tạo thất bại!'), backgroundColor: Colors.red),
+                        _showError(
+                          _errorMessage(e, fallback: 'Tạo nhóm thất bại'),
                         );
                       }
                     }
                   },
-                  child: const Text('Tạo nhóm', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  child: const Text(
+                    'Tạo nhóm',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ),
               ),
             ],
@@ -388,20 +543,38 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: const Color(0xFF2A2A3E),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (ctx) {
         return Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(ctx).viewInsets.bottom + 20),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Thêm chi tiêu - ${group.groupName}',
-                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Thêm chi tiêu - ${group.groupName}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 20),
               _buildTextField(descCtrl, 'Mô tả', Icons.edit),
               const SizedBox(height: 12),
-              _buildTextField(amountCtrl, 'Số tiền', Icons.attach_money, isNumber: true),
+              _buildTextField(
+                amountCtrl,
+                'Số tiền',
+                Icons.attach_money,
+                isNumber: true,
+              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -409,7 +582,9 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   onPressed: () async {
                     try {
@@ -421,7 +596,10 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
                       _loadGroups();
                     } catch (_) {}
                   },
-                  child: const Text('Thêm', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  child: const Text(
+                    'Thêm',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ),
               ),
             ],
@@ -437,9 +615,15 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
         title: const Text('Xóa nhóm', style: TextStyle(color: Colors.white)),
-        content: Text('Bạn có chắc muốn xóa "${group.groupName}"?', style: const TextStyle(color: Colors.grey)),
+        content: Text(
+          'Bạn có chắc muốn xóa "${group.groupName}"?',
+          style: const TextStyle(color: Colors.grey),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
+          ),
           TextButton(
             onPressed: () async {
               await _api.deleteSharedExpenseGroup(group.id);
@@ -453,10 +637,40 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController ctrl, String label, IconData icon, {bool isNumber = false}) {
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  String _errorMessage(Object error, {String fallback = 'Có lỗi xảy ra'}) {
+    if (error is DioException) {
+      if (error.response?.statusCode == 401) {
+        return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+      }
+      final data = error.response?.data;
+      if (data is Map<String, dynamic>) {
+        final message = data['message'];
+        if (message is String && message.isNotEmpty) return message;
+        if (message is List && message.isNotEmpty) return message.join('\n');
+        final errorText = data['error'];
+        if (errorText is String && errorText.isNotEmpty) return errorText;
+      }
+    }
+    return fallback;
+  }
+
+  Widget _buildTextField(
+    TextEditingController ctrl,
+    String label,
+    IconData icon, {
+    bool isNumber = false,
+  }) {
     return TextField(
       controller: ctrl,
-      keyboardType: isNumber ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
+      keyboardType: isNumber
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.text,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
@@ -464,7 +678,10 @@ class _SharedExpensesScreenState extends State<SharedExpensesScreen> {
         prefixIcon: Icon(icon, color: const Color(0xFF6C63FF)),
         filled: true,
         fillColor: const Color(0xFF1E1E2E),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }

@@ -1,163 +1,116 @@
-import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
 import { X } from 'lucide-react'
-import { toast } from 'sonner'
-import api from '../../lib/api'
+import { BudgetModel } from '../../models/budget'
+import { CategoryModel } from '../../models/transaction'
+import { useBudgetModalViewModel } from '../../viewmodels/useBudgetModalViewModel'
 
 interface BudgetModalProps {
-  budget?: any
-  categories: any[]
+  budget?: BudgetModel | null
+  categories: CategoryModel[]
   onClose: () => void
   onSuccess: () => void
 }
 
-interface BudgetForm {
-  name: string
-  amount: number
-  categoryId: number
-  startDate: string
-  endDate: string
-  period: 'MONTHLY' | 'QUARTERLY' | 'YEARLY' | 'CUSTOM'
-}
-
 export default function BudgetModal({ budget, categories, onClose, onSuccess }: BudgetModalProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<BudgetForm>({
-    defaultValues: budget
-      ? {
-          name: budget.name,
-          amount: budget.amount,
-          categoryId: budget.categoryId,
-          startDate: new Date(budget.startDate).toISOString().split('T')[0],
-          endDate: new Date(budget.endDate).toISOString().split('T')[0],
-          period: budget.period,
-        }
-      : {
-          period: 'MONTHLY',
-          startDate: new Date().toISOString().split('T')[0],
-          endDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
-            .toISOString()
-            .split('T')[0],
-        },
-  })
-
-  const mutation = useMutation(
-    (data: BudgetForm) => {
-      if (budget) {
-        return api.put(`/budgets/${budget.id}`, data)
-      }
-      return api.post('/budgets', data)
-    },
-    {
-      onSuccess: () => {
-        toast.success(budget ? 'Đã cập nhật ngân sách' : 'Đã tạo ngân sách')
-        onSuccess()
-      },
-      onError: () => {
-        toast.error('Có lỗi xảy ra')
-      },
-    }
-  )
-
-  const onSubmit = (data: BudgetForm) => {
-    mutation.mutate(data)
-  }
+  const viewModel = useBudgetModalViewModel({ budget, onSuccess })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">
-            {budget ? 'Sửa ngân sách' : 'Tạo ngân sách'}
+            {budget ? 'Sá»­a ngÃ¢n sÃ¡ch' : 'Táº¡o ngÃ¢n sÃ¡ch'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+        <form onSubmit={viewModel.handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="label">Tên ngân sách</label>
+            <label className="label">TÃªn ngÃ¢n sÃ¡ch</label>
             <input
-              {...register('name', { required: 'Vui lòng nhập tên' })}
+              {...viewModel.register('name', { required: 'Vui lÃ²ng nháº­p tÃªn' })}
               type="text"
               className="input"
-              placeholder="Ví dụ: Ngân sách ăn uống tháng 4"
+              placeholder="VÃ­ dá»¥: NgÃ¢n sÃ¡ch Äƒn uá»‘ng thÃ¡ng 4"
             />
-            {errors.name && <p className="text-sm text-danger-600 mt-1">{errors.name.message}</p>}
+            {viewModel.errors.name && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.name.message}</p>
+            )}
           </div>
 
           <div>
-            <label className="label">Số tiền</label>
+            <label className="label">Sá»‘ tiá»n</label>
             <input
-              {...register('amount', {
-                required: 'Vui lòng nhập số tiền',
-                min: { value: 0, message: 'Số tiền phải lớn hơn 0' },
+              {...viewModel.register('amount', {
+                required: 'Vui lÃ²ng nháº­p sá»‘ tiá»n',
+                min: { value: 0, message: 'Sá»‘ tiá»n pháº£i lá»›n hÆ¡n 0' },
               })}
               type="number"
               step="1000"
               className="input"
               placeholder="0"
             />
-            {errors.amount && (
-              <p className="text-sm text-danger-600 mt-1">{errors.amount.message}</p>
+            {viewModel.errors.amount && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.amount.message}</p>
             )}
           </div>
 
           <div>
-            <label className="label">Danh mục</label>
+            <label className="label">Danh má»¥c</label>
             <select
-              {...register('categoryId', { required: 'Vui lòng chọn danh mục' })}
+              {...viewModel.register('categoryId', { required: 'Vui lÃ²ng chá»n danh má»¥c' })}
               className="input"
             >
-              <option value="">Chọn danh mục</option>
+              <option value="">Chá»n danh má»¥c</option>
               {categories
-                ?.filter((c: any) => c.type === 'EXPENSE')
-                .map((category: any) => (
+                ?.filter((category) => category.type === 'EXPENSE')
+                .map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
             </select>
-            {errors.categoryId && (
-              <p className="text-sm text-danger-600 mt-1">{errors.categoryId.message}</p>
+            {viewModel.errors.categoryId && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.categoryId.message}</p>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="label">Từ ngày</label>
+              <label className="label">Tá»« ngÃ y</label>
               <input
-                {...register('startDate', { required: 'Vui lòng chọn ngày' })}
+                {...viewModel.register('startDate', { required: 'Vui lÃ²ng chá»n ngÃ y' })}
                 type="date"
                 className="input"
               />
-              {errors.startDate && (
-                <p className="text-sm text-danger-600 mt-1">{errors.startDate.message}</p>
+              {viewModel.errors.startDate && (
+                <p className="text-sm text-danger-600 mt-1">
+                  {viewModel.errors.startDate.message}
+                </p>
               )}
             </div>
             <div>
-              <label className="label">Đến ngày</label>
+              <label className="label">Äáº¿n ngÃ y</label>
               <input
-                {...register('endDate', { required: 'Vui lòng chọn ngày' })}
+                {...viewModel.register('endDate', { required: 'Vui lÃ²ng chá»n ngÃ y' })}
                 type="date"
                 className="input"
               />
-              {errors.endDate && (
-                <p className="text-sm text-danger-600 mt-1">{errors.endDate.message}</p>
+              {viewModel.errors.endDate && (
+                <p className="text-sm text-danger-600 mt-1">
+                  {viewModel.errors.endDate.message}
+                </p>
               )}
             </div>
           </div>
 
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={onClose} className="btn btn-secondary flex-1">
-              Hủy
+              Há»§y
             </button>
-            <button type="submit" disabled={mutation.isLoading} className="btn btn-primary flex-1">
-              {mutation.isLoading ? 'Đang lưu...' : budget ? 'Cập nhật' : 'Tạo'}
+            <button type="submit" disabled={viewModel.isSaving} className="btn btn-primary flex-1">
+              {viewModel.isSaving ? 'Äang lÆ°u...' : budget ? 'Cáº­p nháº­t' : 'Táº¡o'}
             </button>
           </div>
         </form>

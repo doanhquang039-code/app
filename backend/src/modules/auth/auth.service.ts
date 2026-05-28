@@ -158,7 +158,7 @@ export class AuthService {
 
     const url = new URL(config.authUrl);
     url.searchParams.set(config.clientIdParam || 'client_id', clientId);
-    url.searchParams.set('redirect_uri', this.getRedirectUri(provider));
+    url.searchParams.set('redirect_uri', this.getRedirectUri(provider, target));
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('state', this.createState(provider, target));
 
@@ -174,7 +174,7 @@ export class AuthService {
     if (!code) throw new BadRequestException('Missing authorization code');
     const target = this.verifyState(provider, state);
 
-    const token = await this.exchangeCodeForToken(provider, code);
+    const token = await this.exchangeCodeForToken(provider, code, target);
     const profile = await this.fetchSocialProfile(provider, token.access_token);
     const user = await this.findOrCreateSocialUser(provider, profile);
     const payload = Buffer.from(
@@ -266,11 +266,15 @@ export class AuthService {
     return username;
   }
 
-  private async exchangeCodeForToken(provider: SocialProvider, code: string): Promise<any> {
+  private async exchangeCodeForToken(
+    provider: SocialProvider,
+    code: string,
+    target: SocialAuthTarget,
+  ): Promise<any> {
     const config = SOCIAL_PROVIDERS[provider];
     const clientId = this.requiredEnv(config.clientIdEnv, provider);
     const clientSecret = this.requiredEnv(config.clientSecretEnv, provider);
-    const redirectUri = this.getRedirectUri(provider);
+    const redirectUri = this.getRedirectUri(provider, target);
 
     if (provider === 'facebook') {
       const url = new URL(config.tokenUrl);
@@ -393,8 +397,13 @@ export class AuthService {
     return value;
   }
 
-  private getRedirectUri(provider: SocialProvider) {
-    const baseUrl = process.env.OAUTH_REDIRECT_BASE_URL || 'http://localhost:3000';
+  private getRedirectUri(provider: SocialProvider, target: SocialAuthTarget = 'web') {
+    const baseUrl =
+      target === 'mobile'
+        ? process.env.MOBILE_OAUTH_REDIRECT_BASE_URL ||
+          process.env.OAUTH_REDIRECT_BASE_URL ||
+          'http://localhost:3000'
+        : process.env.OAUTH_REDIRECT_BASE_URL || 'http://localhost:3000';
     return `${baseUrl.replace(/\/$/, '')}/auth/social/${provider}/callback`;
   }
 

@@ -1,11 +1,11 @@
-import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
 import { BulkImportTransactionsDto } from './dto/bulk-import-transactions.dto';
+import { TransactionsViewModel } from './transactions.view-model';
 export declare class TransactionsController {
-    private transactionsService;
-    constructor(transactionsService: TransactionsService);
+    private readonly viewModel;
+    constructor(viewModel: TransactionsViewModel);
     create(req: any, dto: CreateTransactionDto): Promise<import("../../entities/transaction.entity").Transaction>;
     bulkCreate(req: any, dto: BulkImportTransactionsDto): Promise<{
         created: number;

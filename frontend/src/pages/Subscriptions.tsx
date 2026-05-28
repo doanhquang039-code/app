@@ -1,115 +1,36 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { Plus, CreditCard, Calendar, DollarSign, TrendingUp, Play, Pause, X, Edit } from 'lucide-react'
-import { toast } from 'sonner'
-import api from '../lib/api'
+import {
+  Plus,
+  CreditCard,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  Play,
+  Pause,
+  X,
+  Edit,
+} from 'lucide-react'
 import SubscriptionModal from '../components/subscriptions/SubscriptionModal'
+import { useSubscriptionsViewModel } from '../viewmodels/useSubscriptionsViewModel'
 
 export default function Subscriptions() {
-  const queryClient = useQueryClient()
-  const [showModal, setShowModal] = useState(false)
-  const [editingSubscription, setEditingSubscription] = useState<any>(null)
-
-  const { data: subscriptions, isLoading } = useQuery('subscriptions', async () => {
-    const response = await api.get('/subscriptions')
-    return response.data
-  })
-
-  const { data: stats } = useQuery('subscription-stats', async () => {
-    const response = await api.get('/subscriptions/stats')
-    return response.data
-  })
-
-  const { data: upcoming } = useQuery('upcoming-subscriptions', async () => {
-    const response = await api.get('/subscriptions/upcoming?days=30')
-    return response.data
-  })
-
-  const pauseMutation = useMutation(
-    (id: number) => api.put(`/subscriptions/${id}/pause`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('subscriptions')
-        toast.success('Đã tạm dừng đăng ký')
-      },
-    }
-  )
-
-  const resumeMutation = useMutation(
-    (id: number) => api.put(`/subscriptions/${id}/resume`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('subscriptions')
-        toast.success('Đã tiếp tục đăng ký')
-      },
-    }
-  )
-
-  const cancelMutation = useMutation(
-    (id: number) => api.put(`/subscriptions/${id}/cancel`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('subscriptions')
-        toast.success('Đã hủy đăng ký')
-      },
-    }
-  )
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(amount)
-  }
-
-  const getBillingCycleText = (cycle: string) => {
-    const map: any = {
-      DAILY: 'Hàng ngày',
-      WEEKLY: 'Hàng tuần',
-      MONTHLY: 'Hàng tháng',
-      QUARTERLY: 'Hàng quý',
-      YEARLY: 'Hàng năm',
-    }
-    return map[cycle] || cycle
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-success-100 text-success-800'
-      case 'PAUSED':
-        return 'bg-warning-100 text-warning-800'
-      case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getDaysUntilRenewal = (date: string) => {
-    return Math.ceil((new Date(date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-  }
+  const viewModel = useSubscriptionsViewModel()
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Đăng ký</h1>
-          <p className="text-gray-600 mt-1">Quản lý dịch vụ định kỳ</p>
+          <h1 className="text-3xl font-bold text-gray-900">ÄÄƒng kÃ½</h1>
+          <p className="text-gray-600 mt-1">Quáº£n lÃ½ dá»‹ch vá»¥ Ä‘á»‹nh ká»³</p>
         </div>
         <button
-          onClick={() => {
-            setEditingSubscription(null)
-            setShowModal(true)
-          }}
+          onClick={viewModel.openCreateModal}
           className="btn btn-primary flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
-          Thêm đăng ký
+          ThÃªm Ä‘Äƒng kÃ½
         </button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="card">
           <div className="flex items-center gap-3">
@@ -117,8 +38,8 @@ export default function Subscriptions() {
               <CreditCard className="w-6 h-6 text-primary-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Tổng đăng ký</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.total || 0}</p>
+              <p className="text-sm text-gray-600">Tá»•ng Ä‘Äƒng kÃ½</p>
+              <p className="text-2xl font-bold text-gray-900">{viewModel.stats?.total || 0}</p>
             </div>
           </div>
         </div>
@@ -129,8 +50,8 @@ export default function Subscriptions() {
               <Play className="w-6 h-6 text-success-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Đang hoạt động</p>
-              <p className="text-2xl font-bold text-success-600">{stats?.active || 0}</p>
+              <p className="text-sm text-gray-600">Äang hoáº¡t Ä‘á»™ng</p>
+              <p className="text-2xl font-bold text-success-600">{viewModel.stats?.active || 0}</p>
             </div>
           </div>
         </div>
@@ -141,9 +62,9 @@ export default function Subscriptions() {
               <DollarSign className="w-6 h-6 text-warning-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Chi phí/tháng</p>
+              <p className="text-sm text-gray-600">Chi phÃ­/thÃ¡ng</p>
               <p className="text-xl font-bold text-warning-600">
-                {formatCurrency(stats?.monthlyCost || 0)}
+                {viewModel.formatCurrency(viewModel.stats?.monthlyCost || 0)}
               </p>
             </div>
           </div>
@@ -155,39 +76,44 @@ export default function Subscriptions() {
               <TrendingUp className="w-6 h-6 text-danger-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Chi phí/năm</p>
+              <p className="text-sm text-gray-600">Chi phÃ­/nÄƒm</p>
               <p className="text-xl font-bold text-danger-600">
-                {formatCurrency(stats?.yearlyCost || 0)}
+                {viewModel.formatCurrency(viewModel.stats?.yearlyCost || 0)}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Upcoming Renewals */}
-      {upcoming && upcoming.length > 0 && (
+      {viewModel.upcoming && viewModel.upcoming.length > 0 && (
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Sắp gia hạn (30 ngày tới)</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Sáº¯p gia háº¡n (30 ngÃ y tá»›i)
+          </h3>
           <div className="space-y-3">
-            {upcoming.map((sub: any) => {
-              const days = getDaysUntilRenewal(sub.nextBillingDate)
+            {viewModel.upcoming.map((subscription) => {
+              const days = viewModel.getDaysUntilRenewal(subscription.nextBillingDate)
               return (
                 <div
-                  key={sub.id}
+                  key={subscription.id}
                   className="flex items-center justify-between p-3 bg-warning-50 rounded-lg border border-warning-200"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{sub.icon || '📱'}</span>
+                    <span className="text-2xl">{subscription.icon || 'ðŸ“±'}</span>
                     <div>
-                      <p className="font-medium text-gray-900">{sub.name}</p>
+                      <p className="font-medium text-gray-900">{subscription.name}</p>
                       <p className="text-sm text-gray-600">
-                        {days === 0 ? 'Hôm nay' : days === 1 ? 'Ngày mai' : `${days} ngày nữa`}
+                        {days === 0 ? 'HÃ´m nay' : days === 1 ? 'NgÃ y mai' : `${days} ngÃ y ná»¯a`}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatCurrency(sub.amount)}</p>
-                    <p className="text-sm text-gray-600">{getBillingCycleText(sub.billingCycle)}</p>
+                    <p className="font-semibold text-gray-900">
+                      {viewModel.formatCurrency(subscription.amount)}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {viewModel.getBillingCycleText(subscription.billingCycle)}
+                    </p>
                   </div>
                 </div>
               )
@@ -196,49 +122,48 @@ export default function Subscriptions() {
         </div>
       )}
 
-      {/* Subscriptions List */}
-      {isLoading ? (
+      {viewModel.isLoading ? (
         <div className="card">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">Đang tải...</p>
+            <p className="text-gray-500 mt-4">Äang táº£i...</p>
           </div>
         </div>
-      ) : subscriptions?.length === 0 ? (
+      ) : viewModel.subscriptions?.length === 0 ? (
         <div className="card">
           <div className="text-center py-12">
             <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 mb-4">Chưa có đăng ký nào</p>
-            <button onClick={() => setShowModal(true)} className="btn btn-primary">
-              Thêm đăng ký đầu tiên
+            <p className="text-gray-500 mb-4">ChÆ°a cÃ³ Ä‘Äƒng kÃ½ nÃ o</p>
+            <button onClick={viewModel.openCreateModal} className="btn btn-primary">
+              ThÃªm Ä‘Äƒng kÃ½ Ä‘áº§u tiÃªn
             </button>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {subscriptions?.map((subscription: any) => {
-            const daysUntilRenewal = getDaysUntilRenewal(subscription.nextBillingDate)
+          {viewModel.subscriptions?.map((subscription) => {
+            const daysUntilRenewal = viewModel.getDaysUntilRenewal(subscription.nextBillingDate)
 
             return (
               <div key={subscription.id} className="card hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <span className="text-4xl">{subscription.icon || '📱'}</span>
+                    <span className="text-4xl">{subscription.icon || 'ðŸ“±'}</span>
                     <div>
                       <h3 className="font-semibold text-gray-900">{subscription.name}</h3>
                       <p className="text-sm text-gray-600">{subscription.provider}</p>
                     </div>
                   </div>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      subscription.status
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${viewModel.getStatusColor(
+                      subscription.status,
                     )}`}
                   >
                     {subscription.status === 'ACTIVE'
-                      ? 'Hoạt động'
+                      ? 'Hoáº¡t Ä‘á»™ng'
                       : subscription.status === 'PAUSED'
-                      ? 'Tạm dừng'
-                      : 'Đã hủy'}
+                        ? 'Táº¡m dá»«ng'
+                        : 'ÄÃ£ há»§y'}
                   </span>
                 </div>
 
@@ -248,21 +173,21 @@ export default function Subscriptions() {
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Giá</span>
+                    <span className="text-sm text-gray-600">GiÃ¡</span>
                     <span className="font-semibold text-gray-900">
-                      {formatCurrency(subscription.amount)}
+                      {viewModel.formatCurrency(subscription.amount)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Chu kỳ</span>
+                    <span className="text-sm text-gray-600">Chu ká»³</span>
                     <span className="text-sm text-gray-900">
-                      {getBillingCycleText(subscription.billingCycle)}
+                      {viewModel.getBillingCycleText(subscription.billingCycle)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Gia hạn tiếp theo</span>
+                    <span className="text-sm text-gray-600">Gia háº¡n tiáº¿p theo</span>
                     <span className="text-sm text-gray-900">
                       {new Date(subscription.nextBillingDate).toLocaleDateString('vi-VN')}
                     </span>
@@ -273,52 +198,44 @@ export default function Subscriptions() {
                       <Calendar className="w-4 h-4" />
                       <span>
                         {daysUntilRenewal === 0
-                          ? 'Gia hạn hôm nay'
+                          ? 'Gia háº¡n hÃ´m nay'
                           : daysUntilRenewal > 0
-                          ? `Còn ${daysUntilRenewal} ngày`
-                          : `Quá hạn ${Math.abs(daysUntilRenewal)} ngày`}
+                            ? `CÃ²n ${daysUntilRenewal} ngÃ y`
+                            : `QuÃ¡ háº¡n ${Math.abs(daysUntilRenewal)} ngÃ y`}
                       </span>
                     </div>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex gap-2 pt-2">
                     <button
-                      onClick={() => {
-                        setEditingSubscription(subscription)
-                        setShowModal(true)
-                      }}
+                      onClick={() => viewModel.openEditModal(subscription)}
                       className="btn btn-secondary flex-1 flex items-center justify-center gap-2"
                     >
                       <Edit className="w-4 h-4" />
-                      Sửa
+                      Sá»­a
                     </button>
 
                     {subscription.status === 'ACTIVE' ? (
                       <button
-                        onClick={() => pauseMutation.mutate(subscription.id)}
+                        onClick={() => viewModel.pauseSubscription(subscription.id)}
                         className="btn btn-secondary flex-1 flex items-center justify-center gap-2"
                       >
                         <Pause className="w-4 h-4" />
-                        Tạm dừng
+                        Táº¡m dá»«ng
                       </button>
                     ) : subscription.status === 'PAUSED' ? (
                       <button
-                        onClick={() => resumeMutation.mutate(subscription.id)}
+                        onClick={() => viewModel.resumeSubscription(subscription.id)}
                         className="btn btn-success flex-1 flex items-center justify-center gap-2"
                       >
                         <Play className="w-4 h-4" />
-                        Tiếp tục
+                        Tiáº¿p tá»¥c
                       </button>
                     ) : null}
 
                     {subscription.status !== 'CANCELLED' && (
                       <button
-                        onClick={() => {
-                          if (window.confirm('Bạn có chắc muốn hủy đăng ký này?')) {
-                            cancelMutation.mutate(subscription.id)
-                          }
-                        }}
+                        onClick={() => viewModel.cancelSubscription(subscription.id)}
                         className="p-2 text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
                       >
                         <X className="w-5 h-5" />
@@ -332,20 +249,11 @@ export default function Subscriptions() {
         </div>
       )}
 
-      {showModal && (
+      {viewModel.showModal && (
         <SubscriptionModal
-          subscription={editingSubscription}
-          onClose={() => {
-            setShowModal(false)
-            setEditingSubscription(null)
-          }}
-          onSuccess={() => {
-            queryClient.invalidateQueries('subscriptions')
-            queryClient.invalidateQueries('subscription-stats')
-            queryClient.invalidateQueries('upcoming-subscriptions')
-            setShowModal(false)
-            setEditingSubscription(null)
-          }}
+          subscription={viewModel.editingSubscription}
+          onClose={viewModel.closeModal}
+          onSuccess={viewModel.handleMutationSuccess}
         />
       )}
     </div>

@@ -1,98 +1,42 @@
-import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
 import { X } from 'lucide-react'
-import { toast } from 'sonner'
-import api from '../../lib/api'
+import { SavingsGoalModel } from '../../models/savingsGoal'
+import {
+  SAVINGS_GOAL_ICON_OPTIONS,
+  useSavingsGoalModalViewModel,
+} from '../../viewmodels/useSavingsGoalModalViewModel'
 
 interface SavingsGoalModalProps {
-  goal?: any
+  goal?: SavingsGoalModel | null
   onClose: () => void
   onSuccess: () => void
 }
 
-interface GoalForm {
-  name: string
-  description?: string
-  targetAmount: number
-  currentAmount?: number
-  deadline: string
-  icon?: string
-}
-
-const ICON_OPTIONS = ['🎯', '🏠', '🚗', '✈️', '💍', '🎓', '💰', '🏖️', '📱', '💻']
-
 export default function SavingsGoalModal({ goal, onClose, onSuccess }: SavingsGoalModalProps) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<GoalForm>({
-    defaultValues: goal
-      ? {
-          name: goal.name,
-          description: goal.description,
-          targetAmount: goal.targetAmount,
-          currentAmount: goal.currentAmount,
-          deadline: new Date(goal.deadline).toISOString().split('T')[0],
-          icon: goal.icon,
-        }
-      : {
-          currentAmount: 0,
-          icon: '🎯',
-          deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        },
-  })
-
-  const selectedIcon = watch('icon')
-
-  const mutation = useMutation(
-    (data: GoalForm) => {
-      if (goal) {
-        return api.put(`/savings-goals/${goal.id}`, data)
-      }
-      return api.post('/savings-goals', data)
-    },
-    {
-      onSuccess: () => {
-        toast.success(goal ? 'Đã cập nhật mục tiêu' : 'Đã tạo mục tiêu')
-        onSuccess()
-      },
-      onError: () => {
-        toast.error('Có lỗi xảy ra')
-      },
-    }
-  )
-
-  const onSubmit = (data: GoalForm) => {
-    mutation.mutate(data)
-  }
+  const viewModel = useSavingsGoalModalViewModel({ goal, onSuccess })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">
-            {goal ? 'Sửa mục tiêu' : 'Tạo mục tiêu'}
+            {goal ? 'Sá»­a má»¥c tiÃªu' : 'Táº¡o má»¥c tiÃªu'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-          {/* Icon Selection */}
+        <form onSubmit={viewModel.handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="label">Biểu tượng</label>
+            <label className="label">Biá»ƒu tÆ°á»£ng</label>
             <div className="grid grid-cols-5 gap-2">
-              {ICON_OPTIONS.map((icon) => (
+              {SAVINGS_GOAL_ICON_OPTIONS.map((icon) => (
                 <button
                   key={icon}
                   type="button"
-                  onClick={() => setValue('icon', icon)}
+                  onClick={() => viewModel.setValue('icon', icon)}
                   className={`text-3xl p-3 rounded-lg border-2 transition-all ${
-                    selectedIcon === icon
+                    viewModel.selectedIcon === icon
                       ? 'border-primary-600 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
@@ -103,88 +47,88 @@ export default function SavingsGoalModal({ goal, onClose, onSuccess }: SavingsGo
             </div>
           </div>
 
-          {/* Name */}
           <div>
-            <label className="label">Tên mục tiêu</label>
+            <label className="label">TÃªn má»¥c tiÃªu</label>
             <input
-              {...register('name', { required: 'Vui lòng nhập tên' })}
+              {...viewModel.register('name', { required: 'Vui lÃ²ng nháº­p tÃªn' })}
               type="text"
               className="input"
-              placeholder="Ví dụ: Mua nhà, Du lịch Nhật Bản..."
+              placeholder="VÃ­ dá»¥: Mua nhÃ , Du lá»‹ch Nháº­t Báº£n..."
             />
-            {errors.name && <p className="text-sm text-danger-600 mt-1">{errors.name.message}</p>}
+            {viewModel.errors.name && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.name.message}</p>
+            )}
           </div>
 
-          {/* Description */}
           <div>
-            <label className="label">Mô tả (tùy chọn)</label>
+            <label className="label">MÃ´ táº£ (tÃ¹y chá»n)</label>
             <textarea
-              {...register('description')}
+              {...viewModel.register('description')}
               className="input"
               rows={2}
-              placeholder="Thêm mô tả..."
+              placeholder="ThÃªm mÃ´ táº£..."
             />
           </div>
 
-          {/* Target Amount */}
           <div>
-            <label className="label">Số tiền mục tiêu</label>
+            <label className="label">Sá»‘ tiá»n má»¥c tiÃªu</label>
             <input
-              {...register('targetAmount', {
-                required: 'Vui lòng nhập số tiền',
-                min: { value: 0, message: 'Số tiền phải lớn hơn 0' },
+              {...viewModel.register('targetAmount', {
+                required: 'Vui lÃ²ng nháº­p sá»‘ tiá»n',
+                min: { value: 0, message: 'Sá»‘ tiá»n pháº£i lá»›n hÆ¡n 0' },
               })}
               type="number"
               step="1000"
               className="input"
               placeholder="0"
             />
-            {errors.targetAmount && (
-              <p className="text-sm text-danger-600 mt-1">{errors.targetAmount.message}</p>
+            {viewModel.errors.targetAmount && (
+              <p className="text-sm text-danger-600 mt-1">
+                {viewModel.errors.targetAmount.message}
+              </p>
             )}
           </div>
 
-          {/* Current Amount */}
           <div>
-            <label className="label">Số tiền hiện tại</label>
+            <label className="label">Sá»‘ tiá»n hiá»‡n táº¡i</label>
             <input
-              {...register('currentAmount', {
-                min: { value: 0, message: 'Số tiền phải lớn hơn 0' },
+              {...viewModel.register('currentAmount', {
+                min: { value: 0, message: 'Sá»‘ tiá»n pháº£i lá»›n hÆ¡n 0' },
               })}
               type="number"
               step="1000"
               className="input"
               placeholder="0"
             />
-            {errors.currentAmount && (
-              <p className="text-sm text-danger-600 mt-1">{errors.currentAmount.message}</p>
+            {viewModel.errors.currentAmount && (
+              <p className="text-sm text-danger-600 mt-1">
+                {viewModel.errors.currentAmount.message}
+              </p>
             )}
           </div>
 
-          {/* Deadline */}
           <div>
-            <label className="label">Hạn hoàn thành</label>
+            <label className="label">Háº¡n hoÃ n thÃ nh</label>
             <input
-              {...register('deadline', { required: 'Vui lòng chọn ngày' })}
+              {...viewModel.register('deadline', { required: 'Vui lÃ²ng chá»n ngÃ y' })}
               type="date"
               className="input"
             />
-            {errors.deadline && (
-              <p className="text-sm text-danger-600 mt-1">{errors.deadline.message}</p>
+            {viewModel.errors.deadline && (
+              <p className="text-sm text-danger-600 mt-1">{viewModel.errors.deadline.message}</p>
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={onClose} className="btn btn-secondary flex-1">
-              Hủy
+              Há»§y
             </button>
             <button
               type="submit"
-              disabled={mutation.isLoading}
+              disabled={viewModel.isSaving}
               className="btn btn-primary flex-1"
             >
-              {mutation.isLoading ? 'Đang lưu...' : goal ? 'Cập nhật' : 'Tạo'}
+              {viewModel.isSaving ? 'Äang lÆ°u...' : goal ? 'Cáº­p nháº­t' : 'Táº¡o'}
             </button>
           </div>
         </form>
