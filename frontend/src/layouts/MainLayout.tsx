@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/Header'
 import QuickAddExpense from '../components/QuickAddExpense'
+import AIChatWidget from '../components/AIChatWidget'
 
 export default function MainLayout() {
   return (
@@ -15,6 +16,8 @@ export default function MainLayout() {
       </div>
       {/* Floating Quick Add - available on all pages */}
       <QuickAddExpense />
+      {/* AI Chat Widget - floating bottom-right */}
+      <AIChatWidget />
     </div>
   )
 }

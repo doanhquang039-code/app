@@ -6,10 +6,12 @@ import { useAuthStore } from './stores/authStore'
 import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
 
-// Pages
+// Pages — Auth
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import SocialCallback from './pages/auth/SocialCallback'
+
+// Pages — Main
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Budgets from './pages/Budgets'
@@ -21,6 +23,11 @@ import Social from './pages/Social'
 import Gamification from './pages/Gamification'
 import Settings from './pages/Settings'
 import CashFlow from './pages/CashFlow'
+import Investments from './pages/Investments'
+import NetWorth from './pages/NetWorth'
+import ReceiptScanner from './pages/ReceiptScanner'
+import GreenBanking from './pages/GreenBanking'
+import XanhSM from './pages/XanhSM'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
@@ -55,6 +62,11 @@ function App() {
             <Route path="/cash-flow" element={<CashFlow />} />
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/ai-insights" element={<AIInsights />} />
+            <Route path="/investments" element={<Investments />} />
+            <Route path="/net-worth" element={<NetWorth />} />
+            <Route path="/receipt-scanner" element={<ReceiptScanner />} />
+            <Route path="/green-banking" element={<GreenBanking />} />
+            <Route path="/xanh-sm" element={<XanhSM />} />
             <Route path="/social" element={<Social />} />
             <Route path="/gamification" element={<Gamification />} />
             <Route path="/settings" element={<Settings />} />
