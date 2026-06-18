@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   TrendingUp, TrendingDown, Wallet, Target, CreditCard, AlertCircle,
   ArrowUpRight, ArrowDownRight, Sparkles, Activity, Send, QrCode,
@@ -15,41 +15,13 @@ import { useGreenStore } from '../stores/greenStore'
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#38bdf8', '#0d9488']
 
-/* ---- Mock data ---- */
-const MOCK_TREND = [
-  { month: 'T1', 'Thu nhập': 15_000_000, 'Chi tiêu': 9_200_000 },
-  { month: 'T2', 'Thu nhập': 15_000_000, 'Chi tiêu': 8_800_000 },
-  { month: 'T3', 'Thu nhập': 16_500_000, 'Chi tiêu': 10_100_000 },
-  { month: 'T4', 'Thu nhập': 15_000_000, 'Chi tiêu': 9_600_000 },
-  { month: 'T5', 'Thu nhập': 18_000_000, 'Chi tiêu': 8_400_000 },
-  { month: 'T6', 'Thu nhập': 15_000_000, 'Chi tiêu': 7_800_000 },
-]
-const MOCK_CAT = [
-  { name: 'Ăn uống',    value: 3_800_000 },
-  { name: 'Di chuyển',  value: 1_200_000 },
-  { name: 'Giải trí',   value: 900_000 },
-  { name: 'Mua sắm',    value: 1_100_000 },
-  { name: 'Sức khỏe',   value: 500_000 },
-  { name: 'Khác',       value: 300_000 },
-]
-const MOCK_CONTACTS = [
-  { name: 'Minh Tuấn', avatar: 'MT', color: '#2563eb' },
-  { name: 'Lan Anh',   avatar: 'LA', color: '#10b981' },
-  { name: 'Huy Đức',   avatar: 'HD', color: '#f59e0b' },
-  { name: 'Thu Hà',    avatar: 'TH', color: '#8b5cf6' },
-]
-const MOCK_TRANSACTIONS = [
-  { id: 1, desc: 'Shopee',         type: 'EXPENSE', amount: 450_000,    cat: 'Mua sắm',   icon: '🛒', date: '2026-06-01' },
-  { id: 2, desc: 'Lương tháng 6',  type: 'INCOME',  amount: 15_000_000, cat: 'Thu nhập',  icon: '💼', date: '2026-06-01' },
-  { id: 3, desc: 'Grab Food',      type: 'EXPENSE', amount: 85_000,     cat: 'Ăn uống',   icon: '🍔', date: '2026-05-31' },
-  { id: 4, desc: 'Điện nước',      type: 'EXPENSE', amount: 350_000,    cat: 'Sinh hoạt', icon: '💡', date: '2026-05-30' },
-  { id: 5, desc: 'Grab Bike',      type: 'EXPENSE', amount: 45_000,     cat: 'Di chuyển', icon: '🛵', date: '2026-05-30' },
-]
-const GREEN_TIPS = [
-  { icon: '🌱', text: 'Đi xe đạp giúp giảm 2.3kg CO₂ hôm nay', impact: '-2.3kg' },
-  { icon: '♻️', text: 'Mua đồ cũ tiết kiệm 40% carbon', impact: '−40%' },
-  { icon: '🥗', text: 'Ăn chay 1 bữa = tiết kiệm 2.5kg CO₂', impact: '-2.5kg' },
-]
+import {
+  MOCK_TREND,
+  MOCK_CAT,
+  MOCK_CONTACTS,
+  MOCK_TRANSACTIONS,
+  GREEN_TIPS,
+} from '../fixtures/mockData'
 
 function fmt(n: number) {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n)
@@ -196,8 +168,11 @@ export default function Dashboard() {
   const [showTransfer, setShowTransfer] = useState(false)
   const [tipIdx, setTipIdx] = useState(0)
 
-  const { data: stats } = useQuery('dashboard-stats', async () => {
-    try { const res = await api.get('/dashboard/stats'); return res.data } catch { return null }
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      try { const res = await api.get('/dashboard/stats'); return res.data } catch { return null }
+    }
   })
 
   const balance = stats?.totalBalance || store.blueCardBalance

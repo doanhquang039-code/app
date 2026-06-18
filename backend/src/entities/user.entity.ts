@@ -32,6 +32,9 @@ export class User {
   @Column({ nullable: true })
   lastLoginAt?: Date;
 
+  @Column({ type: 'nvarchar', length: 20, default: 'user' })
+  role: string;
+
   @CreateDateColumn()
   createdAt: Date;
 }

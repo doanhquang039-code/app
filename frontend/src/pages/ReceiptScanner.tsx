@@ -5,53 +5,7 @@ import {
   FileText, Eye, X,
 } from 'lucide-react'
 
-interface ReceiptItem {
-  name: string
-  quantity: number
-  price: number
-}
-
-interface Receipt {
-  id: number
-  merchant: string
-  date: string
-  total: number
-  category: string
-  items: ReceiptItem[]
-  status: 'scanned' | 'pending' | 'added'
-}
-
-const MOCK_RECEIPTS: Receipt[] = [
-  {
-    id: 1, merchant: 'Lotte Mart', date: '2026-06-01', total: 485000,
-    category: 'Thực phẩm', status: 'added',
-    items: [
-      { name: 'Rau cải xanh', quantity: 2, price: 15000 },
-      { name: 'Thịt heo', quantity: 1, price: 120000 },
-      { name: 'Sữa Vinamilk', quantity: 3, price: 35000 },
-      { name: 'Trứng gà (10 quả)', quantity: 1, price: 45000 },
-      { name: 'Bánh mì sandwich', quantity: 2, price: 25000 },
-    ],
-  },
-  {
-    id: 2, merchant: 'Circle K', date: '2026-05-31', total: 78000,
-    category: 'Ăn uống', status: 'scanned',
-    items: [
-      { name: 'Cà phê G7', quantity: 1, price: 28000 },
-      { name: 'Bánh mì', quantity: 1, price: 20000 },
-      { name: 'Nước suối', quantity: 2, price: 15000 },
-    ],
-  },
-  {
-    id: 3, merchant: 'Grab Food', date: '2026-05-30', total: 156000,
-    category: 'Ăn uống', status: 'pending',
-    items: [
-      { name: 'Cơm gà xối mỡ', quantity: 1, price: 65000 },
-      { name: 'Bún bò Huế', quantity: 1, price: 55000 },
-      { name: 'Trà sữa', quantity: 2, price: 18000 },
-    ],
-  },
-]
+import { MOCK_RECEIPTS, Receipt } from '../fixtures/mockData'
 
 const CATEGORY_MAP: Record<string, string> = {
   'Thực phẩm': 'icon-bubble-success',

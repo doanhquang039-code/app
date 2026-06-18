@@ -17,6 +17,11 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  @Get('social/providers')
+  socialProviders() {
+    return this.authService.getSocialProviders();
+  }
+
   @Get('social/:provider')
   socialLogin(
     @Param('provider') provider: string,

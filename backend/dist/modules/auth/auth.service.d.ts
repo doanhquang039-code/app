@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+type SocialProvider = 'google' | 'facebook' | 'microsoft' | 'zalo' | 'tiktok' | 'instagram';
 export declare class AuthService {
     private userRepository;
     private jwtService;
@@ -22,6 +23,11 @@ export declare class AuthService {
         };
     }>;
     getSocialAuthUrl(providerInput: string, targetInput?: string): string;
+    getSocialProviders(): {
+        id: SocialProvider;
+        enabled: boolean;
+        configured: boolean;
+    }[];
     handleSocialCallback(providerInput: string, code?: string, state?: string): Promise<string>;
     getSocialErrorRedirect(message: string, stateOrTarget?: string): string;
     private signToken;
@@ -34,6 +40,8 @@ export declare class AuthService {
     private fetchJson;
     private assertProvider;
     private requiredEnv;
+    private assertProviderEnabled;
+    private isProviderEnabled;
     private getRedirectUri;
     private getFrontendUrl;
     private getMobileCallbackUrl;
@@ -44,3 +52,4 @@ export declare class AuthService {
     private createState;
     private verifyState;
 }
+export {};

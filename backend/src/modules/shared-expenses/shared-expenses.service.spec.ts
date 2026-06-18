@@ -3,6 +3,7 @@ import { SharedExpensesService } from './shared-expenses.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SharedExpenseGroup, SharedExpense, GroupSettlement } from '../../entities/shared-expense.entity';
 import { User } from '../../entities/user.entity';
+import { BadRequestException } from '@nestjs/common';
 
 describe('SharedExpensesService', () => {
   let service: SharedExpensesService;
@@ -13,6 +14,7 @@ describe('SharedExpensesService', () => {
     find: jest.fn(),
     findOne: jest.fn(),
     delete: jest.fn(),
+    count: jest.fn(),
     createQueryBuilder: jest.fn(),
   };
 
@@ -60,6 +62,7 @@ describe('SharedExpensesService', () => {
     }).compile();
 
     service = module.get<SharedExpensesService>(SharedExpensesService);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -67,31 +70,70 @@ describe('SharedExpensesService', () => {
   });
 
   describe('createGroup', () => {
-    it('should create a shared expense group', async () => {
+    const groupDto = {
+      groupName: 'Trip to Vegas',
+      description: 'Shared expenses for trip',
+    };
+
+    it('should create a group successfully when user has no existing groups', async () => {
       const ownerId = 1;
-      const groupDto = {
-        groupName: 'Trip to Vegas',
-        description: 'Shared expenses for trip',
-      };
-
-      mockGroupRepository.create.mockReturnValue({
-        ownerId,
-        ...groupDto,
-      });
-
-      mockGroupRepository.save.mockResolvedValue({
-        id: 1,
-        ownerId,
-        ...groupDto,
-        members: [],
-      });
-
-      mockUserRepository.findOne.mockResolvedValue({ id: ownerId, name: 'User 1' });
+      mockUserRepository.findOne.mockResolvedValue({ id: ownerId, role: 'user' });
+      mockGroupRepository.count.mockResolvedValue(0);
+      mockGroupRepository.create.mockReturnValue({ ownerId, ...groupDto });
+      mockGroupRepository.save.mockResolvedValue({ id: 1, ownerId, ...groupDto, members: [] });
 
       const result = await service.createGroup(ownerId, groupDto);
 
       expect(result).toBeDefined();
       expect(result.groupName).toBe('Trip to Vegas');
+      expect(mockGroupRepository.count).toHaveBeenCalledWith({ where: { ownerId } });
+    });
+
+    it('should create a second group successfully for a standard user (count=1)', async () => {
+      const ownerId = 2;
+      mockUserRepository.findOne.mockResolvedValue({ id: ownerId, role: 'user' });
+      mockGroupRepository.count.mockResolvedValue(1); // 1 nhóm đã tồn tại
+      mockGroupRepository.create.mockReturnValue({ ownerId, ...groupDto });
+      mockGroupRepository.save.mockResolvedValue({ id: 2, ownerId, ...groupDto, members: [] });
+
+      const result = await service.createGroup(ownerId, groupDto);
+      expect(result).toBeDefined();
+    });
+
+    it('should throw BadRequestException when standard user already has 2 groups (count=2)', async () => {
+      const ownerId = 3;
+      mockUserRepository.findOne.mockResolvedValue({ id: ownerId, role: 'user' });
+      mockGroupRepository.count.mockResolvedValue(2); // đã đủ 2 nhóm
+
+      await expect(service.createGroup(ownerId, groupDto)).rejects.toThrow(BadRequestException);
+      await expect(service.createGroup(ownerId, groupDto)).rejects.toThrow(
+        'Mỗi tài khoản thường chỉ được tạo tối đa 2 nhóm.',
+      );
+    });
+
+    it('should allow premium user to create a third group (count=2)', async () => {
+      const ownerId = 4;
+      mockUserRepository.findOne.mockResolvedValue({ id: ownerId, role: 'premium' });
+      mockGroupRepository.count.mockResolvedValue(2);
+      mockGroupRepository.create.mockReturnValue({ ownerId, ...groupDto });
+      mockGroupRepository.save.mockResolvedValue({ id: 3, ownerId, ...groupDto, members: [] });
+
+      const result = await service.createGroup(ownerId, groupDto);
+      expect(result).toBeDefined();
+      // Premium users should NOT have count checked
+      expect(mockGroupRepository.count).not.toHaveBeenCalled();
+    });
+
+    it('should allow admin user to create unlimited groups', async () => {
+      const ownerId = 5;
+      mockUserRepository.findOne.mockResolvedValue({ id: ownerId, role: 'admin' });
+      mockGroupRepository.count.mockResolvedValue(10);
+      mockGroupRepository.create.mockReturnValue({ ownerId, ...groupDto });
+      mockGroupRepository.save.mockResolvedValue({ id: 11, ownerId, ...groupDto, members: [] });
+
+      const result = await service.createGroup(ownerId, groupDto);
+      expect(result).toBeDefined();
+      expect(mockGroupRepository.count).not.toHaveBeenCalled();
     });
   });
 

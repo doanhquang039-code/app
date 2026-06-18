@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SharedExpenseGroup, SharedExpense, GroupSettlement } from '../../entities/shared-expense.entity';
@@ -18,8 +18,32 @@ export class SharedExpensesService {
     private userRepository: Repository<User>,
   ) {}
 
+  // Giới hạn số nhóm tối đa theo role
+  private static readonly GROUP_LIMIT_BY_ROLE: Record<string, number> = {
+    user: 2,
+    premium: Infinity,
+    admin: Infinity,
+  };
+
   // Group Management
   async createGroup(ownerId: number, createGroupDto: CreateGroupDto): Promise<SharedExpenseGroup> {
+    // Kiểm tra giới hạn số nhóm theo role của người dùng
+    const ownerUser = await this.userRepository.findOne({ where: { id: ownerId } });
+    if (ownerUser) {
+      const userRole = ownerUser.role ?? 'user';
+      const maxGroups = SharedExpensesService.GROUP_LIMIT_BY_ROLE[userRole] ?? 2;
+
+      if (isFinite(maxGroups)) {
+        const existingCount = await this.groupRepository.count({ where: { ownerId } });
+        if (existingCount >= maxGroups) {
+          throw new BadRequestException(
+            `Mỗi tài khoản thường chỉ được tạo tối đa ${maxGroups} nhóm. ` +
+            `Vui lòng nâng cấp tài khoản để tạo thêm nhóm.`,
+          );
+        }
+      }
+    }
+
     const group = this.groupRepository.create({
       ...createGroupDto,
       ownerId,
@@ -27,7 +51,6 @@ export class SharedExpensesService {
     const savedGroup = await this.groupRepository.save(group);
 
     // Add owner as member
-    const ownerUser = await this.userRepository.findOne({ where: { id: ownerId } });
     if (ownerUser) {
       savedGroup.members = [ownerUser];
       return this.groupRepository.save(savedGroup);

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { BudgetModel } from '../models/budget'
 import { budgetService } from '../services/budgetService'
@@ -9,13 +9,20 @@ export function useBudgetsViewModel() {
   const [showModal, setShowModal] = useState(false)
   const [editingBudget, setEditingBudget] = useState<BudgetModel | null>(null)
 
-  const { data: budgets, isLoading } = useQuery('budgets', budgetService.listBudgets)
-  const { data: categories } = useQuery('categories', budgetService.listCategories)
+  const { data: budgets, isLoading } = useQuery({
+    queryKey: ['budgets'],
+    queryFn: budgetService.listBudgets,
+  })
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: budgetService.listCategories,
+  })
 
-  const deleteMutation = useMutation(budgetService.deleteBudget, {
+  const deleteMutation = useMutation({
+    mutationFn: budgetService.deleteBudget,
     onSuccess: () => {
-      queryClient.invalidateQueries('budgets')
-      toast.success('ÄÃ£ xÃ³a ngÃ¢n sÃ¡ch')
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      toast.success('Đã xóa ngân sách')
     },
   })
 
@@ -58,7 +65,7 @@ export function useBudgetsViewModel() {
   }
 
   const handleMutationSuccess = () => {
-    queryClient.invalidateQueries('budgets')
+    queryClient.invalidateQueries({ queryKey: ['budgets'] })
     closeModal()
   }
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   AlertTriangle,
   ArrowDownRight,
@@ -181,9 +181,9 @@ function buildFallbackInsights(report: {
 export default function CashFlow() {
   const [rangeDays, setRangeDays] = useState(30)
 
-  const { data: serverReport } = useQuery<CashFlowReport | null>(
-    ['cash-flow-summary', rangeDays],
-    async () => {
+  const { data: serverReport } = useQuery<CashFlowReport | null>({
+    queryKey: ['cash-flow-summary', rangeDays],
+    queryFn: async () => {
       try {
         const response = await api.get(`/cash-flow/summary?days=${rangeDays}`)
         return response.data
@@ -191,24 +191,30 @@ export default function CashFlow() {
         return null
       }
     }
-  )
+  })
 
-  const { data: transactions = [], isLoading: loadingTransactions } = useQuery<Transaction[]>(
-    ['cash-flow-transactions', rangeDays],
-    async () => {
+  const { data: transactions = [], isLoading: loadingTransactions } = useQuery<Transaction[]>({
+    queryKey: ['cash-flow-transactions', rangeDays],
+    queryFn: async () => {
       const response = await api.get(`/transactions?limit=500&days=${rangeDays}`)
       return Array.isArray(response.data) ? response.data : response.data?.data || []
     }
-  )
-
-  const { data: budgets = [] } = useQuery<Budget[]>('cash-flow-budgets', async () => {
-    const response = await api.get('/budgets')
-    return Array.isArray(response.data) ? response.data : response.data?.data || []
   })
 
-  const { data: subscriptions = [] } = useQuery<Subscription[]>('cash-flow-subscriptions', async () => {
-    const response = await api.get('/subscriptions/upcoming')
-    return Array.isArray(response.data) ? response.data : response.data?.data || []
+  const { data: budgets = [] } = useQuery<Budget[]>({
+    queryKey: ['cash-flow-budgets'],
+    queryFn: async () => {
+      const response = await api.get('/budgets')
+      return Array.isArray(response.data) ? response.data : response.data?.data || []
+    }
+  })
+
+  const { data: subscriptions = [] } = useQuery<Subscription[]>({
+    queryKey: ['cash-flow-subscriptions'],
+    queryFn: async () => {
+      const response = await api.get('/subscriptions/upcoming')
+      return Array.isArray(response.data) ? response.data : response.data?.data || []
+    }
   })
 
   const clientReport = useMemo<CashFlowReport>(() => {

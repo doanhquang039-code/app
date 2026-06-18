@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { User } from './entities/user.entity';
 import { Wallet } from './entities/wallet.entity';
 import { Category } from './entities/category.entity';
@@ -91,6 +93,8 @@ import { SecurityEvent } from './entities/security-event.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    // Rate Limiting - 20 requests per 60 seconds per IP
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -99,7 +103,7 @@ import { SecurityEvent } from './entities/security-event.entity';
         host: configService.get('DB_HOST', 'localhost'),
         port: parseInt(configService.get('DB_PORT', '1433')),
         username: configService.get('DB_USERNAME', 'sa'),
-        password: configService.get('DB_PASSWORD', '123456789'),
+        password: configService.get('DB_PASSWORD', ''),
         database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
         entities: [
           User, Wallet, Category, Transaction, Budget,
@@ -198,6 +202,10 @@ import { SecurityEvent } from './entities/security-event.entity';
     // QueueModule,    // requires Bull/Redis
     // CloudModule,    // requires AWS credentials
     // MLModule,       // requires ML endpoints
+  ],
+  providers: [
+    // Global rate limiting guard
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule {}

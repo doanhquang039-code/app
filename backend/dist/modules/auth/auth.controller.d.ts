@@ -18,6 +18,11 @@ export declare class AuthController {
             avatarUrl: string | undefined;
         };
     }>;
+    socialProviders(): {
+        id: "google" | "facebook" | "microsoft" | "zalo" | "tiktok" | "instagram";
+        enabled: boolean;
+        configured: boolean;
+    }[];
     socialLogin(provider: string, target: string, res: any): any;
     socialCallback(provider: string, code: string, state: string, error: string, res: any): Promise<any>;
 }

@@ -8,8 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const core_1 = require("@nestjs/core");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
+const throttler_1 = require("@nestjs/throttler");
 const user_entity_1 = require("./entities/user.entity");
 const wallet_entity_1 = require("./entities/wallet.entity");
 const category_entity_1 = require("./entities/category.entity");
@@ -98,6 +100,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            throttler_1.ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -106,7 +109,7 @@ exports.AppModule = AppModule = __decorate([
                     host: configService.get('DB_HOST', 'localhost'),
                     port: parseInt(configService.get('DB_PORT', '1433')),
                     username: configService.get('DB_USERNAME', 'sa'),
-                    password: configService.get('DB_PASSWORD', '123456789'),
+                    password: configService.get('DB_PASSWORD', ''),
                     database: configService.get('DB_DATABASE', 'ExpenseTrackerDB'),
                     entities: [
                         user_entity_1.User, wallet_entity_1.Wallet, category_entity_1.Category, transaction_entity_1.Transaction, budget_entity_1.Budget,
@@ -190,6 +193,9 @@ exports.AppModule = AppModule = __decorate([
             ai_module_1.AIModule,
             common_module_1.CommonModule,
             cash_flow_module_1.CashFlowModule,
+        ],
+        providers: [
+            { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard },
         ],
     })
 ], AppModule);

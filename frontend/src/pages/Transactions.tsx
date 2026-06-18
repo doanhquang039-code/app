@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   ArrowLeftRight, Search, Filter, Plus, Download,
   TrendingUp, TrendingDown, Leaf, ChevronDown,
@@ -22,18 +22,7 @@ const CATEGORIES = [
   { name: 'Thu nhập', icon: '💼' },
 ]
 
-const MOCK_TRANSACTIONS = [
-  { id: 1,  desc: 'Lương tháng 6',     type: 'INCOME',  amount: 15_000_000, cat: 'Thu nhập',  icon: '💼', date: '2026-06-01', green: false, note: 'Công ty ABC' },
-  { id: 2,  desc: 'Shopee',            type: 'EXPENSE', amount: 450_000,    cat: 'Mua sắm',  icon: '🛒', date: '2026-06-01', green: false, note: 'Đặt hàng #123' },
-  { id: 3,  desc: 'Xe đạp điện',       type: 'EXPENSE', amount: 35_000,     cat: 'Di chuyển',icon: '🚲', date: '2026-05-31', green: true,  note: 'EBIKE sharing' },
-  { id: 4,  desc: 'Grab Food',         type: 'EXPENSE', amount: 85_000,     cat: 'Ăn uống',  icon: '🍔', date: '2026-05-31', green: false, note: 'Cơm gà + bún bò' },
-  { id: 5,  desc: 'Siêu thị organic',  type: 'EXPENSE', amount: 320_000,    cat: 'Thực phẩm',icon: '🥗', date: '2026-05-30', green: true,  note: 'Vinmart+' },
-  { id: 6,  desc: 'Netflix',           type: 'EXPENSE', amount: 199_000,    cat: 'Giải trí', icon: '🎬', date: '2026-05-30', green: false, note: 'Premium' },
-  { id: 7,  desc: 'Điện nước',         type: 'EXPENSE', amount: 350_000,    cat: 'Sinh hoạt',icon: '💡', date: '2026-05-29', green: false, note: 'Tháng 5/2026' },
-  { id: 8,  desc: 'Năng lượng mặt trời',type:'INCOME',  amount: 280_000,    cat: 'Thu nhập', icon: '☀️', date: '2026-05-29', green: true,  note: 'Solar panel sell-back' },
-  { id: 9,  desc: 'Gym',               type: 'EXPENSE', amount: 400_000,    cat: 'Sức khỏe', icon: '💪', date: '2026-05-28', green: false, note: 'Tháng 6' },
-  { id: 10, desc: 'Chuyển tiền Minh',  type: 'EXPENSE', amount: 500_000,    cat: 'Khác',     icon: '💸', date: '2026-05-28', green: false, note: 'Góp tiền nhậu' },
-]
+import { MOCK_TRANSACTIONS } from '../fixtures/mockData'
 
 function fmt(n: number) {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n)
@@ -101,11 +90,17 @@ export default function Transactions() {
   const [showModal, setShowModal] = useState(false)
   const [selectedTx, setSelectedTx] = useState<any | null>(null)
 
-  const { data: transactions, refetch } = useQuery('transactions', async () => {
-    try { const res = await api.get('/transactions'); return res.data } catch { return MOCK_TRANSACTIONS }
-  }, { initialData: MOCK_TRANSACTIONS })
+  const { data: transactions, refetch } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      try { const res = await api.get('/transactions'); return res.data } catch { return MOCK_TRANSACTIONS }
+    },
+    initialData: MOCK_TRANSACTIONS
+  })
 
-  const { data: categories } = useQuery('categories', () => transactionService.listCategories(), {
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => transactionService.listCategories(),
     initialData: [],
   })
 

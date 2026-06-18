@@ -26,12 +26,7 @@ const INSIGHT_ICONS: Record<string, React.ReactNode> = {
   prediction:  <Target className="w-4 h-4 text-purple-400" />,
 }
 
-const MOCK_INSIGHTS = [
-  { type: 'warning',     priority: 'high',   title: 'Ngân sách ăn uống sắp vượt', message: 'Bạn đã chi 85% ngân sách ăn uống. Còn 15% cho 10 ngày còn lại.' },
-  { type: 'tip',         priority: 'medium', title: 'Cơ hội tiết kiệm', message: 'Cắt giảm chi tiêu giải trí 20% có thể tiết kiệm ~600,000đ/tháng.' },
-  { type: 'achievement', priority: 'low',    title: '🎉 Mục tiêu đạt được!', message: 'Mục tiêu "Mua laptop" đã hoàn thành 100%. Xuất sắc!' },
-  { type: 'prediction',  priority: 'medium', title: 'Dự báo tháng tới', message: 'Dựa trên xu hướng, chi tiêu tháng tới khoảng 9,200,000đ.' },
-]
+import { MOCK_INSIGHTS } from '../fixtures/mockData'
 
 function TypingDots() {
   return (

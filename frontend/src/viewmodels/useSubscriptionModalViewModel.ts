@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { SubscriptionFormModel, SubscriptionModel } from '../models/subscription'
 import { subscriptionService } from '../services/subscriptionService'
@@ -41,34 +41,32 @@ export function useSubscriptionModalViewModel({
         }
       : {
           billingCycle: 'MONTHLY',
-          icon: 'ðŸ“±',
+          icon: '📱',
           startDate: new Date().toISOString().split('T')[0],
           reminderDaysBefore: 3,
         },
   })
 
-  const mutation = useMutation(
-    (data: SubscriptionFormModel) => {
+  const mutation = useMutation({
+    mutationFn: (data: SubscriptionFormModel) => {
       if (subscription) {
         return subscriptionService.updateSubscription(subscription.id, data)
       }
       return subscriptionService.createSubscription(data)
     },
-    {
-      onSuccess: () => {
-        toast.success(subscription ? 'ÄÃ£ cáº­p nháº­t Ä‘Äƒng kÃ½' : 'ÄÃ£ thÃªm Ä‘Äƒng kÃ½')
-        onSuccess()
-      },
-      onError: () => {
-        toast.error('CÃ³ lá»—i xáº£y ra')
-      },
+    onSuccess: () => {
+      toast.success(subscription ? 'Đã cập nhật đăng ký' : 'Đã thêm đăng ký')
+      onSuccess()
     },
-  )
+    onError: () => {
+      toast.error('Có lỗi xảy ra')
+    },
+  })
 
   return {
     errors: form.formState.errors,
     handleSubmit: form.handleSubmit((data) => mutation.mutate(data)),
-    isSaving: mutation.isLoading,
+    isSaving: mutation.isPending,
     register: form.register,
     selectedIcon: form.watch('icon'),
     setValue: form.setValue,

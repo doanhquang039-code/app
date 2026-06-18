@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown, PieChart as PieChartIcon, BarChart3, Download } from 'lucide-react'
 import api from '../lib/api'
 import {
@@ -23,25 +23,37 @@ const COLORS = ['#0ea5e9', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 export default function Analytics() {
   const [dateRange, setDateRange] = useState('6months')
 
-  const { data: monthlyTrend } = useQuery(['monthly-trend', dateRange], async () => {
-    const months = dateRange === '3months' ? 3 : dateRange === '6months' ? 6 : 12
-    const response = await api.get(`/financial-insights/monthly-trend?months=${months}`)
-    return response.data
+  const { data: monthlyTrend } = useQuery({
+    queryKey: ['monthly-trend', dateRange],
+    queryFn: async () => {
+      const months = dateRange === '3months' ? 3 : dateRange === '6months' ? 6 : 12
+      const response = await api.get(`/financial-insights/monthly-trend?months=${months}`)
+      return response.data
+    }
   })
 
-  const { data: categoryBreakdown } = useQuery('category-breakdown', async () => {
-    const response = await api.get('/financial-insights/spending-by-category')
-    return response.data
+  const { data: categoryBreakdown } = useQuery({
+    queryKey: ['category-breakdown'],
+    queryFn: async () => {
+      const response = await api.get('/financial-insights/spending-by-category')
+      return response.data
+    }
   })
 
-  const { data: summary } = useQuery('financial-summary', async () => {
-    const response = await api.get('/financial-insights/summary')
-    return response.data
+  const { data: summary } = useQuery({
+    queryKey: ['financial-summary'],
+    queryFn: async () => {
+      const response = await api.get('/financial-insights/summary')
+      return response.data
+    }
   })
 
-  const { data: recommendations } = useQuery('recommendations', async () => {
-    const response = await api.get('/financial-insights/recommendations')
-    return response.data
+  const { data: recommendations } = useQuery({
+    queryKey: ['recommendations'],
+    queryFn: async () => {
+      const response = await api.get('/financial-insights/recommendations')
+      return response.data
+    }
   })
 
   const formatCurrency = (amount: number) => {

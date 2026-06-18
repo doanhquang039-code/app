@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/api_service.dart';
 
-class SocialAuthButtons extends StatelessWidget {
+class SocialAuthButtons extends StatefulWidget {
   const SocialAuthButtons({
     super.key,
     required this.actionLabel,
@@ -11,6 +11,11 @@ class SocialAuthButtons extends StatelessWidget {
 
   final String actionLabel;
 
+  @override
+  State<SocialAuthButtons> createState() => _SocialAuthButtonsState();
+}
+
+class _SocialAuthButtonsState extends State<SocialAuthButtons> {
   static const _providers = [
     _SocialProvider('google', 'Google', 'G', Color(0xFFFFFFFF), Color(0xFF4285F4)),
     _SocialProvider('facebook', 'Facebook', 'f', Color(0xFF1877F2), Colors.white),
@@ -19,6 +24,33 @@ class SocialAuthButtons extends StatelessWidget {
     _SocialProvider('tiktok', 'TikTok', '♪', Color(0xFF000000), Colors.white),
     _SocialProvider('instagram', 'Instagram', 'IG', Color(0xFFE1306C), Colors.white),
   ];
+
+  Set<String>? _enabledProviderIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEnabledProviders();
+  }
+
+  Future<void> _loadEnabledProviders() async {
+    try {
+      final providers = await ApiService.getSocialProviders();
+      if (!mounted) return;
+      setState(() {
+        _enabledProviderIds = providers
+            .where((provider) => provider['enabled'] == true)
+            .map((provider) => provider['id']?.toString())
+            .whereType<String>()
+            .toSet();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _enabledProviderIds = _providers.map((provider) => provider.id).toSet();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +64,7 @@ class SocialAuthButtons extends StatelessWidget {
               .map(
                 (provider) => _SocialButton(
                   provider: provider,
-                  actionLabel: actionLabel,
+                  actionLabel: widget.actionLabel,
                   onPressed: () => _openSocialAuth(context, provider.id),
                 ),
               )
@@ -57,6 +89,16 @@ class SocialAuthButtons extends StatelessWidget {
   }
 
   Future<void> _openSocialAuth(BuildContext context, String provider) async {
+    if (_enabledProviderIds != null && !_enabledProviderIds!.contains(provider)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${_providerLabel(provider)} login is disabled'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     final uri = Uri.parse('${ApiService.baseUrl}/auth/social/$provider?target=mobile');
     final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!opened && context.mounted) {
@@ -67,6 +109,10 @@ class SocialAuthButtons extends StatelessWidget {
         ),
       );
     }
+  }
+
+  String _providerLabel(String id) {
+    return _providers.firstWhere((provider) => provider.id == id).label;
   }
 }
 

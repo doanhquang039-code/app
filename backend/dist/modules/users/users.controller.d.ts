@@ -18,6 +18,7 @@ export declare class UsersController {
         socialProviderId?: string;
         avatarUrl?: string;
         lastLoginAt?: Date;
+        role: string;
         createdAt: Date;
     }>;
     updateProfile(req: any, dto: UpdateProfileDto): Promise<{
@@ -33,6 +34,7 @@ export declare class UsersController {
             socialProviderId?: string;
             avatarUrl?: string;
             lastLoginAt?: Date;
+            role: string;
             createdAt: Date;
         };
     }>;

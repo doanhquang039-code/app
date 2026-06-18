@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import { Facebook, Globe2, Mail, Music2 } from 'lucide-react'
 
 type SocialLoginButtonsProps = {
@@ -51,9 +52,8 @@ const providers = [
 
 function socialAuthUrl(provider: string) {
   const configuredBase = (import.meta as any).env?.VITE_API_URL?.replace(/\/$/, '')
-  const target = /Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent)
-    ? '?target=mobile'
-    : ''
+  const oauthTarget = (import.meta as any).env?.VITE_SOCIAL_AUTH_TARGET
+  const target = oauthTarget === 'mobile' ? '?target=mobile' : ''
   if (configuredBase) return `${configuredBase}/auth/social/${provider}${target}`
   return `/api/auth/social/${provider}${target}`
 }
@@ -61,14 +61,43 @@ function socialAuthUrl(provider: string) {
 export default function SocialLoginButtons({ mode = 'login' }: SocialLoginButtonsProps) {
   const actionLabel = mode === 'register' ? 'Đăng ký' : 'Đăng nhập'
 
+  const [enabledProviderIds, setEnabledProviderIds] = useState<string[] | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    fetch('/api/auth/social/providers')
+      .then((response) => (response.ok ? response.json() : []))
+      .then((data) => {
+        if (cancelled) return
+        const ids = Array.isArray(data)
+          ? data.filter((provider) => provider.enabled).map((provider) => provider.id)
+          : []
+        setEnabledProviderIds(ids)
+      })
+      .catch(() => {
+        if (!cancelled) setEnabledProviderIds(providers.map((provider) => provider.id))
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const visibleProviders = useMemo(() => {
+    if (!enabledProviderIds) return providers
+    return providers.filter((provider) => enabledProviderIds.includes(provider.id))
+  }, [enabledProviderIds])
+
   const handleSocialLogin = (provider: string) => {
     window.location.href = socialAuthUrl(provider)
   }
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        {providers.map((provider) => (
+      {visibleProviders.length > 0 && (
+        <div className="grid grid-cols-2 gap-3">
+        {visibleProviders.map((provider) => (
           <button
             key={provider.id}
             type="button"
@@ -85,7 +114,8 @@ export default function SocialLoginButtons({ mode = 'login' }: SocialLoginButton
             <span className="truncate">{provider.label}</span>
           </button>
         ))}
-      </div>
+        </div>
+      )}
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">

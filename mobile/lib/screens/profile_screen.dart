@@ -14,6 +14,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ApiService _api = ApiService();
   Map<String, dynamic>? _profile;
+  Map<String, dynamic>? _userSettings;
+  Map<String, int> _dataSummary = {};
   Map<String, dynamic>? _healthScore;
   bool _isLoading = true;
   bool _isEditing = false;
@@ -33,13 +35,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadData() async {
     try {
-      final results = await Future.wait([
+      final results = await Future.wait<dynamic>([
         _api.getProfile(),
+        _api.getUserProfile().catchError((_) => <String, dynamic>{}),
+        _api.getWallets().catchError((_) => <dynamic>[]),
+        _api.getTransactions(limit: 500).catchError((_) => <dynamic>[]),
+        _api.getBudgets().catchError((_) => <dynamic>[]),
+        _api.getSavingsGoals().catchError((_) => <dynamic>[]),
+        _api.getCategories().catchError((_) => <dynamic>[]),
         _api.getHealthScore().catchError((_) => <String, dynamic>{}),
       ]);
       setState(() {
         _profile = results[0] as Map<String, dynamic>;
-        _healthScore = results[1] as Map<String, dynamic>;
+        _userSettings = results[1] as Map<String, dynamic>;
+        _dataSummary = {
+          'wallets': (results[2] as List).length,
+          'transactions': (results[3] as List).length,
+          'budgets': (results[4] as List).length,
+          'savingsGoals': (results[5] as List).length,
+          'categories': (results[6] as List).length,
+        };
+        _healthScore = results[7] as Map<String, dynamic>;
         _nameCtrl.text = _profile?['name'] ?? '';
         _isLoading = false;
       });
@@ -144,6 +160,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 24),
 
+                    _personalDataCard(),
+                    const SizedBox(height: 24),
+
                     // Menu sections
                     _sectionTitle('Tài chính'),
                     _menuItem(Icons.account_balance_wallet_outlined, 'Quản lý ví', '/wallets', const Color(0xFF6C63FF)),
@@ -199,24 +218,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _personalDataCard() {
+    final profile = _profile ?? {};
+    final rows = <MapEntry<String, String>>[
+      MapEntry('Email', '${profile['email'] ?? 'Chưa có'}'),
+      MapEntry('Tên đăng nhập', '${profile['username'] ?? profile['name'] ?? 'Chưa có'}'),
+      MapEntry('Họ tên', '${profile['fullName'] ?? profile['name'] ?? 'Chưa cập nhật'}'),
+      MapEntry('Kiểu đăng nhập', '${profile['authProvider'] ?? 'local'}'),
+      MapEntry('Ngày tạo tài khoản', _formatDate(profile['createdAt'])),
+      MapEntry('Ngôn ngữ', '${_userSettings?['language'] ?? 'vi'}'),
+      MapEntry('Tiền tệ', '${_userSettings?['currency'] ?? 'VND'}'),
+      MapEntry('Giao dịch', '${_dataSummary['transactions'] ?? profile['transactionCount'] ?? 0}'),
+      MapEntry('Ví', '${_dataSummary['wallets'] ?? profile['walletCount'] ?? 0}'),
+      MapEntry('Ngân sách', '${_dataSummary['budgets'] ?? profile['budgetCount'] ?? 0}'),
+      MapEntry('Mục tiêu tiết kiệm', '${_dataSummary['savingsGoals'] ?? 0}'),
+      MapEntry('Danh mục', '${_dataSummary['categories'] ?? profile['categoryCount'] ?? 0}'),
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2A3E),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.badge_outlined, color: Color(0xFF38BDF8), size: 22),
+              SizedBox(width: 10),
+              Text('Tổng quan dữ liệu cá nhân', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...rows.map((row) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      child: Text(row.key, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    ),
+                    Expanded(
+                      child: Text(row.value, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHealthScoreCard() {
     final score = _healthScore!['score'] ?? 0;
     final label = _healthScore!['label'] ?? '';
     final tips = (_healthScore!['tips'] as List?)?.cast<String>() ?? [];
 
-    Color scoreColor;
     List<Color> gradientColors;
     if (score >= 80) {
-      scoreColor = Colors.greenAccent;
       gradientColors = [const Color(0xFF11998E), const Color(0xFF38EF7D)];
     } else if (score >= 65) {
-      scoreColor = const Color(0xFF6C63FF);
       gradientColors = [const Color(0xFF6C63FF), const Color(0xFF9C88FF)];
     } else if (score >= 50) {
-      scoreColor = Colors.orangeAccent;
       gradientColors = [const Color(0xFFF97316), const Color(0xFFF9A825)];
     } else {
-      scoreColor = Colors.redAccent;
       gradientColors = [const Color(0xFFEB5757), const Color(0xFFF97316)];
     }
 

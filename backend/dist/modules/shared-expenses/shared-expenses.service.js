@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var SharedExpensesService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SharedExpensesService = void 0;
 const common_1 = require("@nestjs/common");
@@ -19,6 +20,7 @@ const typeorm_2 = require("typeorm");
 const shared_expense_entity_1 = require("../../entities/shared-expense.entity");
 const user_entity_1 = require("../../entities/user.entity");
 let SharedExpensesService = class SharedExpensesService {
+    static { SharedExpensesService_1 = this; }
     groupRepository;
     expenseRepository;
     settlementRepository;
@@ -29,13 +31,29 @@ let SharedExpensesService = class SharedExpensesService {
         this.settlementRepository = settlementRepository;
         this.userRepository = userRepository;
     }
+    static GROUP_LIMIT_BY_ROLE = {
+        user: 2,
+        premium: Infinity,
+        admin: Infinity,
+    };
     async createGroup(ownerId, createGroupDto) {
+        const ownerUser = await this.userRepository.findOne({ where: { id: ownerId } });
+        if (ownerUser) {
+            const userRole = ownerUser.role ?? 'user';
+            const maxGroups = SharedExpensesService_1.GROUP_LIMIT_BY_ROLE[userRole] ?? 2;
+            if (isFinite(maxGroups)) {
+                const existingCount = await this.groupRepository.count({ where: { ownerId } });
+                if (existingCount >= maxGroups) {
+                    throw new common_1.BadRequestException(`Mỗi tài khoản thường chỉ được tạo tối đa ${maxGroups} nhóm. ` +
+                        `Vui lòng nâng cấp tài khoản để tạo thêm nhóm.`);
+                }
+            }
+        }
         const group = this.groupRepository.create({
             ...createGroupDto,
             ownerId,
         });
         const savedGroup = await this.groupRepository.save(group);
-        const ownerUser = await this.userRepository.findOne({ where: { id: ownerId } });
         if (ownerUser) {
             savedGroup.members = [ownerUser];
             return this.groupRepository.save(savedGroup);
@@ -260,7 +278,7 @@ let SharedExpensesService = class SharedExpensesService {
     }
 };
 exports.SharedExpensesService = SharedExpensesService;
-exports.SharedExpensesService = SharedExpensesService = __decorate([
+exports.SharedExpensesService = SharedExpensesService = SharedExpensesService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(shared_expense_entity_1.SharedExpenseGroup)),
     __param(1, (0, typeorm_1.InjectRepository)(shared_expense_entity_1.SharedExpense)),

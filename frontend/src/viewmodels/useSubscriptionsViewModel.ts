@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { SubscriptionModel } from '../models/subscription'
 import { subscriptionService } from '../services/subscriptionService'
@@ -9,37 +9,46 @@ export function useSubscriptionsViewModel() {
   const [showModal, setShowModal] = useState(false)
   const [editingSubscription, setEditingSubscription] = useState<SubscriptionModel | null>(null)
 
-  const { data: subscriptions, isLoading } = useQuery(
-    'subscriptions',
-    subscriptionService.listSubscriptions,
-  )
-  const { data: stats } = useQuery('subscription-stats', subscriptionService.getStats)
-  const { data: upcoming } = useQuery('upcoming-subscriptions', subscriptionService.listUpcoming)
+  const { data: subscriptions, isLoading } = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: subscriptionService.listSubscriptions,
+  })
+  const { data: stats } = useQuery({
+    queryKey: ['subscription-stats'],
+    queryFn: subscriptionService.getStats,
+  })
+  const { data: upcoming } = useQuery({
+    queryKey: ['upcoming-subscriptions'],
+    queryFn: subscriptionService.listUpcoming,
+  })
 
   const invalidateSubscriptions = () => {
-    queryClient.invalidateQueries('subscriptions')
-    queryClient.invalidateQueries('subscription-stats')
-    queryClient.invalidateQueries('upcoming-subscriptions')
+    queryClient.invalidateQueries({ queryKey: ['subscriptions'] })
+    queryClient.invalidateQueries({ queryKey: ['subscription-stats'] })
+    queryClient.invalidateQueries({ queryKey: ['upcoming-subscriptions'] })
   }
 
-  const pauseMutation = useMutation(subscriptionService.pauseSubscription, {
+  const pauseMutation = useMutation({
+    mutationFn: subscriptionService.pauseSubscription,
     onSuccess: () => {
       invalidateSubscriptions()
-      toast.success('ÄÃ£ táº¡m dá»«ng Ä‘Äƒng kÃ½')
+      toast.success('Đã tạm dừng đăng ký')
     },
   })
 
-  const resumeMutation = useMutation(subscriptionService.resumeSubscription, {
+  const resumeMutation = useMutation({
+    mutationFn: subscriptionService.resumeSubscription,
     onSuccess: () => {
       invalidateSubscriptions()
-      toast.success('ÄÃ£ tiáº¿p tá»¥c Ä‘Äƒng kÃ½')
+      toast.success('Đã tiếp tục đăng ký')
     },
   })
 
-  const cancelMutation = useMutation(subscriptionService.cancelSubscription, {
+  const cancelMutation = useMutation({
+    mutationFn: subscriptionService.cancelSubscription,
     onSuccess: () => {
       invalidateSubscriptions()
-      toast.success('ÄÃ£ há»§y Ä‘Äƒng kÃ½')
+      toast.success('Đã hủy đăng ký')
     },
   })
 

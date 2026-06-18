@@ -3,9 +3,13 @@ import {
   LayoutDashboard, ArrowLeftRight, Wallet, Target,
   BarChart3, CreditCard, Brain, Users, Trophy, Settings,
   TrendingUp, WalletCards, Landmark, ScanLine, Leaf,
-  ChevronRight, Shield,
+  ChevronRight, Shield, Languages, X,
 } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
+
+interface SidebarProps {
+  onClose?: () => void
+}
 
 const navigation = [
   {
@@ -47,6 +51,12 @@ const navigation = [
     ],
   },
   {
+    group: 'Học tập',
+    items: [
+      { name: 'Học ngoại ngữ', href: '/language-learning', icon: Languages, badge: 'NEW' },
+    ],
+  },
+  {
     group: 'Cộng đồng',
     items: [
       { name: 'Xã hội',        href: '/social',         icon: Users,           badge: null },
@@ -71,7 +81,7 @@ function GreenMiniBar({ score }: { score: number }) {
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }: SidebarProps) {
   const { user } = useAuthStore()
   const location = useLocation()
 
@@ -80,26 +90,38 @@ export default function Sidebar() {
 
   return (
     <div
-      className="w-64 flex flex-col flex-shrink-0"
+      className="w-64 h-full flex flex-col flex-shrink-0"
       style={{
         background: 'rgba(8,14,26,0.95)',
         borderRight: '1px solid rgba(255,255,255,0.06)',
         backdropFilter: 'blur(20px)',
       }}
     >
-      {/* ===== Logo ===== */}
+      {/* ===== Logo + Mobile Close ===== */}
       <div className="p-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse-glow"
-            style={{ background: 'linear-gradient(135deg, #1d4ed8, #2563eb)', boxShadow: '0 0 20px rgba(37,99,235,0.4)' }}
-          >
-            <Leaf className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse-glow"
+              style={{ background: 'linear-gradient(135deg, #1d4ed8, #2563eb)', boxShadow: '0 0 20px rgba(37,99,235,0.4)' }}
+            >
+              <Leaf className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-sm font-black text-white leading-tight">FinGreen</h1>
+              <p className="text-xs font-semibold" style={{ color: '#34d399' }}>Smart Banking</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-black text-white leading-tight">FinGreen</h1>
-            <p className="text-xs font-semibold" style={{ color: '#34d399' }}>Smart Banking</p>
-          </div>
+          {/* Mobile close button */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden btn btn-ghost p-2 rounded-xl"
+              aria-label="Đóng menu"
+            >
+              <X className="w-5 h-5 text-muted" />
+            </button>
+          )}
         </div>
 
         {/* Green Score mini */}
@@ -134,6 +156,7 @@ export default function Sidebar() {
                     key={item.name}
                     to={item.href}
                     end={item.href === '/'}
+                    onClick={onClose}
                     className={`nav-item group ${isActive ? 'active' : ''}`}
                   >
                     <item.icon
@@ -181,6 +204,7 @@ export default function Sidebar() {
       <div className="px-3 pb-2">
         <NavLink
           to="/settings"
+          onClick={onClose}
           className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
         >
           <Settings style={{ width: '16px', height: '16px' }} className="flex-shrink-0" />

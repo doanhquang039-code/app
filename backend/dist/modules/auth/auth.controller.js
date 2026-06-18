@@ -28,6 +28,9 @@ let AuthController = class AuthController {
     login(dto) {
         return this.authService.login(dto);
     }
+    socialProviders() {
+        return this.authService.getSocialProviders();
+    }
     socialLogin(provider, target, res) {
         try {
             return res.redirect(this.authService.getSocialAuthUrl(provider, target));
@@ -63,6 +66,12 @@ __decorate([
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Get)('social/providers'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "socialProviders", null);
 __decorate([
     (0, common_1.Get)('social/:provider'),
     __param(0, (0, common_1.Param)('provider')),

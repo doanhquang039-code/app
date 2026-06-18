@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
   TransactionFormModel,
@@ -33,28 +33,26 @@ export function useTransactionModalViewModel({
         },
   })
 
-  const mutation = useMutation(
-    (data: TransactionFormModel) => {
+  const mutation = useMutation({
+    mutationFn: (data: TransactionFormModel) => {
       if (transaction) {
         return transactionService.updateTransaction(transaction.id, data)
       }
       return transactionService.createTransaction(data)
     },
-    {
-      onSuccess: () => {
-        toast.success(transaction ? 'ÄÃ£ cáº­p nháº­t giao dá»‹ch' : 'ÄÃ£ thÃªm giao dá»‹ch')
-        onSuccess()
-      },
-      onError: () => {
-        toast.error('CÃ³ lá»—i xáº£y ra')
-      },
+    onSuccess: () => {
+      toast.success(transaction ? 'Đã cập nhật giao dịch' : 'Đã thêm giao dịch')
+      onSuccess()
     },
-  )
+    onError: () => {
+      toast.error('Có lỗi xảy ra')
+    },
+  })
 
   return {
     errors: form.formState.errors,
     handleSubmit: form.handleSubmit((data) => mutation.mutate(data)),
-    isSaving: mutation.isLoading,
+    isSaving: mutation.isPending,
     register: form.register,
     transactionType: form.watch('type'),
   }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
   TransactionFilterType,
@@ -14,23 +14,24 @@ export function useTransactionsViewModel() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState<TransactionFilterType>('ALL')
 
-  const { data: transactions, isLoading } = useQuery(
-    'transactions',
-    transactionService.listTransactions,
-  )
+  const { data: transactions, isLoading } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: transactionService.listTransactions,
+  })
 
-  const { data: categories } = useQuery(
-    'categories',
-    transactionService.listCategories,
-  )
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: transactionService.listCategories,
+  })
 
-  const deleteMutation = useMutation(transactionService.deleteTransaction, {
+  const deleteMutation = useMutation({
+    mutationFn: transactionService.deleteTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries('transactions')
-      toast.success('ÄÃ£ xÃ³a giao dá»‹ch')
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      toast.success('Đã xóa giao dịch')
     },
     onError: () => {
-      toast.error('XÃ³a giao dá»‹ch tháº¥t báº¡i')
+      toast.error('Xóa giao dịch thất bại')
     },
   })
 
@@ -68,7 +69,7 @@ export function useTransactionsViewModel() {
   }
 
   const handleMutationSuccess = () => {
-    queryClient.invalidateQueries('transactions')
+    queryClient.invalidateQueries({ queryKey: ['transactions'] })
     closeModal()
   }
 

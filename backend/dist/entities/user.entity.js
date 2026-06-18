@@ -22,6 +22,7 @@ let User = class User {
     socialProviderId;
     avatarUrl;
     lastLoginAt;
+    role;
     createdAt;
 };
 exports.User = User;
@@ -65,6 +66,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", Date)
 ], User.prototype, "lastLoginAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'nvarchar', length: 20, default: 'user' }),
+    __metadata("design:type", String)
+], User.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

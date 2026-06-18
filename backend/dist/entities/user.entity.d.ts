@@ -9,5 +9,6 @@ export declare class User {
     socialProviderId?: string;
     avatarUrl?: string;
     lastLoginAt?: Date;
+    role: string;
     createdAt: Date;
 }

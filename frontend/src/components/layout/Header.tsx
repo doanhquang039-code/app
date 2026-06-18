@@ -1,4 +1,4 @@
-import { Bell, User, LogOut, Search, Sun, Moon, Check, Trash2 } from 'lucide-react'
+import { Bell, User, LogOut, Search, Sun, Moon, Check, Trash2, Menu } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
 import { useState, useEffect, useRef } from 'react'
 
@@ -25,14 +25,27 @@ const TYPE_BORDER: Record<string, string> = {
   success: 'rgba(16,185,129,0.4)',
 }
 
-export default function Header() {
+interface HeaderProps {
+  onMenuToggle?: () => void
+}
+
+export default function Header({ onMenuToggle }: HeaderProps) {
   const { user, logout } = useAuthStore()
   const [showUserMenu,       setShowUserMenu]       = useState(false)
   const [showNotifications,  setShowNotifications]  = useState(false)
-  const [darkMode,           setDarkMode]           = useState(true)
+  const [darkMode,           setDarkMode]           = useState(() => {
+    const saved = localStorage.getItem('theme')
+    return saved ? saved === 'dark' : true
+  })
   const [notifications,      setNotifications]      = useState<Notification[]>(INITIAL_NOTIFS)
   const notifRef = useRef<HTMLDivElement>(null)
   const userRef  = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const theme = darkMode ? 'dark' : 'light'
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [darkMode])
 
   const initials = (user?.fullName || user?.username || 'U')
     .split(' ')
@@ -73,7 +86,17 @@ export default function Header() {
         backdropFilter: 'blur(20px)',
       }}
     >
-      {/* Left: greeting */}
+      {/* Left: hamburger + greeting */}
+      <div className="flex items-center gap-3">
+        {onMenuToggle && (
+          <button
+            onClick={onMenuToggle}
+            className="lg:hidden btn btn-ghost p-2 rounded-xl"
+            aria-label="Mở menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
       <div>
         <h2 className="text-base font-semibold text-white leading-tight">
           {greeting}, <span className="text-gradient">{user?.fullName?.split(' ').slice(-1)[0] || user?.username}</span>! 👋
@@ -82,6 +105,7 @@ export default function Header() {
           {new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
       </div>
+    </div>
 
       {/* Right: Search + Theme + Notifications + User */}
       <div className="flex items-center gap-2">

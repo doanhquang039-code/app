@@ -5,6 +5,21 @@ class ApiService {
   static const String baseUrl = 'http://10.0.2.2:3000'; // Android emulator
   late Dio _dio;
 
+  static Future<List<Map<String, dynamic>>> getSocialProviders() async {
+    final dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ));
+    final res = await dio.get('/auth/social/providers');
+    final data = res.data;
+    if (data is! List) return [];
+    return data
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
+  }
+
   ApiService() {
     _dio = Dio(BaseOptions(
       baseUrl: baseUrl,

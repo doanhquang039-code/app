@@ -151,6 +151,7 @@ export class AuthService {
 
   getSocialAuthUrl(providerInput: string, targetInput?: string) {
     const provider = this.assertProvider(providerInput);
+    this.assertProviderEnabled(provider);
     const target = this.getSocialAuthTarget(targetInput);
     const config = SOCIAL_PROVIDERS[provider];
     const clientId = this.requiredEnv(config.clientIdEnv, provider);
@@ -169,8 +170,21 @@ export class AuthService {
     return url.toString();
   }
 
+  getSocialProviders() {
+    return Object.keys(SOCIAL_PROVIDERS).map((provider) => {
+      const socialProvider = provider as SocialProvider;
+      const config = SOCIAL_PROVIDERS[socialProvider];
+      return {
+        id: socialProvider,
+        enabled: this.isProviderEnabled(socialProvider),
+        configured: Boolean(process.env[config.clientIdEnv] && process.env[config.clientSecretEnv]),
+      };
+    });
+  }
+
   async handleSocialCallback(providerInput: string, code?: string, state?: string) {
     const provider = this.assertProvider(providerInput);
+    this.assertProviderEnabled(provider);
     if (!code) throw new BadRequestException('Missing authorization code');
     const target = this.verifyState(provider, state);
 
@@ -395,6 +409,21 @@ export class AuthService {
     const value = process.env[name];
     if (!value) throw new BadRequestException(`Missing ${name} for ${provider} login`);
     return value;
+  }
+
+  private assertProviderEnabled(provider: SocialProvider) {
+    if (!this.isProviderEnabled(provider)) {
+      throw new BadRequestException(`${provider} login is disabled`);
+    }
+  }
+
+  private isProviderEnabled(provider: SocialProvider) {
+    const key = `${provider.toUpperCase()}_OAUTH_ENABLED`;
+    const config = SOCIAL_PROVIDERS[provider];
+    return (
+      process.env[key]?.toLowerCase() !== 'false' &&
+      Boolean(process.env[config.clientIdEnv] && process.env[config.clientSecretEnv])
+    );
   }
 
   private getRedirectUri(provider: SocialProvider, target: SocialAuthTarget = 'web') {

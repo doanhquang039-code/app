@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/app_settings_provider.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/wallet_provider.dart';
 import '../models/transaction.dart' as model;
@@ -20,6 +21,7 @@ import 'analytics_screen.dart';
 import 'shared_expenses_screen.dart';
 import 'multi_currency_screen.dart';
 import 'financial_reports_screen.dart';
+import 'language_learning_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -51,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appSettings = context.watch<AppSettingsProvider>();
     final screens = [
       _buildHomeTab(),
       const WalletScreen(),
@@ -60,18 +63,18 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E2E),
+      backgroundColor: appSettings.backgroundColor,
       body: screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF2A2A3E),
+          color: appSettings.surfaceColor,
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 15)],
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (i) => setState(() => _currentIndex = i),
-          backgroundColor: const Color(0xFF2A2A3E),
-          selectedItemColor: const Color(0xFF6C63FF),
+          backgroundColor: appSettings.surfaceColor,
+          selectedItemColor: appSettings.accentGradient.first,
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
           selectedFontSize: 11,
@@ -99,21 +102,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeTab() {
+    final appSettings = context.watch<AppSettingsProvider>();
     return Consumer2<TransactionProvider, WalletProvider>(
       builder: (context, txProvider, walletProvider, _) {
         final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
         final compactFormatter = NumberFormat.compactCurrency(locale: 'vi_VN', symbol: 'đ');
 
         return Scaffold(
-          backgroundColor: const Color(0xFF1E1E2E),
+          backgroundColor: appSettings.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF1E1E2E),
+            backgroundColor: appSettings.backgroundColor,
             elevation: 0,
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('Xin chào! 👋', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                Text('Quản lý chi tiêu', style: TextStyle(color: Colors.grey, fontSize: 12)),
+              children: [
+                Text(appSettings.text('hello'), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(appSettings.text('expenseManagement'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
             actions: [
@@ -209,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 20),
 
                         // Quick actions - Row 1
-                        const Text('Tính năng', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                        Text(appSettings.text('features'), style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -342,6 +346,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             }),
                           ],
                         ),
+                        const SizedBox(height: 14),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _quickAction('Ngoại ngữ', Icons.language_rounded, const Color(0xFF38BDF8), () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const LanguageLearningScreen()));
+                            }),
+                            _quickAction('Lịch học', Icons.event_available_rounded, const Color(0xFF14B8A6), () {
+                              Navigator.pushNamed(context, '/language-learning');
+                            }),
+                            _quickAction('Từ vựng', Icons.menu_book_rounded, const Color(0xFF8E2DE2), () {
+                              Navigator.pushNamed(context, '/language-learning');
+                            }),
+                            _quickAction('Tài liệu AI', Icons.analytics_rounded, const Color(0xFFEB5757), () {
+                              Navigator.pushNamed(context, '/document-analyzer');
+                            }),
+                          ],
+                        ),
                         const SizedBox(height: 24),
 
                         // Wallets scroll
@@ -349,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Ví của tôi', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                              Text(appSettings.text('myWallets'), style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                               TextButton(
                                 onPressed: () => setState(() => _currentIndex = 1),
                                 child: const Text('Xem tất cả', style: TextStyle(color: Color(0xFF6C63FF), fontSize: 13)),
@@ -401,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Giao dịch gần đây', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                            Text(appSettings.text('recentTransactions'), style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                             TextButton(
                               onPressed: () => Navigator.push(
                                 context,

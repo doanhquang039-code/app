@@ -28,6 +28,7 @@ import NetWorth from './pages/NetWorth'
 import ReceiptScanner from './pages/ReceiptScanner'
 import GreenBanking from './pages/GreenBanking'
 import XanhSM from './pages/XanhSM'
+import LanguageLearning from './pages/LanguageLearning'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
@@ -67,6 +68,7 @@ function App() {
             <Route path="/receipt-scanner" element={<ReceiptScanner />} />
             <Route path="/green-banking" element={<GreenBanking />} />
             <Route path="/xanh-sm" element={<XanhSM />} />
+            <Route path="/language-learning" element={<LanguageLearning />} />
             <Route path="/social" element={<Social />} />
             <Route path="/gamification" element={<Gamification />} />
             <Route path="/settings" element={<Settings />} />

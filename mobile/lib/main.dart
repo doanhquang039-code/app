@@ -8,6 +8,8 @@ import 'providers/net_worth_provider.dart';
 import 'providers/savings_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/category_provider.dart';
+import 'providers/app_settings_provider.dart';
+import 'providers/language_learning_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
@@ -48,9 +50,15 @@ import 'screens/subscription_manager_screen.dart';
 import 'screens/financial_news_screen.dart';
 import 'screens/budget_alerts_screen.dart';
 import 'screens/category_manager_screen.dart';
+import 'screens/language_learning_screen.dart';
+import 'screens/language_chat_screen.dart';
+import 'screens/ai_document_analyzer_screen.dart';
 import 'widgets/oauth_deep_link_handler.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('vi_VN', null);
   runApp(
     MultiProvider(
       providers: [
@@ -62,6 +70,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => SavingsProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => AppSettingsProvider()..load()),
+        ChangeNotifierProvider(create: (_) => LanguageLearningProvider()..load()),
       ],
       child: const MyApp(),
     ),
@@ -73,6 +83,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appSettings = context.watch<AppSettingsProvider>();
+
     return OAuthDeepLinkHandler(
       child: MaterialApp(
         navigatorKey: oauthNavigatorKey,
@@ -80,14 +92,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         colorScheme: ColorScheme.dark(
-          primary: const Color(0xFF6C63FF),
-          secondary: const Color(0xFF9C88FF),
-          surface: const Color(0xFF2A2A3E),
-          background: const Color(0xFF1E1E2E),
+          primary: appSettings.accentGradient.first,
+          secondary: appSettings.accentGradient.last,
+          surface: appSettings.surfaceColor,
+          background: appSettings.backgroundColor,
         ),
-        scaffoldBackgroundColor: const Color(0xFF1E1E2E),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1E1E2E),
+        scaffoldBackgroundColor: appSettings.backgroundColor,
+        appBarTheme: AppBarTheme(
+          backgroundColor: appSettings.backgroundColor,
           elevation: 0,
         ),
         datePickerTheme: DatePickerThemeData(
@@ -150,6 +162,12 @@ class MyApp extends StatelessWidget {
         '/financial-news': (_) => const FinancialNewsScreen(),
         '/budget-alerts': (_) => const BudgetAlertsScreen(),
         '/category-manager': (_) => const CategoryManagerScreen(),
+        '/language-learning': (_) => const LanguageLearningScreen(),
+        '/language-chat': (context) {
+          final lesson = ModalRoute.of(context)!.settings.arguments as LanguageLesson;
+          return LanguageChatScreen(lesson: lesson);
+        },
+        '/document-analyzer': (_) => const AIDocumentAnalyzerScreen(),
       },
       ),
     );

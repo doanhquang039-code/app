@@ -6,9 +6,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS cho mobile app
+  // Enable CORS - cấu hình theo environment
+  const corsOrigin = process.env.CORS_ORIGIN
+    || process.env.FRONTEND_URL
+    || 'http://localhost:5173';
   app.enableCors({
-    origin: '*',
+    origin: corsOrigin.split(',').map(o => o.trim()),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -62,8 +65,11 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(3000);
-  console.log(`🚀 Server đang chạy tại http://localhost:3000`);
-  console.log(`📚 Swagger docs: http://localhost:3000/api/docs`);
+  const port = Number(process.env.PORT || 3000);
+  const host = process.env.HOST || '0.0.0.0';
+
+  await app.listen(port, host);
+  console.log(`🚀 Server đang chạy tại http://${host}:${port}`);
+  console.log(`📚 Swagger docs: http://${host}:${port}/api/docs`);
 }
 bootstrap();

@@ -8,6 +8,7 @@ export declare class SharedExpensesService {
     private settlementRepository;
     private userRepository;
     constructor(groupRepository: Repository<SharedExpenseGroup>, expenseRepository: Repository<SharedExpense>, settlementRepository: Repository<GroupSettlement>, userRepository: Repository<User>);
+    private static readonly GROUP_LIMIT_BY_ROLE;
     createGroup(ownerId: number, createGroupDto: CreateGroupDto): Promise<SharedExpenseGroup>;
     getGroupsForUser(userId: number): Promise<SharedExpenseGroup[]>;
     getGroupDetails(groupId: number, userId: number): Promise<SharedExpenseGroup | null>;

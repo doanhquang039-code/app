@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, X, Zap, Mic, Camera, CheckCircle2 } from 'lucide-react'
 import api from '../lib/api'
 import { toast } from 'sonner'
@@ -48,8 +48,8 @@ export default function QuickAddExpense() {
     return () => window.removeEventListener('keydown', handler)
   }, [open])
 
-  const { mutate, isLoading } = useMutation(
-    async () => {
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: async () => {
       const payload = {
         amount: parseFloat(amount.replace(/,/g, '')),
         description: description || selectedCat,
@@ -59,19 +59,17 @@ export default function QuickAddExpense() {
       }
       await api.post('/transactions', payload)
     },
-    {
-      onSuccess: () => {
-        setSuccess(true)
-        qc.invalidateQueries('recent-transactions')
-        qc.invalidateQueries('dashboard-stats')
-        toast.success(`Đã thêm ${type === 'EXPENSE' ? 'chi tiêu' : 'thu nhập'}: ${formatAmount(amount)}`)
-        setTimeout(() => setOpen(false), 1200)
-      },
-      onError: () => {
-        toast.error('Không thể thêm giao dịch. Vui lòng thử lại.')
-      },
-    }
-  )
+    onSuccess: () => {
+      setSuccess(true)
+      qc.invalidateQueries({ queryKey: ['recent-transactions'] })
+      qc.invalidateQueries({ queryKey: ['dashboard-stats'] })
+      toast.success(`Đã thêm ${type === 'EXPENSE' ? 'chi tiêu' : 'thu nhập'}: ${formatAmount(amount)}`)
+      setTimeout(() => setOpen(false), 1200)
+    },
+    onError: () => {
+      toast.error('Không thể thêm giao dịch. Vui lòng thử lại.')
+    },
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

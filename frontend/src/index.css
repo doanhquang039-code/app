@@ -57,6 +57,32 @@
   --transition:    all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+html[data-theme='light'] {
+  /* Background */
+  --color-bg:              #f8fafc;
+  --color-bg-2:            #ffffff;
+  --color-surface:         rgba(15, 23, 42, 0.05);
+  --color-surface-hover:   rgba(15, 23, 42, 0.08);
+  --color-border:          rgba(15, 23, 42, 0.09);
+  --color-border-strong:   rgba(15, 23, 42, 0.16);
+
+  /* Text */
+  --color-text:            #0f172a;
+  --color-text-muted:      #475569;
+  --color-text-faint:      #94a3b8;
+
+  /* Gradients */
+  --gradient-card:         linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+  --gradient-card-gold:    linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  --gradient-card-green:   linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  --gradient-card-premium: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  --gradient-card-blue:    linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+
+  /* Shadows */
+  --shadow-card:           0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover:     0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -6px rgba(0, 0, 0, 0.08);
+}
+
 /* ===== BASE ===== */
 @layer base {
   * { border-color: var(--color-border); box-sizing: border-box; }

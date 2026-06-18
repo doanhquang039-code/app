@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { SavingsGoalModel } from '../models/savingsGoal'
 import { savingsGoalService } from '../services/savingsGoalService'
@@ -9,24 +9,26 @@ export function useSavingsGoalsViewModel() {
   const [showModal, setShowModal] = useState(false)
   const [editingGoal, setEditingGoal] = useState<SavingsGoalModel | null>(null)
 
-  const { data: goals, isLoading } = useQuery('savings-goals', savingsGoalService.listGoals)
+  const { data: goals, isLoading } = useQuery({
+    queryKey: ['savings-goals'],
+    queryFn: savingsGoalService.listGoals,
+  })
 
-  const deleteMutation = useMutation(savingsGoalService.deleteGoal, {
+  const deleteMutation = useMutation({
+    mutationFn: savingsGoalService.deleteGoal,
     onSuccess: () => {
-      queryClient.invalidateQueries('savings-goals')
-      toast.success('ÄÃ£ xÃ³a má»¥c tiÃªu')
+      queryClient.invalidateQueries({ queryKey: ['savings-goals'] })
+      toast.success('Đã xóa mục tiêu')
     },
   })
 
-  const contributeMutation = useMutation(
-    ({ id, amount }: { id: number; amount: number }) => savingsGoalService.contribute(id, amount),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('savings-goals')
-        toast.success('ÄÃ£ thÃªm tiá»n tiáº¿t kiá»‡m')
-      },
+  const contributeMutation = useMutation({
+    mutationFn: ({ id, amount }: { id: number; amount: number }) => savingsGoalService.contribute(id, amount),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings-goals'] })
+      toast.success('Đã thêm tiền tiết kiệm')
     },
-  )
+  })
 
   const summary = useMemo(() => {
     return {
@@ -76,7 +78,7 @@ export function useSavingsGoalsViewModel() {
   }
 
   const handleMutationSuccess = () => {
-    queryClient.invalidateQueries('savings-goals')
+    queryClient.invalidateQueries({ queryKey: ['savings-goals'] })
     closeModal()
   }
 

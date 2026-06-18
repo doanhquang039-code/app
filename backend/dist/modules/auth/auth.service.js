@@ -157,6 +157,7 @@ let AuthService = class AuthService {
     }
     getSocialAuthUrl(providerInput, targetInput) {
         const provider = this.assertProvider(providerInput);
+        this.assertProviderEnabled(provider);
         const target = this.getSocialAuthTarget(targetInput);
         const config = SOCIAL_PROVIDERS[provider];
         const clientId = this.requiredEnv(config.clientIdEnv, provider);
@@ -173,8 +174,20 @@ let AuthService = class AuthService {
         this.applyFreshLoginParams(url, provider);
         return url.toString();
     }
+    getSocialProviders() {
+        return Object.keys(SOCIAL_PROVIDERS).map((provider) => {
+            const socialProvider = provider;
+            const config = SOCIAL_PROVIDERS[socialProvider];
+            return {
+                id: socialProvider,
+                enabled: this.isProviderEnabled(socialProvider),
+                configured: Boolean(process.env[config.clientIdEnv] && process.env[config.clientSecretEnv]),
+            };
+        });
+    }
     async handleSocialCallback(providerInput, code, state) {
         const provider = this.assertProvider(providerInput);
+        this.assertProviderEnabled(provider);
         if (!code)
             throw new common_1.BadRequestException('Missing authorization code');
         const target = this.verifyState(provider, state);
@@ -361,6 +374,17 @@ let AuthService = class AuthService {
         if (!value)
             throw new common_1.BadRequestException(`Missing ${name} for ${provider} login`);
         return value;
+    }
+    assertProviderEnabled(provider) {
+        if (!this.isProviderEnabled(provider)) {
+            throw new common_1.BadRequestException(`${provider} login is disabled`);
+        }
+    }
+    isProviderEnabled(provider) {
+        const key = `${provider.toUpperCase()}_OAUTH_ENABLED`;
+        const config = SOCIAL_PROVIDERS[provider];
+        return (process.env[key]?.toLowerCase() !== 'false' &&
+            Boolean(process.env[config.clientIdEnv] && process.env[config.clientSecretEnv]));
     }
     getRedirectUri(provider, target = 'web') {
         const baseUrl = target === 'mobile'
